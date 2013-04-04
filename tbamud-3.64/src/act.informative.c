@@ -292,8 +292,8 @@ static void list_one_char(struct char_data *i, struct char_data *ch)
     " is lying here, mortally wounded.",
     " is lying here, incapacitated.",
     " is lying here, stunned.",
-    " is meditating here.",
     " is sleeping here.",
+    " is meditating here.",
     " is resting here.",
     " is sitting here.",
     " is standing here.",
@@ -832,8 +832,9 @@ ACMD(do_score)
 {
 	static char *positAry[] = { ""
 			"A Corpse", "Critical", "Moribund",
-			"Stunned",  "Sleeping",  "Resting",
-			"Sitting",  "Fighting", "Standing"
+			"Stunned",  "Sleeping", "Meditating",
+			"Resting",	"Sitting",  "Fighting",
+			"Standing"
 	};
 	static int positMax = sizeof(positAry)/sizeof(char *);
 
