@@ -537,10 +537,10 @@
  * LVL_IMPL should always be the HIGHEST possible immortal level, and
  * LVL_IMMORT should always be the LOWEST immortal level.  The number of
  * mortal levels will always be LVL_IMMORT - 1. */
-#define LVL_IMPL    34  /**< Level of Implementors */
-#define LVL_GRGOD   33  /**< Level of Greater Gods */
-#define LVL_GOD     32  /**< Level of Gods */
-#define LVL_IMMORT	31  /**< Level of Immortals */
+#define LVL_IMPL    70  /**< Level of Implementors */
+#define LVL_GRGOD   63  /**< Level of Greater Gods */
+#define LVL_GOD     62  /**< Level of Gods */
+#define LVL_IMMORT  61  /**< Level of Immortals */
 
 /** Minimum level to build and to run the saveall command */
 #define LVL_BUILDER	LVL_IMMORT
