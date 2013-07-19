@@ -62,23 +62,31 @@ static const char *how_good(int percent)
   if (percent < 0)
     return " error)";
   if (percent == 0)
-    return " (not learned)";
-  if (percent <= 10)
-    return " (awful)";
-  if (percent <= 20)
-    return " (bad)";
-  if (percent <= 40)
-    return " (poor)";
-  if (percent <= 55)
-    return " (average)";
-  if (percent <= 70)
-    return " (fair)";
-  if (percent <= 80)
-    return " (good)";
-  if (percent <= 85)
-    return " (very good)";
-
-  return " (superb)";
+    return " (@Wnot learned@n)";
+  if (percent < 15)
+    return " (@Rinept@n)";
+  if (percent < 30)
+    return " (@Rawful@n)";
+  if (percent < 40)
+    return " (@Mpoor@n)";
+  if (percent < 55)
+    return " (@Bfair@n)";
+  if (percent < 65)
+    return " (@Bpromising@n)";
+  if (percent < 70)
+    return " (@Bgood@n)";
+  if (percent < 75)
+    return " (@Cvery good@n)";
+  if (percent < 80)
+    return " (@Csuperb@n)";
+  if (percent < 85)
+    return " (@Bexcellent@n)";
+  if (percent < 90)
+    return " (@Badept@n)";
+  if (percent <= 99)
+    return " (@Btrue meaning@n)";
+  
+  return " (@R@=godlike@n)";
 }
 
 const char *prac_types[] = {
@@ -107,10 +115,12 @@ void list_skills(struct char_data *ch)
 	"You know of the following %ss:\r\n", GET_PRACTICES(ch),
 	GET_PRACTICES(ch) == 1 ? "" : "s", SPLSKL(ch));
 
+  int cnt = 0;
   for (sortpos = 1; sortpos <= MAX_SKILLS; sortpos++) {
     i = spell_sort_info[sortpos];
     if (GET_LEVEL(ch) >= spell_info[i].min_level[(int) GET_CLASS(ch)]) {
-      nlen = snprintf(buf2 + len, sizeof(buf2) - len, "%-20s %s\r\n", spell_info[i].name, how_good(GET_SKILL(ch, i)));
+      cnt += 1;
+      nlen = snprintf(buf2 + len, sizeof(buf2) - len, (cnt%2) ? "%-20s %s | " : "%-20s %s\r\n", spell_info[i].name, how_good(GET_SKILL(ch, i)));
       if (len + nlen >= sizeof(buf2) || nlen < 0)
         break;
       len += nlen;
@@ -119,6 +129,7 @@ void list_skills(struct char_data *ch)
   if (len >= sizeof(buf2))
     strcpy(buf2 + sizeof(buf2) - strlen(overflow) - 1, overflow); /* strcpy: OK */
 
+  parse_at(buf2);
   page_string(ch->desc, buf2, TRUE);
 }
 
