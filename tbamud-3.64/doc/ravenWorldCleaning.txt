@@ -53,4 +53,53 @@ python fix.py 1.zon
 ...
 
 
+mob:
+
+Make the following file named 'fix.py' in the /lib/world/zon directory:
+
+--------------------------
+
+#!/usr/bin/env python
+import sys
+
+file = open(sys.argv[1], 'r')
+mobNum = (sys.argv[1].split("."))[0]
+
+try:
+  # read a list of lines into data
+  data = file.readlines()
+finally:
+  file.close()
+
+tildeCount = 0
+
+for i in range(len(data)):
+  if "~" in data[i]:
+    tildeCount += 1
+
+  if tildeCount == 5:
+    data[i + 1] = data[i + 1].rstrip() + " E\r\n"
+    data[i + 4] = data[i + 4] + "E\r\n"
+    tildeCount = 0
+
+# and write everything back
+file = open(mobNum + '.mob.test', 'w')
+try:
+  file.writelines( data )
+
+finally:
+  file.close()
+
+--------------------------
+
+
+Then make some script that runs the following for all ZON files in the directory:
+
+python fix.py 0.mob
+python fix.py 1.mob
+...
+
+obj:
+
+
 
