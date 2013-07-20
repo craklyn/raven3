@@ -116,12 +116,12 @@ obj:
 
 
 
-perl -pi -w -e 's/Z 1/T 1/g;' *.wld
-perl -pi -w -e 's/Z 2/T 2/g;' *.wld
-perl -pi -w -e 's/Z 3/T 3/g;' *.wld
-perl -pi -w -e 's/Z 4/T 4/g;' *.wld
-perl -pi -w -e 's/Z 5/T 5/g;' *.wld
-perl -pi -w -e 's/Z 6/T 6/g;' *.wld
-perl -pi -w -e 's/Z 7/T 7/g;' *.wld
-perl -pi -w -e 's/Z 8/T 8/g;' *.wld
-perl -pi -w -e 's/Z 9/T 9/g;' *.wld
+perl -pi -w -e 's/Z 1/T 1/g;' *.obj
+perl -pi -w -e 's/Z 2/T 2/g;' *.obj
+perl -pi -w -e 's/Z 3/T 3/g;' *.obj
+perl -pi -w -e 's/Z 4/T 4/g;' *.obj
+perl -pi -w -e 's/Z 5/T 5/g;' *.obj
+perl -pi -w -e 's/Z 6/T 6/g;' *.obj
+perl -pi -w -e 's/Z 7/T 7/g;' *.obj
+perl -pi -w -e 's/Z 8/T 8/g;' *.obj
+perl -pi -w -e 's/Z 9/T 9/g;' *.obj
