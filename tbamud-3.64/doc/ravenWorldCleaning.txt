@@ -97,6 +97,19 @@ Then make some script that runs the following for all ZON files in the directory
 
 python fix.py 0.mob
 python fix.py 1.mob
+
+Also, you must do the following to convert mob triggers:
+
+perl -pi -w -e 's/Z 1/T 1/g;' *.mob
+perl -pi -w -e 's/Z 2/T 2/g;' *.mob
+perl -pi -w -e 's/Z 3/T 3/g;' *.mob
+perl -pi -w -e 's/Z 4/T 4/g;' *.mob
+perl -pi -w -e 's/Z 5/T 5/g;' *.mob
+perl -pi -w -e 's/Z 6/T 6/g;' *.mob
+perl -pi -w -e 's/Z 7/T 7/g;' *.mob
+perl -pi -w -e 's/Z 8/T 8/g;' *.mob
+perl -pi -w -e 's/Z 9/T 9/g;' *.mob
+
 ...
 
 obj:
