@@ -1,0 +1,17 @@
+For cleaning world files from Raven 2.x to Raven 3.0:
+
+
+wld:
+
+perl -pi -w -e 's/Z 1/T 1/g;' *.wld
+perl -pi -w -e 's/Z 2/T 2/g;' *.wld
+perl -pi -w -e 's/Z 3/T 3/g;' *.wld
+perl -pi -w -e 's/Z 4/T 4/g;' *.wld
+perl -pi -w -e 's/Z 5/T 5/g;' *.wld
+perl -pi -w -e 's/Z 6/T 6/g;' *.wld
+perl -pi -w -e 's/Z 7/T 7/g;' *.wld
+perl -pi -w -e 's/Z 8/T 8/g;' *.wld
+perl -pi -w -e 's/Z 9/T 9/g;' *.wld
+
+zon:
+
