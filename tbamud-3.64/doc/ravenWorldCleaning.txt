@@ -15,3 +15,42 @@ perl -pi -w -e 's/Z 9/T 9/g;' *.wld
 
 zon:
 
+Make the following file named 'fix.py' in the /lib/world/zon directory:
+
+---------------------
+
+#!/usr/bin/env python
+import sys
+
+# with is like your try .. finally block in this case
+
+file = open(sys.argv[1], 'r')
+zonNum = (sys.argv[1].split("."))[0]
+
+try:
+  # read a list of lines into data
+  data = file.readlines()
+finally:
+  file.close()
+
+# now change the 2nd line, note that you have to add a newline
+data[2] = zonNum + '00 ' + data[2]
+
+# and write everything back
+file = open(zonNum + '.zon', 'w')
+try:
+  file.writelines( data )
+
+finally:
+  file.close()
+
+---------------------
+
+Then make some script that runs the following for all ZON files in the directory:
+
+python fix.py 0.zon
+python fix.py 1.zon
+...
+
+
+
