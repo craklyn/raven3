@@ -1683,6 +1683,7 @@ void parse_mobile(FILE *mob_f, int nr)
   int j, t[10], retval;
   char line[READ_SIZE], *tmpptr, letter;
   char f1[128], f2[128], f3[128], f4[128], f5[128], f6[128], f7[128], f8[128], buf2[128];
+  char *mob_RaceClassSubrace;
 
   mob_index[i].vnum = nr;
   mob_index[i].number = 0;
@@ -1697,6 +1698,7 @@ void parse_mobile(FILE *mob_f, int nr)
   sprintf(buf2, "mob vnum %d", nr);	/* sprintf: OK (for 'buf2 >= 19') */
 
   /* String data */
+  mob_RaceClassSubrace = fread_string (mob_f, buf2);
   mob_proto[i].player.name = fread_string(mob_f, buf2);
   tmpptr = mob_proto[i].player.short_descr = fread_string(mob_f, buf2);
   if (tmpptr && *tmpptr)
@@ -1707,7 +1709,7 @@ void parse_mobile(FILE *mob_f, int nr)
   mob_proto[i].player.description = fread_string(mob_f, buf2);
   GET_TITLE(mob_proto + i) = NULL;
 
-  /* Numeric data */
+  /* Numeric data */  
   if (!get_line(mob_f, line)) {
     log("SYSERR: Format error after string section of mob #%d\n"
 	"...expecting line of form '# # # {S | E}', but file ended!", nr);
