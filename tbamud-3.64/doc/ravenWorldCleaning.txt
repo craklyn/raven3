@@ -114,6 +114,58 @@ perl -pi -w -e 's/Z 9/T 9/g;' *.mob
 
 obj:
 
+fix.sh script:
+
+#!/usr/bin/env python
+import sys
+
+file = open(sys.argv[1], 'r')
+objNum = (sys.argv[1].split("."))[0]
+
+try:
+  # read a list of lines into data
+  data = file.readlines()
+finally:
+  file.close()
+
+tildeCount = 0
+permLine = -1
+timer = "0"
+permString = "0 0 0 0\r\n"
+
+for i in range(len(data)):
+  if len(data[i]) > 0 and "#" == data[i][0] and permLine != -1 or "$~" in data[i] and permLine != -1:
+    data[permLine + 2] = data[permLine + 2].rstrip() + " 0 " + str(timer) + "\r\n"
+    data[permLine] = data[permLine].rstrip() + " " + permString
+    #reset temp values
+    permString = "0 0 0 0\r\n"
+    timer = "0"
+    tildeCount = 0
+
+  if "~" in data[i]:
+    tildeCount += 1
+
+    if tildeCount == 4:
+      permLine = i + 1
+
+  if data[i] == "B\n":
+    data[i] = ""
+    permString = data[i + 1]
+    data[i + 1] = ""
+
+  if tildeCount >= 4 and len(data[i]) > 0 and data[i][0] == "D" and data[i][1:].rstrip().isdigit():
+    timer = data[i][1:].rstrip()
+    data[i] = ""
+
+# and write everything back
+file = open(objNum + '.obj', 'w')
+try:
+  file.writelines( data )
+
+finally:
+  file.close()
+
+
 
 
 perl -pi -w -e 's/Z 1/T 1/g;' *.obj
