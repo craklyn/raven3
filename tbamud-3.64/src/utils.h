@@ -34,6 +34,8 @@
 /** Standard line size, used for many string limits. */
 #define READ_SIZE	256
 
+#define ATTR_STR( maxAttr, thisAttr, listAttr ) listAttr[( thisAttr > maxAttr ? maxAttr : thisAttr )]
+
 /* Public functions made available from utils.c. Documentation for all functions
  * are made available with the function definition. */
 void basic_mud_log(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
