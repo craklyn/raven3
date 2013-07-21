@@ -605,7 +605,7 @@
 #define MAX_RAW_INPUT_LENGTH  (12 * 1024) /**< Max size of *raw* input */
 #define MAX_MESSAGES          60     /**< Max Different attack message types */
 #define MAX_NAME_LENGTH       20     /**< Max PC/NPC name length */
-#define MAX_PWD_LENGTH        30     /**< Max PC password length */
+#define MAX_PWD_LENGTH        10     /**< Max PC password length */
 #define MAX_TITLE_LENGTH      80     /**< Max PC title length */
 #define HOST_LENGTH           40     /**< Max hostname resolution length */
 #define PLR_DESC_LENGTH       4096   /**< Max length for PC description */
