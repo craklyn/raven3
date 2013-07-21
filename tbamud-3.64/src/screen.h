@@ -12,6 +12,9 @@
 #ifndef _SCREEN_H_
 #define _SCREEN_H_
 
+#define COLOR_COOKED 1
+#define COLOR_RAW    0
+
 #define CNRM  "\x1B[0;0m"     /* "Normal"                            */ 
 #define CNUL  ""              /* No Change                           */ 
 #define KNRM  "\x1B[0m"       /* Foreground "Normal"                 */ 
@@ -41,6 +44,16 @@
 #define BKMAG  "\x1B[45m"     /* Background Dark Magenta             */ 
 #define BKCYN  "\x1B[46m"     /* Background Dark Cyan                */ 
 #define BKWHT  "\x1B[47m"     /* Background Dark White (Light Gray)  */ 
+
+#define BKRBY  "\x1B[41m\x1B[1;33m"	/* used in colorRatio */
+
+#define BKBRED  "\x1B[1;41m"     /* Background Dark Red                 */
+#define BKBGRN  "\x1B[1;42m"     /* Background Dark Green               */
+#define BKBYEL  "\x1B[1;43m"     /* Background Dark Yellow              */
+#define BKBBLU  "\x1B[1;44m"     /* Background Dark Blue                */
+#define BKBMAG  "\x1B[1;45m"     /* Background Dark Magenta             */
+#define BKBCYN  "\x1B[1;46m"     /* Background Dark Cyan                */
+#define BKBWHT  "\x1B[1;47m"     /* Background Dark White (Light Gray)  */
 
 #define FBLK  "\x1B[5;30m"    /* Foreground Flashing Black (silly)   */ 
 #define FRED  "\x1B[5;31m"    /* Foreground Flashing Dark Red        */ 
@@ -78,7 +91,7 @@
 #define C_CMP   3 
 #define _clrlevel(ch) (!IS_NPC(ch) ? (PRF_FLAGGED((ch), PRF_COLOR_1) ? 1 : 0) + \
 			(PRF_FLAGGED((ch), PRF_COLOR_2) ? 2 : 0) : 0) 
-#define clr(ch,lvl) (_clrlevel(ch) >= (lvl)) 
+#define clr(ch,lvl) ((ch != NULL && ch->player_specials != NULL) ? _clrlevel(ch) >= (lvl) : 0)
 
 /* Player dependant foreground color codes */ 
 #define CCNRM(ch,lvl)  (clr((ch),(lvl))?KNRM:KNUL) 
@@ -179,5 +192,7 @@
 #define QBKMAG CBKMAG(ch,C_SPR) 
 #define QBKCYN CBKCYN(ch,C_SPR) 
 #define QBKWHT CBKWHT(ch,C_SPR) 
+
+char * colorRatio( struct char_data *ch, int cookIt, int clvl, int num, int den );
 
 #endif /* _SCREEN_H_ */

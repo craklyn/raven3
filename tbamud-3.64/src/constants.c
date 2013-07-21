@@ -49,16 +49,16 @@ const char *dirs[] =
 
 const char *autoexits[] =
 {
-  "n",
-  "e",
-  "s",
-  "w",
-  "u",
-  "d",
-  "nw",
-  "ne",
-  "se",
-  "sw",
+  "North",
+  "East",
+  "South",
+  "West",
+  "Up",
+  "Down",
+  "Northwest",
+  "Northeast",
+  "Southeast",
+  "Southwest",
   "\n"
 };
 
@@ -951,6 +951,95 @@ const char *ibt_bits[] = {
   "Important",
   "InProgress",
   "\n"
+};
+
+const char *chaString[27] = {
+    "NONE!",
+    "Nightmare",  "Horrifying",  "Monstrous",   /* 01 - 03 */
+    "Sickening",  "Hideous",     "Deformed",    /* 04 - 06 */
+    "Ugly",       "Ugly",        "Unattractive",   /* 07 - 09 */
+    "Below Avg",  "Plain",       "Average",     /* 10 - 12 */
+    "Appealing",  "Attractive",  "Comely",      /* 13 - 15 */
+    "Charming",   "Stunning",    "Gorgeous",    /* 16 - 18 */
+    "Breathtaking","Majestic",   "Perfect",     /* 19 - 21 */
+    "Unearthly",  "Godlike",     "Godlike",	/* 22 - 24 */
+    "Divine",
+    "-*END*-"
+};
+
+const char *conString[27] = {
+    "NONE!",
+    "Simp",       "Sickly",      "Anemic",      /* 01 - 03 */
+    "Anemic",     "Fragile",     "Frail",       /* 04 - 06 */
+    "Feeble",     "Feeble",      "Below Avg",   /* 07 - 09 */
+    "Below Avg",  "Average",     "Average",     /* 10 - 12 */
+    "Above Avg",  "Healthy",     "Husky",       /* 13 - 15 */
+    "Hardy",      "Sturdy",      "Rugged",      /* 16 - 18 */
+    "Tough",      "Tireless",    "Primordial",  /* 19 - 21 */
+    "Primordial", "Godlike",     "Godlike",	/* 22 - 24 */
+    "Divine",
+    "-*END*-"
+};
+
+/*
+ * Below are the string representations of attributes
+ */
+
+const char *dexString[27] = {
+    "NONE!",
+    "Immobile",   "Slugish",     "Arthritic",   /* 01 - 03 */
+    "Brick",      "Clutz",       "Clutz",       /* 04 - 06 */
+    "Clumsy",     "Clumsy",      "Below Avg",   /* 07 - 09 */
+    "Below Avg",  "Average",     "Average",     /* 10 - 12 */
+    "Above Avg",  "Deft",        "Adroit",      /* 13 - 15 */
+    "Smooth",     "Nimble",      "Agile",       /* 16 - 18 */
+    "Graceful",   "Cat-like",    "Incredible",  /* 19 - 21 */
+    "Incredible", "Godlike",	 "Godlike",	/* 22 - 24 */
+    "Divine",					/* 25	   */
+    "-*END*-"
+};
+
+const char *strString[32] = {
+    "NONE!",
+    "Child",      "Child",       "Wimpy",       /* 01 - 03 */
+    "Wimpy",      "Pencil-neck", "Weak",        /* 04 - 06 */
+    "Weak",       "Weak",        "Pipsqueak",   /* 07 - 09 */
+    "Piwi",       "Below Avg",   "Average",     /* 10 - 12 */
+    "Average",    "Above Avg",   "Vigorous",    /* 13 - 15 */
+    "Wiry",       "Sinewy",      "Muscular",    /* 16 - 18 */
+    "Potent",     "Strong",      "Powerful",    /* 18/0 , 18/41,  18/61 */
+    "Heroic",     "Atlantian",   "Herculean",   /* 18/81, 18/100, 19    */
+    "Gigantic",   "Colossal",    "Gargantuan",  /* 20 - 22 */
+    "Titanic",    "Godlike",	 "Divine",	/* 23 - 25 */
+    "-*END*-"
+};
+
+const char *intString[27] = {
+    "NONE!",
+    "Vegetable",  "Animal",      "Idiot",
+    "Imbecile",   "Moron",       "Dolt",
+    "Dumb",       "Below Avg",   "Average",
+    "Average",    "Average",     "Apt",
+    "Smart",      "Clever",      "Intellignt",
+    "Exceptnl",   "Brilliant",   "Gifted",
+    "Genius",     "Genius",      "Sup-Genius",
+    "Sup-Genius", "Godlike",	 "Godlike",
+    "Divine",
+    "-*END*-"
+};
+
+const char *wisString[27] = {
+    "NONE!",
+    "Ninkempoop",        "Fool",              "Fool",
+    "Fool",              "Twit",              "Gullible",
+    "Gullible",          "Gullible",          "Naive",
+    "Naive",             "Average",           "Average",
+    "Above Avg",         "Keen",              "Crafty",
+    "Shrewd",            "Astute",            "Wise",
+    "Sagacious",         "Transcendent",      "Infinite",
+    "Omniscient",	 "Godlike",	      "Godlike",
+    "Divine",
+    "-*END*-"
 };
 /* --- End of constants arrays. --- */
 

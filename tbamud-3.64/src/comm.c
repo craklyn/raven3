@@ -1126,47 +1126,58 @@ static char *make_prompt(struct descriptor_data *d)
 
     *prompt = '\0';
 
-    if (GET_INVIS_LEV(d->character) && len < sizeof(prompt)) {
-      count = snprintf(prompt + len, sizeof(prompt) - len, "i%d ", GET_INVIS_LEV(d->character));
-      if (count >= 0)
-        len += count;
-    }
+
     /* show only when below 25% */
     if (PRF_FLAGGED(d->character, PRF_DISPAUTO) && len < sizeof(prompt)) {
       struct char_data *ch = d->character;
       if (GET_HIT(ch) << 2 < GET_MAX_HIT(ch) ) {
-        count = snprintf(prompt + len, sizeof(prompt) - len, "%dH ", GET_HIT(ch));
+        count = snprintf(prompt + len, sizeof(prompt) - len, "%s%d%sH ",
+        		colorRatio(ch,COLOR_RAW, C_CMP, GET_HIT(ch), GET_MAX_HIT(ch)),GET_HIT(ch),QNRM);
         if (count >= 0)
           len += count;
       }
       if (GET_MANA(ch) << 2 < GET_MAX_MANA(ch) && len < sizeof(prompt)) {
-        count = snprintf(prompt + len, sizeof(prompt) - len, "%dM ", GET_MANA(ch));
+        count = snprintf(prompt + len, sizeof(prompt) - len, "%s%d%sM ",
+        		colorRatio(ch,COLOR_RAW, C_CMP, GET_MANA(ch), GET_MAX_MANA(ch)),GET_MANA(ch),QNRM);
         if (count >= 0)
           len += count;
       }
       if (GET_MOVE(ch) << 2 < GET_MAX_MOVE(ch) && len < sizeof(prompt)) {
-        count = snprintf(prompt + len, sizeof(prompt) - len, "%dV ", GET_MOVE(ch));
+        count = snprintf(prompt + len, sizeof(prompt) - len, "%s%d%sV ",
+        		colorRatio(ch,COLOR_RAW, C_CMP, GET_MOVE(ch), GET_MAX_MOVE(ch)),GET_MOVE(ch),QNRM);
         if (count >= 0)
           len += count;
       }
     } else { /* not auto prompt */
       if (PRF_FLAGGED(d->character, PRF_DISPHP) && len < sizeof(prompt)) {
-        count = snprintf(prompt + len, sizeof(prompt) - len, "%dH ", GET_HIT(d->character));
+        count = snprintf(prompt + len, sizeof(prompt) - len, "%s%d%sH ",
+        		colorRatio(d->character,COLOR_RAW, C_CMP, GET_HIT(d->character), GET_MAX_HIT(d->character)),
+        		GET_HIT(d->character),CCNRM(d->character,C_NRM));
         if (count >= 0)
           len += count;
       }
 
       if (PRF_FLAGGED(d->character, PRF_DISPMANA) && len < sizeof(prompt)) {
-        count = snprintf(prompt + len, sizeof(prompt) - len, "%dM ", GET_MANA(d->character));
+        count = snprintf(prompt + len, sizeof(prompt) - len, "%s%d%sM ",
+        		colorRatio(d->character,COLOR_RAW, C_CMP, GET_MANA(d->character), GET_MAX_MANA(d->character)),
+        		GET_MANA(d->character),CCNRM(d->character,C_NRM));
         if (count >= 0)
           len += count;
       }
 
       if (PRF_FLAGGED(d->character, PRF_DISPMOVE) && len < sizeof(prompt)) {
-        count = snprintf(prompt + len, sizeof(prompt) - len, "%dV ", GET_MOVE(d->character));
+        count = snprintf(prompt + len, sizeof(prompt) - len, "%s%d%sV ",
+        		colorRatio(d->character,COLOR_RAW, C_CMP, GET_MOVE(d->character), GET_MAX_MOVE(d->character)),
+        		GET_MOVE(d->character),CCNRM(d->character,C_NRM));
         if (count >= 0)
           len += count;
       }
+    }
+
+    if (GET_INVIS_LEV(d->character) && len < sizeof(prompt)) {
+          count = snprintf(prompt + len, sizeof(prompt) - len, "(i%d) ", GET_INVIS_LEV(d->character));
+          if (count >= 0)
+            len += count;
     }
 
     if (PRF_FLAGGED(d->character, PRF_BUILDWALK) && len < sizeof(prompt)) {
