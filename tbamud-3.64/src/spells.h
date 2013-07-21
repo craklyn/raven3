@@ -110,7 +110,7 @@
 #define SKILL_SNEAK                 138 /* Reserved Skill[] DO NOT CHANGE */
 #define SKILL_STEAL                 139 /* Reserved Skill[] DO NOT CHANGE */
 #define SKILL_TRACK		              140 /* Reserved Skill[] DO NOT CHANGE */
-/* New skills may be added here up to MAX_SKILLS (200) */
+/* New skills may be added here up to MAX_SKILLS (300) */
 
 /* NON-PLAYER AND OBJECT SPELLS AND SKILLS: The practice levels for the spells
  * and skills below are _not_ recorded in the players file; therefore, the
@@ -120,32 +120,32 @@
 
 /* To make an affect induced by dg_affect look correct on 'stat' we need to
  * define it with a 'spellname'. */
-#define SPELL_DG_AFFECT              298
+#define SPELL_DG_AFFECT              398
 
-#define TOP_SPELL_DEFINE	     299
+#define TOP_SPELL_DEFINE	     399
 /* NEW NPC/OBJECT SPELLS can be inserted here up to 299 */
 
 /* WEAPON ATTACK TYPES */
-#define TYPE_HIT        300
-#define TYPE_STING      301
-#define TYPE_WHIP       302
-#define TYPE_SLASH      303
-#define TYPE_BITE       304
-#define TYPE_BLUDGEON   305
-#define TYPE_CRUSH      306
-#define TYPE_POUND      307
-#define TYPE_CLAW       308
-#define TYPE_MAUL       309
-#define TYPE_THRASH     310
-#define TYPE_PIERCE     311
-#define TYPE_BLAST		  312
-#define TYPE_PUNCH		  313
-#define TYPE_STAB		    314
+#define TYPE_HIT        400
+#define TYPE_STING      401
+#define TYPE_WHIP       402
+#define TYPE_SLASH      403
+#define TYPE_BITE       404
+#define TYPE_BLUDGEON   405
+#define TYPE_CRUSH      406
+#define TYPE_POUND      407
+#define TYPE_CLAW       408
+#define TYPE_MAUL       409
+#define TYPE_THRASH     410
+#define TYPE_PIERCE     411
+#define TYPE_BLAST	412
+#define TYPE_PUNCH	413
+#define TYPE_STAB	414
 /** The total number of attack types */
 #define NUM_ATTACK_TYPES  15
 
 /* new attack types can be added here - up to TYPE_SUFFERING */
-#define TYPE_SUFFERING		     399
+#define TYPE_SUFFERING		     499
 
 #define SAVING_PARA   0
 #define SAVING_ROD    1
