@@ -791,141 +791,156 @@ ACMD(do_gold)
     send_to_char(ch, "You have %d gold coins.\r\n", GET_GOLD(ch));
 }
 
+#define SEPARATOR \
+"-------------------------------------------------------------------------------\r\n"
+
+int
+getRangedIdx( int lowerVal, int upperVal, int idxRange, int theValue) {
+    int maxRange  = upperVal - lowerVal;
+    int baseValue = theValue - lowerVal;
+    int idxThresh = maxRange / idxRange;
+    int idxMax    = idxRange - 1;
+    int theIdx    = baseValue / idxThresh;
+
+    if( theIdx == upperVal ) return( idxMax );
+    if( theIdx < 0 )         return( 0 );
+    if( theIdx > idxMax )    return( idxMax );
+
+    return( theIdx );
+}
+
+
 ACMD(do_score)
 {
-  struct time_info_data playing_time;
+	static char *positAry[] = { ""
+			"A Corpse", "Critical", "Moribund",
+			"Stunned",  "Sleeping",  "Resting",
+			"Sitting",  "Fighting", "Standing"
+	};
+	static int positMax = sizeof(positAry)/sizeof(char *);
 
-  if (IS_NPC(ch))
-    return;
+	static char *alignAry[] = {
+			"Satanic",   "Demonic",   "Wicked",
+			"Evil",      "Sinful",    "Spiteful",
+			"Shifty",    "Neutral",   "Fair",
+			"Good",      "Moral",     "Pure",
+			"Virtuous",  "Righteous", "Holy"
+	};
+	static int   alignMax   = sizeof(alignAry)/sizeof(char *);
 
-  send_to_char(ch, "You are %d years old.", GET_AGE(ch));
+	static char *armorAry[] = {
+			"Godlike",  "Impervious", "Shrouded",
+			"Shielded", "Armored",    "Protected",
+			"Clothed",  "Covered",    "Naked" }
+	;
+	static int   armorMax   = sizeof(armorAry)/sizeof(char *);
 
-  if (age(ch)->month == 0 && age(ch)->day == 0)
-    send_to_char(ch, "  It's your birthday today.\r\n");
-  else
-    send_to_char(ch, "\r\n");
+	char *positStr = positAry[ getRangedIdx(     0,   10, positMax, GET_POS(ch)) ];
+	char *alignStr = alignAry[ getRangedIdx( -1000, 1000, alignMax, GET_ALIGNMENT(ch)) ];
+	char *thirst = ((GET_COND(ch,THIRST) < 4 && GET_COND(ch,THIRST) >= 0) ? "Thirsty" : " ");
+	char *hunger = ((GET_COND(ch,HUNGER  ) < 4 && GET_COND(ch, HUNGER  ) >= 0) ? "Hungry" : " ");
+	char *stupor = ((GET_COND(ch,DRUNK ) > 8 && GET_COND(ch,DRUNK ) >= 0) ? "Drunk" : " ");
 
-  send_to_char(ch, "You have %d(%d) hit, %d(%d) mana and %d(%d) movement points.\r\n",
-	  GET_HIT(ch), GET_MAX_HIT(ch), GET_MANA(ch), GET_MAX_MANA(ch),
-	  GET_MOVE(ch), GET_MAX_MOVE(ch));
+	int neededXp = (GET_LEVEL(ch) > LVL_IMMORT) ? 999999999 : level_exp(GET_CLASS(ch), GET_LEVEL(ch) + 1) - GET_EXP(ch);
+	int real_ac = compute_armor_class(ch);
+	char *armorStr = armorAry[ getRangedIdx( -100, 100, armorMax, real_ac)];
 
-  send_to_char(ch, "Your armor class is %d/10, and your alignment is %d.\r\n",
-	  compute_armor_class(ch), GET_ALIGNMENT(ch));
+	send_to_char(ch,"\r\n");
+	send_to_char(ch, SEPARATOR);
+	send_to_char( ch, "Race   [%10s]  Cls  [%s%2s%s]          Lvl  [%s%2d%s]  Status [%16s]\r\n",
+	                   "None",
+	                   QBCYN, CLASS_ABBR(ch),QNRM,
+	                   QBCYN,GET_LEVEL(ch), QNRM,
+	                   "None");
 
-  send_to_char(ch, "You have %d exp, %d gold coins, and %d questpoints.\r\n",
-	  GET_EXP(ch), GET_GOLD(ch), GET_QUESTPOINTS(ch));
+	send_to_char( ch, "Health [%s%4d/%4d%s ]  Exp  [%s%10d%s]  QP   [%s%2d%s]  %s%s  %s  %s%s\r\n",
+	                   colorRatio( ch, COLOR_COOKED, C_CMP, GET_HIT(ch), GET_MAX_HIT(ch) ),
+	                   GET_HIT(ch), GET_MAX_HIT(ch), QNRM,
+	                   QBCYN,GET_EXP(ch),QNRM,
+	                   QBCYN,GET_QUESTPOINTS(ch), QNRM,
+	                   QRED,hunger, thirst, stupor, QNRM);
 
-  if (GET_LEVEL(ch) < LVL_IMMORT)
-    send_to_char(ch, "You need %d exp to reach your next level.\r\n",
-	level_exp(GET_CLASS(ch), GET_LEVEL(ch) + 1) - GET_EXP(ch));
+	send_to_char( ch, "Power  [%s%4d/%4d%s ]  Need [%s%10d%s]  Clan [%s%20s%s] %s%s%s\r\n",
+	                   colorRatio( ch, COLOR_COOKED, C_CMP, GET_MANA(ch), GET_MAX_MANA(ch) ),
+	                   GET_MANA(ch), GET_MAX_MANA(ch), QNRM,
+	                   QBCYN,neededXp, QNRM,
+	                   QBCYN,"None", QNRM,
+	                   QBRED,(IS_AFFECTED(ch, AFF_BLIND) ? "Blind":"" ), QNRM);
 
-  send_to_char(ch, "You have earned %d quest points.\r\n", GET_QUESTPOINTS(ch));
-  send_to_char(ch, "You have completed %d quest%s, ",
-       GET_NUM_QUESTS(ch),
-       GET_NUM_QUESTS(ch) == 1 ? "" : "s");
-  if (GET_QUEST(ch) == NOTHING)
-    send_to_char(ch, "and you are not on a quest at the moment.\r\n");
-  else
-    send_to_char(ch, "and your current quest is %d.\r\n",
-                     GET_QUEST(ch) == NOTHING ? -1 : GET_QUEST(ch));
+	send_to_char( ch, "Vigor  [%s%4d/%4d%s ]  Gold [%s%10d%s]  Rank [%20s]\r\n",
+	                   colorRatio( ch, COLOR_COOKED, C_CMP, GET_MOVE(ch), GET_MAX_MOVE(ch) ),
+	                   GET_MOVE(ch), GET_MAX_MOVE(ch), CCNRM(ch,C_NRM),
+	                   QBCYN,GET_GOLD(ch), QNRM,
+	                   "None" );
 
-  playing_time = *real_time_passed((time(0) - ch->player.time.logon) +
-				  ch->player.time.played, 0);
-  send_to_char(ch, "You have been playing for %d day%s and %d hour%s.\r\n",
-     playing_time.day, playing_time.day == 1 ? "" : "s",
-     playing_time.hours, playing_time.hours == 1 ? "" : "s");
+	send_to_char( ch, "Align  [%s%10s%s]   AC  [%s%10s%s]  Pos  [%s%12s%s]  Items [%s%2d%s]\r\n",
+	                   QBCYN,alignStr,QNRM,
+	                   QBCYN,armorStr,QNRM,
+	                   QBCYN,positStr,QNRM,
+	                   QBCYN,IS_CARRYING_N(ch), QNRM);
 
-  send_to_char(ch, "This ranks you as %s %s (level %d).\r\n",
-	  GET_NAME(ch), GET_TITLE(ch), GET_LEVEL(ch));
+	send_to_char( ch, "Str  [%s%12s%s]  Int  [%s%10s%s]  Wis  [%s%12s%s]  Load  [%s%2d%s]\r\n",
+	                   QBGRN,ATTR_STR( 30, STRENGTH_APPLY_INDEX(ch), strString ),QNRM,
+	                   QBGRN,ATTR_STR( 25, GET_INT(ch), intString ),QNRM,
+	                   QBGRN,ATTR_STR( 25, GET_WIS(ch), wisString ),QNRM,
+	                   QBGRN,IS_CARRYING_W(ch),QNRM);
 
-  switch (GET_POS(ch)) {
-  case POS_DEAD:
-    send_to_char(ch, "You are DEAD!\r\n");
-    break;
-  case POS_MORTALLYW:
-    send_to_char(ch, "You are mortally wounded!  You should seek help!\r\n");
-    break;
-  case POS_INCAP:
-    send_to_char(ch, "You are incapacitated, slowly fading away...\r\n");
-    break;
-  case POS_STUNNED:
-    send_to_char(ch, "You are stunned!  You can't move!\r\n");
-    break;
-  case POS_SLEEPING:
-    send_to_char(ch, "You are sleeping.\r\n");
-    break;
-  case POS_RESTING:
-    send_to_char(ch, "You are resting.\r\n");
-    break;
-  case POS_SITTING:
-    if (!SITTING(ch))
-      send_to_char(ch, "You are sitting.\r\n");
-    else {
-      struct obj_data *furniture = SITTING(ch);
-      send_to_char(ch, "You are sitting upon %s.\r\n", furniture->short_description);
-    }
-    break;
-  case POS_FIGHTING:
-    send_to_char(ch, "You are fighting %s.\r\n", FIGHTING(ch) ? PERS(FIGHTING(ch), ch) : "thin air");
-    break;
-  case POS_STANDING:
-    send_to_char(ch, "You are standing.\r\n");
-    break;
-  default:
-    send_to_char(ch, "You are floating.\r\n");
-    break;
-  }
+	send_to_char( ch, "Dex  [%s%12s%s]  Con  [%s%10s%s]  Cha  [%s%12s%s]  Age   [%s%2d%s]\r\n",
+	                  QBGRN,ATTR_STR( 25, GET_DEX(ch), dexString ),QNRM,
+	                  QBGRN,ATTR_STR( 25, GET_CON(ch), conString ),QNRM,
+	                  QBGRN,ATTR_STR( 25, GET_CHA(ch), chaString ),QNRM,
+	                  QBGRN,GET_AGE(ch),QNRM);
 
-  if (GET_COND(ch, DRUNK) > 10)
-    send_to_char(ch, "You are intoxicated.\r\n");
+	//advancement info here...
+	//shoulin stance here...
 
-  if (GET_COND(ch, HUNGER) == 0)
-    send_to_char(ch, "You are hungry.\r\n");
+	if( ch->affected && GET_LEVEL(ch) > 1 ){
+	        struct affected_type *aff;
+	        int affCnt = 0;
 
-  if (GET_COND(ch, THIRST) == 0)
-    send_to_char(ch, "You are thirsty.\r\n");
+	        for( aff = ch->affected; aff; aff = aff->next ){
 
-  if (AFF_FLAGGED(ch, AFF_BLIND) && GET_LEVEL(ch) < LVL_IMMORT)
-    send_to_char(ch, "You have been blinded!\r\n");
+	            if( aff->spell != SPELL_HEAL)
+	            {
+	                if( affCnt == 0 ){
+	                    send_to_char( ch, SEPARATOR );
+	                    send_to_char( ch, "You are affected by the following:\r\n" );
+	                }
+# if 1
 
-  if (AFF_FLAGGED(ch, AFF_INVISIBLE))
-    send_to_char(ch, "You are invisible.\r\n");
+					if( (aff->duration) > 0 ) {
+						send_to_char( ch, " %s%-21s%s (%2d hr)", CCCYN(ch, C_NRM),
+							spell_info[aff->spell].name, CCNRM(ch, C_NRM),
+							((aff->duration ) + 1) );
+					}
+					/*
+					 * Still can't figure how this will work so I decided
+					 * to comment it out for now
+					 * -Hudas
+					 */
+//					else if(aff->duration <= 0) {
+//						send_to_char( ch, " %s%-21s%s (%2dmin)", CCCYN(ch, C_NRM),
+//							spell_info[aff->spell].name, CCNRM(ch, C_NRM),
+//							((aff->duration)%72));
+//					}
+					else {
+						send_to_char( ch, " %s%-21s%s ( On  )", CCCYN(ch, C_NRM),spell_info[aff->spell].name, CCNRM(ch, C_NRM));
+					}
 
-  if (AFF_FLAGGED(ch, AFF_DETECT_INVIS))
-    send_to_char(ch, "You are sensitive to the presence of invisible things.\r\n");
+# else
+	                send_to_char( ch, " %s%-21s%s ", CCCYN(ch, C_NRM),
+	                               spell_info[aff->spell].name, CCNRM(ch, C_NRM));
+# endif
+	                affCnt += 1;
 
-  if (AFF_FLAGGED(ch, AFF_SANCTUARY))
-    send_to_char(ch, "You are protected by Sanctuary.\r\n");
+	                if( affCnt % 2 ) send_to_char( ch, "     " );
+	                else             send_to_char( ch, "\r\n" );
+	            }
+	        }
+	        if( affCnt % 2 ) send_to_char( ch, "\r\n" );
 
-  if (AFF_FLAGGED(ch, AFF_POISON))
-    send_to_char(ch, "You are poisoned!\r\n");
-
-  if (AFF_FLAGGED(ch, AFF_CHARM))
-    send_to_char(ch, "You have been charmed!\r\n");
-
-  if (affected_by_spell(ch, SPELL_ARMOR))
-    send_to_char(ch, "You feel protected.\r\n");
-
-  if (AFF_FLAGGED(ch, AFF_INFRAVISION))
-    send_to_char(ch, "Your eyes are glowing red.\r\n");
-
-  if (PRF_FLAGGED(ch, PRF_SUMMONABLE))
-    send_to_char(ch, "You are summonable by other players.\r\n");
-
-  if (GET_LEVEL(ch) >= LVL_IMMORT) {
-    if (POOFIN(ch))
-      send_to_char(ch, "%sPOOFIN:  %s%s %s%s\r\n", QYEL, QCYN, GET_NAME(ch), POOFIN(ch), QNRM);
-    else
-      send_to_char(ch, "%sPOOFIN:  %s%s appears with an ear-splitting bang.%s\r\n", QYEL, QCYN, GET_NAME(ch), QNRM);
-
-    if (POOFOUT(ch))
-      send_to_char(ch, "%sPOOFOUT: %s%s %s%s\r\n", QYEL, QCYN, GET_NAME(ch), POOFOUT(ch), QNRM);
-    else
-      send_to_char(ch, "%sPOOFOUT: %s%s disappears in a puff of smoke.%s\r\n", QYEL, QCYN, GET_NAME(ch), QNRM);
-
-    send_to_char(ch, "Your current zone: %s%d%s\r\n", CCCYN(ch, C_NRM), GET_OLC_ZONE(ch),
- CCNRM(ch, C_NRM));
-  }
+	    }
+  send_to_char(ch, SEPARATOR);
 }
 
 ACMD(do_inventory)
