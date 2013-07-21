@@ -21,6 +21,10 @@
 #define MAX_SKILLS		300 /* Used in char_file_u *DO*NOT*CHANGE* */
 #define MAX_AFFECT		64  /* Used in char_file_u *DO*NOT*CHANGE* */
 
+#define MAX_PWD_LENGTH        10     /**< Max PC password length */
+#define PLR_DESC_LENGTH       240   /**< Max length for PC description */
+#define MAX_SKILLS            300    /**< Max number of skills/spells */
+
 #define MAX_CHORES 15
 
 /* Char's abilities.  Used in char_file_u *DO*NOT*CHANGE* */
