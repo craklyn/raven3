@@ -15,42 +15,41 @@
 
 // first some stock circle 3.0 defines. Change where appropriate.
 #define MAX_NAME_LENGTH		20  /* Used in char_file_u *DO*NOT*CHANGE* */
-
-#define MAX_PWD_LENGTH		30  /* Used in char_file_u *DO*NOT*CHANGE* */
+#define MAX_PWD_LENGTH		10  /* Used in char_file_u *DO*NOT*CHANGE* */
 #define MAX_TITLE_LENGTH	80  /* Used in char_file_u *DO*NOT*CHANGE* */
-#define HOST_LENGTH		40  /* Used in char_file_u *DO*NOT*CHANGE* */
-#define MAX_TONGUE		3   /* Used in char_file_u *DO*NOT*CHANGE* */
-#define MAX_SKILLS		200 /* Used in char_file_u *DO*NOT*CHANGE* */
-#define MAX_AFFECT		32  /* Used in char_file_u *DO*NOT*CHANGE* */
+#define HOST_LENGTH		30  /* Used in char_file_u *DO*NOT*CHANGE* */
+#define MAX_SKILLS		300 /* Used in char_file_u *DO*NOT*CHANGE* */
+#define MAX_AFFECT		64  /* Used in char_file_u *DO*NOT*CHANGE* */
+
+#define MAX_CHORES 15
 
 /* Char's abilities.  Used in char_file_u *DO*NOT*CHANGE* */
 struct char_ability_data_plrtoascii {
-   sbyte str;
-   sbyte str_add;      /* 000 - 100 if strength 18             */
-   sbyte intel;
-   sbyte wis;
-   sbyte dex;
-   sbyte con;
-   sbyte cha;
+    char str;
+    char str_add;
+    char intel;
+    char wis;
+    char dex;
+    char con;
+    char cha;
 };
 
 
 /* Char's points.  Used in char_file_u *DO*NOT*CHANGE* */
 struct char_point_data_plrtoascii {
-   sh_int mana;
-   sh_int max_mana;     /* Max mana for PC/NPC			   */
-   sh_int hit;
-   sh_int max_hit;      /* Max hit for PC/NPC                      */
-   sh_int move;
-   sh_int max_move;     /* Max move for PC/NPC                     */
+    sh_int mana;
+    sh_int max_mana; /* Max move for PC/NPC                     */
+    sh_int hit;
+    sh_int max_hit; /* Max hit for PC/NPC                      */
+    sh_int move;
+    sh_int max_move; /* Max move for PC/NPC                     */
 
-   sh_int armor;        /* Internal -100..100, external -10..10 AC */
-   int	gold;           /* Money carried                           */
-   int	bank_gold;	/* Gold the char has in a bank account	   */
-   int	exp;            /* The experience of the player            */
-
-   sbyte hitroll;       /* Any bonus or penalty to the hit roll    */
-   sbyte damroll;       /* Any bonus or penalty to the damage roll */
+    sh_int armor; /* Internal -100..100, external -10..10 AC */
+    int gold; /* Money carried                           */
+    int bank_gold; /* Gold the char has in a bank account     */
+    int exp; /* The experience of the player            */
+    char hitroll; /* Any bonus or penalty to the hit roll    */
+    char damroll; /* Any bonus or penalty to the damage roll */
 };
 
 
@@ -63,62 +62,73 @@ struct char_point_data_plrtoascii {
  * in player_special_data.
  */
 struct char_special_data_saved_plrtoascii {
-   int	alignment;		/* +-1000 for alignments                */
-   long	idnum;			/* player's idnum; -1 for mobiles	*/
-   long /*bitvector_t*/ act;	/* act flag for NPC's; player flag for PC's */
-
-   long /*bitvector_t*/	affected_by;
-				/* Bitvector for spells/skills affected by */
-   sh_int apply_saving_throw[5]; /* Saving throw (Bonuses)		*/
+    int alignment; /* +-1000 for alignments                    */
+    long idnum; /* player's idnum; -1 for mobiles           */
+    int act[PM_ARRAY_MAX]; /* act flag for NPC's; player flag for PC's */
+    int affected_by[AF_ARRAY_MAX]; /* Bitvector for spells/skills affected by */
+    sh_int apply_saving_throw[5]; /* Saving throw (Bonuses)       */
 };
 
 struct player_special_data_saved_plrtoascii {
-   byte skills[MAX_SKILLS+1];	/* array of skills plus skill 0		*/
-   byte PADDING0;		/* used to be spells_to_learn		*/
-   bool talks[MAX_TONGUE];	/* PC s Tongues 0 for NPC		*/
-   int	wimp_level;		/* Below this # of hit points, flee!	*/
-   byte freeze_level;		/* Level of god who froze char, if any	*/
-   sh_int invis_level;		/* level of invisibility		*/
-   room_vnum load_room;		/* Which room to place char in		*/
-   long /*bitvector_t*/	pref;	/* preference flags for PC's.		*/
-   ubyte bad_pws;		/* number of bad password attemps	*/
-   sbyte conditions[3];         /* Drunk, full, thirsty			*/
-
-   /* spares below for future expansion.  You can change the names from
-      'sparen' to something meaningful, but don't change the order.  */
-
-   ubyte spare0;
-   ubyte spare1;
-   ubyte spare2;
-   ubyte spare3;
-   ubyte spare4;
-   ubyte page_length;
-   int spells_to_learn;		/* How many can you learn yet this level*/
-   int olc_zone;
-   int spare8;
-   int spare9;
-   int spare10;
-   int spare11;
-   int spare12;
-   int spare13;
-   int spare14;
-   int spare15;
-   int spare16;
-   long	spare17;
-   long	spare18;
-   long	spare19;
-   long	spare20;
-   long	spare21;
+  u_char skills[MAX_SKILLS+1]; /* array of skills plus skill 0  */
+  u_char skill_usage[MAX_SKILLS+1];
+  u_char spare01;              /* Used to be race, moved it after purge */
+  u_char spells_to_learn;      /* How many can you learn yet this level. */
+  int    wimp_level;           /* Below this # of hit points, flee!    */
+  u_char freeze_level;         /* Level of god who froze char, if any */
+  short  invis_level;          /* level of invisibility  */
+  short  load_room;            /* Which room to place char in  */
+  int  pref[PR_ARRAY_MAX];     /* preference flags for PC's.  */
+  u_char bad_pws;              /* number of bad password attemps   */
+  char   conditions[3];        /* Drunk, full, thirsty         */
+  u_char clan_id;
+  u_char clan_rank;
+  u_char sub_race;             /* Players sub_race */
+  u_char pthief_countdown;
+  u_char combat_delay;
+  u_char race_modifier;
+  char poofin[80];	       /* Poofin */
+  char poofout[80];	       /* Poofout */
+  int    pkill_countdown;
+  u_char conj_countdown[4];       /* Time before character can use a conj spell */
+  int    ac_remain;            /* Remainder from ac calcs in handler.c - stored in 8ths */
+  int    jail_timer;           /* Flag Game jail control variable.         */
+  int    quest_pts;            /* The number of quest points a player has  */
+  char unused1;
+  char unused2;
+  char unused3;
+  char mastery;                /* Mastery, currently only used for warrior weapons */
+  int    olc_zone;             /* zone this immortal can use olc on.       */
+  int    prayer_time;	       /* Time in ticks before can pray again */
+  int    locker_num;           /* vnum of this player's locker, if any */
+  int    assistant;            /* hp of divine assistant */
+  u_char notell_level;
+  u_char nogoss_level;
+  u_char phunt_countdown;
+  u_char chore_count;
+  int    aggr_pref;
+  int   recall;
+  int    chores[MAX_CHORES];
+  /*
+  ** spares below for future expansion.  You can change the names from
+  ** 'sparen' to something meaningful, but don't change the order.
+  */
+  int    arenarank;           /* Elo rating for arena kills */
+  int    advance_level;
+  int    specialization;
+  char   cooldown[4];
+  int    spares[10];
 };
 
 struct affected_type_plrtoascii {
-   sh_int type;          /* The type of spell that caused this      */
-   sh_int duration;      /* For how long its effects will last      */
-   sbyte modifier;       /* This is added to apropriate ability     */
-   byte location;        /* Tells which ability to change(APPLY_XXX)*/
-   long /*bitvector_t*/	bitvector; /* Tells which bits to set (AFF_XXX) */
-
-   struct affected_type_plrtoascii *next;
+    short type; /* The type of spell that caused this       */
+    short duration; /* For how long its effects will last       */
+    char modifier; /* This is added to apropriate ability      */
+    u_char location; /* Tells which ability to change(APPLY_XXX) */
+    u_int bitvector; /* Tells which bits to set (AFF_XXX)        */
+    char level;
+    char unused1;
+    short unused2;
 };
 
 /* ==================== File Structure for Player ======================= */
@@ -128,15 +138,16 @@ struct char_file_u_plrtoascii {
    char	name[MAX_NAME_LENGTH+1];
    char	description[PLR_DESC_LENGTH];
    char	title[MAX_TITLE_LENGTH+1];
-   byte sex;
-   byte chclass;
-   byte level;
-   sh_int hometown;
+   char sex;
+   char chclass;
+   char race;
+   char level;
+   char lostlevels;
+   char orcs;
    time_t birth;   /* Time of birth of character     */
    int	played;    /* Number of secs played in total */
    ubyte weight;
    ubyte height;
-
    char	pwd[MAX_PWD_LENGTH+1];    /* character's password */
 
    struct char_special_data_saved_plrtoascii char_specials_saved;
@@ -174,7 +185,10 @@ void convert(char *filename)
     perror("error opening index file");
     exit(1);
   }
+  
+  int idnum = 0;
   for (;;) {
+    idnum += 1;
     j = fread(&player, sizeof(struct char_file_u_plrtoascii), 1, fl);
     if (feof(fl)) {
       fclose(fl);
@@ -186,8 +200,8 @@ void convert(char *filename)
       exit(1);
     printf("writing: %s\n", outname);
 
-    fprintf(index_file, "%ld %s %d 0 %ld\n", 
-	player.char_specials_saved.idnum, bits, player.level,
+    fprintf(index_file, "%ld %s %d %s %ld\n", 
+	idnum, player.name, player.level, bits,
 	(long)player.last_logon);
 
     if (!(outfile = fopen(outname, "w"))) {
@@ -207,7 +221,8 @@ void convert(char *filename)
     if (player.sex != PFDEF_SEX)
       fprintf(outfile, "Sex : %d\n", (int)player.sex); 
     if (player.chclass != PFDEF_CLASS)
-      fprintf(outfile, "Clas: %d\n", (int)player.chclass); 
+//      fprintf(outfile, "Clas: %d\n", (int)player.chclass); 
+      fprintf(outfile, "Clas: %d\n", 1); 
     if (player.level != PFDEF_LEVEL)
       fprintf(outfile, "Levl: %d\n", (int)player.level); 
     fprintf(outfile, "Brth: %d\n", (int)player.birth);
@@ -223,12 +238,14 @@ void convert(char *filename)
     csds = &(player.char_specials_saved);
     if (csds->alignment != PFDEF_ALIGNMENT)
       fprintf(outfile, "Alin: %d\n", csds->alignment);
-    fprintf(outfile, "Id  : %d\n", (int)csds->idnum);
+    fprintf(outfile, "Id  : %d\n", idnum);
     if (csds->act != PFDEF_PLRFLAGS)
-      fprintf(outfile, "Act : %d\n", (int)csds->act);
+//      fprintf(outfile, "Act : %d\n", (int)csds->act);
+      fprintf(outfile, "Act : %s\n", "0 0 0 0");
     if (csds->affected_by != PFDEF_AFFFLAGS) {
       sprintascii(bits, csds->affected_by);
-      fprintf(outfile, "Aff : %s\n", bits);
+//      fprintf(outfile, "Aff : %s\n", bits);
+      fprintf(outfile, "Aff : %s\n", "0 0 0 0");
     }
     if (csds->apply_saving_throw[0] != PFDEF_SAVETHROW)
       fprintf(outfile, "Thr1: %d\n", csds->apply_saving_throw[0]);
@@ -258,10 +275,11 @@ void convert(char *filename)
     if (psds->invis_level != PFDEF_INVISLEV)
       fprintf(outfile, "Invs: %d\n", (int)psds->invis_level);
     if (psds->load_room != PFDEF_LOADROOM)
-      fprintf(outfile, "Room: %d\n", (int)psds->load_room);
+//      fprintf(outfile, "Room: %d\n", (int)psds->load_room);
+      fprintf(outfile, "Room: %d\n", 1204);
     if (psds->pref != PFDEF_PREFFLAGS) {
       sprintascii(bits, psds->pref);
-      fprintf(outfile, "Pref: %s\n", bits);
+      fprintf(outfile, "Pref: %s\n", "efghno 0 0 0");
     }
     if (psds->conditions[HUNGER] && player.level < LVL_IMMORT &&
 	psds->conditions[HUNGER] != PFDEF_HUNGER)
