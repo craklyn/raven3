@@ -29,6 +29,7 @@
 #include "act.h" /* ACMDs located within the act*.c files */
 #include "ban.h"
 #include "class.h"
+#include "race.h"
 #include "graph.h"
 #include "hedit.h"
 #include "house.h"
@@ -1601,13 +1602,18 @@ void nanny(struct descriptor_data *d, char *arg)
       return;
     }
 
-    write_to_output(d, "%s\r\nClass: ", class_menu);
-    STATE(d) = CON_QCLASS;
+    write_to_output(d, "%s\r\nRace: ", race_menu);
+    STATE(d) = CON_QRACE;
     break;
 
   case CON_QCLASS:
     load_result = parse_class(*arg);
-    if (load_result == CLASS_UNDEFINED) {
+    if(LOWER(*arg) == 'x') {
+    	write_to_output(d, "%s\r\nRace: ", race_menu);
+    	STATE(d) = CON_QRACE;
+    	break;
+    }
+    else if (load_result == CLASS_UNDEFINED) {
       write_to_output(d, "\r\nThat's not a class.\r\nClass: ");
       return;
     } else
@@ -1637,6 +1643,25 @@ void nanny(struct descriptor_data *d, char *arg)
       mudlog(BRF, MAX(LVL_IMMORT, GET_INVIS_LEV(d->character)), TRUE, "Failure to AddRecentPlayer (returned FALSE).");
     }
     break;
+
+  case CON_QRACE:
+	  load_result = parse_race(*arg);
+	  if(load_result == RACE_UNDEFINED) {
+		  write_to_output(d, "\r\nThat is not a valid race.\r\nRace: ");
+		  return;
+	  } else {
+		  GET_RACE(d->character) = load_result;
+		  int i;
+		  write_to_output(d, "\r\nSelect a class:\r\n");
+		  for (i = 0; i < NUM_CLASSES; i++)
+			  if (classRaceAllowed[(int) GET_RACE(d->character)][i])
+				  write_to_output(d, class_menu[i]);
+		  write_to_output(d, "\r\n  [X] - Choose a different race\r\n");
+		  write_to_output(d, "\r\nClass: ");
+		  STATE(d) = CON_QCLASS;
+	  }
+
+	  break;
 
   case CON_RMOTD:		/* read CR after printing motd   */
     write_to_output(d, "%s", CONFIG_MENU);

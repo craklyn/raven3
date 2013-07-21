@@ -36,15 +36,15 @@ colorRatio( struct char_data *ch, int cookIt, int clvl, int num, int den )
     };
 
     static char *colorCooked[] = {
-    	BKRBY,  /* 00 - 09 : BKRBY */
-    	BKRBY,  /* 10 - 19 : BKRBY */
-        BRED,   /* 20 - 29 : BRED  */
-        BYEL,   /* 30 - 39 : BYEL  */
-        BYEL,   /* 40 - 49 : BYEL  */
-        BYEL,   /* 50 - 59 : BYEL  */
-        BCYN,   /* 60 - 69 : BCYN  */
-        BCYN,   /* 70 - 79 : BCYN  */
-        BGRN,   /* 80 - 89 : BGRN  */
+    	"@R@=@Y",  /* 00 - 09 : BKRBY */
+    	"@R@=@Y",  /* 10 - 19 : BKRBY */
+        "@R",   /* 20 - 29 : BRED  */
+        "@Y",   /* 30 - 39 : BYEL  */
+        "@Y",   /* 40 - 49 : BYEL  */
+        "@Y",   /* 50 - 59 : BYEL  */
+        "@C",   /* 60 - 69 : BCYN  */
+        "@C",   /* 70 - 79 : BCYN  */
+        "@G",   /* 80 - 89 : BGRN  */
     };
 #   define NUM_ENTRIES (sizeof(colorCooked) / sizeof(colorCooked[0]))
 #   define LAST_ENTRY  (NUM_ENTRIES-1)
