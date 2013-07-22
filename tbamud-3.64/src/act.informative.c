@@ -418,7 +418,7 @@ static void do_auto_exits(struct char_data *ch)
 {
   int door, slen = 0;
 
-  send_to_char(ch, "%s[ Exits: ", CCCYN(ch, C_NRM));
+  send_to_char(ch, "%sObvious Exits: ", CCCYN(ch, C_NRM));
 
   for (door = 0; door < DIR_COUNT; door++) {
     if (!EXIT(ch, door) || EXIT(ch, door)->to_room == NOWHERE)
@@ -428,7 +428,7 @@ static void do_auto_exits(struct char_data *ch)
 	if (EXIT_FLAGGED(EXIT(ch, door), EX_HIDDEN) && !PRF_FLAGGED(ch, PRF_HOLYLIGHT))
 	  continue;
     if (EXIT_FLAGGED(EXIT(ch, door), EX_CLOSED))
-	  send_to_char(ch, "%s(%s)%s ", EXIT_FLAGGED(EXIT(ch, door), EX_HIDDEN) ? CCWHT(ch, C_NRM) : CCRED(ch, C_NRM), autoexits[door], CCCYN(ch, C_NRM));
+	  send_to_char(ch, "(%s) ", EXIT_FLAGGED(EXIT(ch, door), EX_HIDDEN) ? CCWHT(ch, C_NRM) : autoexits[door]);
 	else if (EXIT_FLAGGED(EXIT(ch, door), EX_HIDDEN))
 	  send_to_char(ch, "%s%s%s ", CCWHT(ch, C_NRM), autoexits[door], CCCYN(ch, C_NRM));
     else
@@ -436,7 +436,7 @@ static void do_auto_exits(struct char_data *ch)
     slen++;
   }
 
-  send_to_char(ch, "%s]%s\r\n", slen ? "" : "None!", CCNRM(ch, C_NRM));
+  send_to_char(ch, "%s%s\r\n\n", slen ? "" : "None!", CCNRM(ch, C_NRM));
 }
 
 ACMD(do_exits)
