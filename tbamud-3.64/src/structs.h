@@ -154,13 +154,63 @@
 #define GROUP_NPC     (1 << 2)  /**< Group created by NPC and thus not listed */
 
 /* PC classes */
-#define CLASS_UNDEFINED	  (-1) /**< PC Class undefined */
-#define CLASS_MAGIC_USER  0    /**< PC Class Magic User */
-#define CLASS_CLERIC      1    /**< PC Class Cleric */
-#define CLASS_THIEF       2    /**< PC Class Thief */
-#define CLASS_WARRIOR     3    /**< PC Class Warrior */
+#define CLASS_UNDEFINED	  		(-1) /**< PC Class undefined */
+#define CLASS_MAGIC_USER  		0    /**< PC Class Magic User */
+#define CLASS_CLERIC      		1    /**< PC Class Cleric */
+#define CLASS_THIEF       		2    /**< PC Class Thief */
+#define CLASS_WARRIOR     		3    /**< PC Class Warrior */
+#define CLASS_RANGER          	4	 /**< PC Class Ranger */
+#define CLASS_ASSASSIN        	5    /**< PC Class Assassin */
+#define CLASS_SHOU_LIN        	6    /**< PC Class Shoulin */
+#define CLASS_SOLAMNIC_KNIGHT 	7    /**< PC Class Solamnic Knight */
+#define CLASS_DEATH_KNIGHT    	8    /**< PC Class Death Knight */
+#define CLASS_SHADOW_DANCER   	9    /**< PC Class Sahdow Dancer */
+#define CLASS_NECROMANCER     	10   /**< PC Class Necromancer */
+#define CLASS_DRUID           	11   /**< PC Class Druid */
 /** Total number of available PC Classes */
-#define NUM_CLASSES	  4
+#define NUM_CLASSES	  12
+
+/* PC and NPC Races */
+#define RACE_UNDEFINED        -1  /* Unknown race */
+#define RACE_HUMAN            0   /* 'H'          */
+#define RACE_PLANT            1   /* 'P' NPC only */
+#define RACE_ANIMAL           2   /* 'K' NPC only */
+#define RACE_DRAGON           3   /* 'D' NPC only */
+#define RACE_UNDEAD           4   /* 'U' NPC only */
+#define RACE_VAMPIRE          5   /* 'V' NPC only */
+#define RACE_HALFLING         6   /* 'L'          */
+#define RACE_ELF              7   /* 'E'          */
+#define RACE_DWARF            8   /* 'W'          */
+#define RACE_GIANT            9   /* 'G'          */
+#define RACE_MINOTAUR        10   /* 'M' NPC only */
+#define RACE_DEMON           11   /* 'N' NPC only */
+#define RACE_OGRE            12   /* 'O'          */
+#define RACE_TROLL           13   /* 'T' NPC only */
+#define RACE_WEREWOLF        14   /* 'R' NPC only */
+#define RACE_ELEMENTAL       15   /* 'F' NPC only */
+#define RACE_ORC             16   /* 'C'	  */
+#define RACE_GNOME           17   /* 'B'      */
+#define RACE_DRACONIAN	     18   /* 'I'	  */
+#define RACE_FAERIE          19   /* 'J' NPC only */
+#define RACE_AMARA           20   /* 'A' NPC only */
+#define RACE_IZARTI          21   /* 'Z' NPC only */
+#define RACE_DROW            22   /* 'X'          */
+#define RACE_SHUMAN          23
+#define RACE_SHALFLING       24
+#define RACE_SELF            25
+#define RACE_SDROW           26
+#define RACE_SDWARF          27
+#define RACE_SMINOTAUR       28
+#define RACE_SOGRE           29
+#define RACE_STROLL          30
+#define RACE_SDRACONIAN      31
+#define RACE_SGNOME          32
+#define RACE_SORC            33
+#define RACE_TERRAN          34
+#define RACE_ZERG            35
+#define RACE_PROTOSS         36
+/* Total number of available races */
+#define NUM_RACES            37   /* Always update this! */
 
 /* NPC classes (currently unused - feel free to implement!) */
 #define CLASS_OTHER       0    /**< NPC Class Other (or undefined) */
@@ -189,6 +239,17 @@
 #define POS_STANDING   8	/**< Position = standing */
 /** Total number of positions. */
 #define NUM_POSITIONS   9
+
+/** For future use */
+#define STAT_STR    0	/**< Strength */
+#define STAT_STRADD 1	/**< STR-add */
+#define STAT_INT 	2	/**< Intelligence */
+#define STAT_WIS 	3   /**< Wisdom */
+#define STAT_DEX 	4   /**< Dexterity */
+#define STAT_CON 	5   /**< Constitution */
+#define STAT_CHA 	6	/**< Charisma */
+/** Total number of stats/attributes */
+#define NUM_STATS 	7
 
 /* Player flags: used by char_data.char_specials.act */
 #define PLR_KILLER        0   /**< Player is a player-killer */
@@ -311,31 +372,32 @@
 #define CON_NEWPASSWD     5 /**< New character, create password */
 #define CON_CNFPASSWD     6 /**< New character, confirm password */
 #define CON_QSEX          7 /**< Choose character sex */
-#define CON_QCLASS        8 /**< Choose character class */
-#define CON_RMOTD         9 /**< Reading the message of the day */
-#define CON_MENU         10 /**< At the main menu */
-#define CON_PLR_DESC     11 /**< Enter a new character description prompt */
-#define CON_CHPWD_GETOLD 12 /**< Changing passwd: Get old		*/
-#define CON_CHPWD_GETNEW 13 /**< Changing passwd: Get new */
-#define CON_CHPWD_VRFY   14 /**< Changing passwd: Verify new password */
-#define CON_DELCNF1      15 /**< Character Delete: Confirmation 1		*/
-#define CON_DELCNF2      16 /**< Character Delete: Confirmation 2		*/
-#define CON_DISCONNECT   17 /**< In-game link loss (leave character)	*/
-#define CON_OEDIT        18 /**< OLC mode - object editor		*/
-#define CON_REDIT        19 /**< OLC mode - room editor		*/
-#define CON_ZEDIT        20 /**< OLC mode - zone info editor		*/
-#define CON_MEDIT        21 /**< OLC mode - mobile editor		*/
-#define CON_SEDIT        22 /**< OLC mode - shop editor		*/
-#define CON_TEDIT        23 /**< OLC mode - text editor		*/
-#define CON_CEDIT        24 /**< OLC mode - conf editor		*/
-#define CON_AEDIT        25 /**< OLC mode - social (action) edit      */
-#define CON_TRIGEDIT     26 /**< OLC mode - trigger edit              */
-#define CON_HEDIT        27 /**< OLC mode - help edit */
-#define CON_QEDIT        28 /**< OLC mode - quest edit */
-#define CON_PREFEDIT     29 /**< OLC mode - preference edit */
-#define CON_IBTEDIT      30 /**< OLC mode - idea/bug/typo edit */
-#define CON_MSGEDIT      31 /**< OLC mode - message editor */
-#define CON_GET_PROTOCOL 32 /**< Used at log-in while attempting to get protocols > */
+#define CON_QRACE         8 /**< Choose character race */
+#define CON_QCLASS        9 /**< Choose character class */
+#define CON_RMOTD        10 /**< Reading the message of the day */
+#define CON_MENU         11 /**< At the main menu */
+#define CON_PLR_DESC     12 /**< Enter a new character description prompt */
+#define CON_CHPWD_GETOLD 13 /**< Changing passwd: Get old		*/
+#define CON_CHPWD_GETNEW 14 /**< Changing passwd: Get new */
+#define CON_CHPWD_VRFY   15 /**< Changing passwd: Verify new password */
+#define CON_DELCNF1      16 /**< Character Delete: Confirmation 1		*/
+#define CON_DELCNF2      17 /**< Character Delete: Confirmation 2		*/
+#define CON_DISCONNECT   16 /**< In-game link loss (leave character)	*/
+#define CON_OEDIT        19 /**< OLC mode - object editor		*/
+#define CON_REDIT        20 /**< OLC mode - room editor		*/
+#define CON_ZEDIT        21 /**< OLC mode - zone info editor		*/
+#define CON_MEDIT        22 /**< OLC mode - mobile editor		*/
+#define CON_SEDIT        23 /**< OLC mode - shop editor		*/
+#define CON_TEDIT        24 /**< OLC mode - text editor		*/
+#define CON_CEDIT        25 /**< OLC mode - conf editor		*/
+#define CON_AEDIT        26 /**< OLC mode - social (action) edit      */
+#define CON_TRIGEDIT     27 /**< OLC mode - trigger edit              */
+#define CON_HEDIT        28 /**< OLC mode - help edit */
+#define CON_QEDIT        29 /**< OLC mode - quest edit */
+#define CON_PREFEDIT     30 /**< OLC mode - preference edit */
+#define CON_IBTEDIT      31 /**< OLC mode - idea/bug/typo edit */
+#define CON_MSGEDIT      32 /**< OLC mode - message editor */
+#define CON_GET_PROTOCOL 33 /**< Used at log-in while attempting to get protocols > */
 
 /* OLC States range - used by IS_IN_OLC and IS_PLAYING */
 #define FIRST_OLC_STATE CON_OEDIT     /**< The first CON_ state that is an OLC */
@@ -544,6 +606,8 @@
 
 /** Minimum level to build and to run the saveall command */
 #define LVL_BUILDER	LVL_IMMORT
+
+#define NUM_GOD_LABELS (LVL_IMPL - (LVL_IMMORT - 1))
 
 /** Arbitrary number that won't be in a string */
 #define MAGIC_NUMBER	(0x06)
@@ -873,6 +937,7 @@ struct char_player_data
   char *title;                   /**< PC / NPC title */
   byte sex;                      /**< PC / NPC sex */
   byte chclass;                  /**< PC / NPC class */
+  byte chrace;                   /**< PC / NPC race */
   byte level;                    /**< PC / NPC level */
   struct time_data time;         /**< PC AGE in days */
   ubyte weight;                  /**< PC / NPC weight */

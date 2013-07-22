@@ -26,6 +26,7 @@
 #include "act.h"
 #include "genzon.h" /* for real_zone_by_thing */
 #include "class.h"
+#include "race.h"
 #include "genolc.h"
 #include "genobj.h"
 #include "fight.h"
@@ -2841,6 +2842,7 @@ ACMD(do_show)
    { "wis", 		LVL_BUILDER, 	BOTH, 	NUMBER }, /* 55 */
    { "questpoints",     LVL_GOD,        PC,     NUMBER },
    { "questhistory",    LVL_GOD,        PC,   NUMBER },
+   { "race",        LVL_BUILDER, BOTH, MISC},
    { "\n", 0, BOTH, MISC }
   };
 
@@ -2921,11 +2923,12 @@ static int perform_set(struct char_data *ch, struct char_data *vict, int mode, c
       affect_total(vict);
       break;
     case 7: /* class */
-      if ((i = parse_class(*val_arg)) == CLASS_UNDEFINED) {
+      if ((i = atoi(val_arg)) <= CLASS_UNDEFINED || i >= NUM_CLASSES) {
         send_to_char(ch, "That is not a class.\r\n");
         return (0);
       }
       GET_CLASS(vict) = i;
+      send_to_char(ch, "%s's class is now %s.\r\n", GET_NAME(vict), pc_class_types[(int)GET_CLASS(vict)]);
       break;
     case 8:  /* color */
       SET_OR_REMOVE(PRF_FLAGS(vict), (PRF_COLOR_1));
@@ -3253,6 +3256,14 @@ static int perform_set(struct char_data *ch, struct char_data *vict, int mode, c
         }
         break;
       }
+    case 58: /* race */
+    	if ((i = atoi(val_arg)) <= RACE_UNDEFINED || i >= NUM_RACES) {
+    		send_to_char(ch, "That is not a race.\r\n");
+    		return (0);
+    	}
+    	GET_RACE(vict) = i;
+    	send_to_char(ch, "%s's race is now %s.\r\n", GET_NAME(vict), pc_race_types[(int)GET_RACE(vict)]);
+    	break;
     default:
       send_to_char(ch, "Can't set that!\r\n");
       return (0);

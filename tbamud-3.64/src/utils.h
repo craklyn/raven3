@@ -487,6 +487,8 @@ do                                                              \
 
 /** Class of ch. */
 #define GET_CLASS(ch)   ((ch)->player.chclass)
+/** Race of ch. */
+#define GET_RACE(ch)	((ch)->player.chrace)
 /** Height of ch. */
 #define GET_HEIGHT(ch)	((ch)->player.height)
 /** Weight of ch. */
@@ -851,7 +853,10 @@ do                                                              \
 		((dir) == SOUTHEAST) || ((dir) == SOUTHWEST) )
 
 /** Return the class abbreviation for ch. */
-#define CLASS_ABBR(ch) (IS_NPC(ch) ? "--" : class_abbrevs[(int)GET_CLASS(ch)])
+#define CLASS_ABBR(ch) (class_abbrevs[(int)GET_CLASS(ch)])
+
+/** Return the race abbreviation of ch */
+#define RACE_ABBR(ch)  (race_abbrevs[(int)GET_RACE(ch)])
 
 /** 1 if ch is magic user class, 0 if not. */
 #define IS_MAGIC_USER(ch)	(!IS_NPC(ch) && \

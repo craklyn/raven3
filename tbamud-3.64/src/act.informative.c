@@ -24,6 +24,7 @@
 #include "mail.h"         /**< For the has_mail function */
 #include "act.h"
 #include "class.h"
+#include "race.h"
 #include "fight.h"
 #include "modify.h"
 #include "asciimap.h"
@@ -848,27 +849,27 @@ ACMD(do_score)
 	send_to_char(ch,"\r\n");
 	send_to_char(ch, SEPARATOR);
 	send_to_char( ch, "Race   [%10s]  Cls  [%s%2s%s]          Lvl  [%s%2d%s]  Status [%16s]\r\n",
-	                   "None",
+	                   pc_race_types[(int)GET_RACE(ch)],
 	                   QBCYN, CLASS_ABBR(ch),QNRM,
 	                   QBCYN,GET_LEVEL(ch), QNRM,
 	                   "None");
 
 	send_to_char( ch, "Health [%s%4d/%4d%s ]  Exp  [%s%10d%s]  QP   [%s%2d%s]  %s%s  %s  %s%s\r\n",
-	                   colorRatio( ch, COLOR_COOKED, C_CMP, GET_HIT(ch), GET_MAX_HIT(ch) ),
+	                   colorRatio( ch, COLOR_RAW, C_CMP, GET_HIT(ch), GET_MAX_HIT(ch) ),
 	                   GET_HIT(ch), GET_MAX_HIT(ch), QNRM,
 	                   QBCYN,GET_EXP(ch),QNRM,
 	                   QBCYN,GET_QUESTPOINTS(ch), QNRM,
 	                   QRED,hunger, thirst, stupor, QNRM);
 
 	send_to_char( ch, "Power  [%s%4d/%4d%s ]  Need [%s%10d%s]  Clan [%s%20s%s] %s%s%s\r\n",
-	                   colorRatio( ch, COLOR_COOKED, C_CMP, GET_MANA(ch), GET_MAX_MANA(ch) ),
+	                   colorRatio( ch, COLOR_RAW, C_CMP, GET_MANA(ch), GET_MAX_MANA(ch) ),
 	                   GET_MANA(ch), GET_MAX_MANA(ch), QNRM,
 	                   QBCYN,neededXp, QNRM,
 	                   QBCYN,"None", QNRM,
 	                   QBRED,(IS_AFFECTED(ch, AFF_BLIND) ? "Blind":"" ), QNRM);
 
 	send_to_char( ch, "Vigor  [%s%4d/%4d%s ]  Gold [%s%10d%s]  Rank [%20s]\r\n",
-	                   colorRatio( ch, COLOR_COOKED, C_CMP, GET_MOVE(ch), GET_MAX_MOVE(ch) ),
+	                   colorRatio( ch, COLOR_RAW, C_CMP, GET_MOVE(ch), GET_MAX_MOVE(ch) ),
 	                   GET_MOVE(ch), GET_MAX_MOVE(ch), CCNRM(ch,C_NRM),
 	                   QBCYN,GET_GOLD(ch), QNRM,
 	                   "None" );
@@ -1120,7 +1121,7 @@ ACMD(do_help)
 }
 
 #define WHO_FORMAT \
-"Usage: who [minlev[-maxlev]] [-n name] [-c classlist] [-k] [-l] [-n] [-q] [-r] [-s] [-z]\r\n"
+"Usage: who [minlev[-maxlev]] [-n name] [-k] [-l] [-n] [-q] [-r] [-s] [-z]\r\n"
 
 /* Written by Rhade */
 ACMD(do_who)
@@ -1140,8 +1141,8 @@ ACMD(do_who)
     int max_level;
     int count; /* must always start as 0 */
   } rank[] = {
-    { "Immortals\r\n---------\r\n", LVL_IMMORT, LVL_IMPL, 0},
-    { "Mortals\r\n-------\r\n", 1, LVL_IMMORT - 1, 0 },
+    { "--- \tYImmortals\tn ---\r\n", LVL_IMMORT, LVL_IMPL, 0},
+    { " --- \tYMortals\tn ---\r\n", 1, LVL_IMMORT - 1, 0 },
     { "\n", 0, 0, 0 }
   };
 
@@ -1182,10 +1183,10 @@ ACMD(do_who)
         who_room = 1;
         strcpy(buf, buf1);   /* strcpy: OK (sizeof: buf1 == buf) */
         break;
-      case 'c':
-        half_chop(buf1, arg, buf);
-        showclass = find_class_bitvector(arg);
-        break;
+//      case 'c':
+//        half_chop(buf1, arg, buf);
+//        showclass = find_class_bitvector(arg);
+//        break;
       case 'l':
         showleader = 1;
         strcpy(buf, buf1);   /* strcpy: OK (sizeof: buf1 == buf) */
@@ -1276,17 +1277,34 @@ ACMD(do_who)
         continue;
 
       if (short_list) {
-        send_to_char(ch, "%s[%2d %s] %-12.12s%s%s",
-          (GET_LEVEL(tch) >= LVL_IMMORT ? CCYEL(ch, C_SPR) : ""),
-          GET_LEVEL(tch), CLASS_ABBR(tch), GET_NAME(tch),
-          CCNRM(ch, C_SPR), ((!(++num_can_see % 4)) ? "\r\n" : ""));
+    	  if(GET_LEVEL(tch) < LVL_IMMORT){
+    		  send_to_char(ch, "[%3d %2s %3s] %-12.12s%s%s",
+    				  GET_LEVEL(tch),
+    				  CLASS_ABBR(tch),
+    				  RACE_ABBR(tch), GET_NAME(tch),
+    				  CCNRM(ch, C_SPR), ((!(++num_can_see % 4)) ? "\r\n" : ""));
+    	  } else {
+    		  send_to_char(ch, "[%6s %3s] %-12.12s%s%s",
+    		      	  god_labels[GET_LEVEL(tch) - LVL_IMMORT],
+    		      	  RACE_ABBR(tch), GET_NAME(tch),
+    		      	  CCNRM(ch, C_SPR), ((!(++num_can_see % 4)) ? "\r\n" : ""));
+    	  }
       } else {
         num_can_see++;
-        send_to_char(ch, "%s[%2d %s] %s%s%s%s",
-            (GET_LEVEL(tch) >= LVL_IMMORT ? CCYEL(ch, C_SPR) : ""),
-            GET_LEVEL(tch), CLASS_ABBR(tch),
-            GET_NAME(tch), (*GET_TITLE(tch) ? " " : ""), GET_TITLE(tch),
-            CCNRM(ch, C_SPR));
+        if(GET_LEVEL(tch) < LVL_IMMORT) {
+        	send_to_char(ch, "[%3d %2s %3s] %s%s%s%s",
+        			GET_LEVEL(tch),
+        			CLASS_ABBR(tch),
+        			RACE_ABBR(tch),
+        			GET_NAME(tch), (*GET_TITLE(tch) ? " " : ""), GET_TITLE(tch),
+        			CCNRM(ch, C_SPR));
+        } else {
+        	send_to_char(ch, "[%6s %3s] %s%s%s%s",
+        			god_labels[GET_LEVEL(tch) - LVL_IMMORT],
+        			RACE_ABBR(tch),
+        			GET_NAME(tch), (*GET_TITLE(tch) ? " " : ""), GET_TITLE(tch),
+        			CCNRM(ch, C_SPR));
+        }
         
         if (GET_INVIS_LEV(tch))
           send_to_char(ch, " (i%d)", GET_INVIS_LEV(tch));

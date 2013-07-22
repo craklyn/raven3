@@ -29,43 +29,75 @@
 
 /* Names first */
 const char *class_abbrevs[] = {
-  "Mu",
-  "Cl",
-  "Th",
-  "Wa",
-  "\n"
+	"Mu",         /* (0) - MAGE            */
+	"Cl",         /* (1) - CLERIC          */
+	"Th",         /* (2) - THIEF           */
+	"Wa",         /* (3) - WARRIOR         */
+	"Ra",         /* (4) - RANGER          */
+	"As",         /* (5) - ASSASSIN        */
+	"Sl",         /* (6) - SHOU_LIN        */
+	"Kn",         /* (7) - SOLAMNIC_KNIGHT */
+	"De",         /* (8) - DEATH_KNIGHT    */
+	"Sd",         /* (9) - SHADOW_DANCER   */
+	"Nm",	      /* (10) - NECROMANCER	   */
+	"Dr",         /* (11) - Druid*/
+	"\n"
 };
 
 const char *pc_class_types[] = {
-  "Magic User",
-  "Cleric",
-  "Thief",
-  "Warrior",
-  "\n"
+	"Magic User",
+	"Cleric",
+	"Thief",
+	"Warrior",
+	"Ranger",
+	"Assassin",
+	"Shou-Lin",
+	"Solamnic Knight",
+	"Death Knight",
+	"Shadow Dancer",
+	"Necromancer",
+	"Druid",
+	"\n"
 };
 
 /* The menu for choosing a class in interpreter.c: */
-const char *class_menu =
-"\r\n"
-"Select a class:\r\n"
-"  [\t(C\t)]leric\r\n"
-"  [\t(T\t)]hief\r\n"
-"  [\t(W\t)]arrior\r\n"
-"  [\t(M\t)]agic-user\r\n";
+const char *class_menu[NUM_CLASSES] = {
+	"  [M] - Magic User\r\n",     /* Mage */
+	"  [C] - Cleric\r\n",	      /* Cleric */
+	"  [T] - Thief\r\n",	      /* Thief */
+	"  [W] - Warrior\r\n",	      /* Warrior */
+	"  [R] - Ranger\r\n",         /* Ranger */
+	"  [A] - Assassin\r\n",       /* Assassin */
+	"  [S] - Shou Lin\r\n",       /* Shou Lin */
+	"  [P] - Solamnic Knight\r\n",/* Solamnic Knight */
+	"  [D] - Death Knight\r\n",   /* Death Knight */
+	"  [H] - Shadow Dancer\r\n",  /* Shadow Dancer */
+	"  [N] - Necromancer\r\n",    /* Necromancer */
+	"  [U] - Druid\r\n"           /* Druid */
+};
 
 /* The code to interpret a class letter -- used in interpreter.c when a new
  * character is selecting a class and by 'set class' in act.wizard.c. */
 int parse_class(char arg)
 {
-  arg = LOWER(arg);
+	arg = LOWER(arg);
 
-  switch (arg) {
-  case 'm': return CLASS_MAGIC_USER;
-  case 'c': return CLASS_CLERIC;
-  case 'w': return CLASS_WARRIOR;
-  case 't': return CLASS_THIEF;
-  default:  return CLASS_UNDEFINED;
-  }
+	switch (arg) {
+	case 'a': return CLASS_ASSASSIN;
+	case 'c': return CLASS_CLERIC;
+	case 'd': return CLASS_DEATH_KNIGHT;
+	case 'h': return CLASS_SHADOW_DANCER;
+	case 'm': return CLASS_MAGIC_USER;
+	case 'k': return CLASS_SOLAMNIC_KNIGHT;
+	case 'p': return CLASS_SOLAMNIC_KNIGHT;
+	case 'r': return CLASS_RANGER;
+	case 's': return CLASS_SHOU_LIN;
+	case 't': return CLASS_THIEF;
+	case 'w': return CLASS_WARRIOR;
+	case 'n': return CLASS_NECROMANCER;
+	case 'u': return CLASS_DRUID;
+	default:  return CLASS_UNDEFINED;
+	}
 }
 
 /* bitvectors (i.e., powers of two) for each class, mainly for use in do_who

@@ -155,6 +155,21 @@ const char *position_types[] = {
   "\n"
 };
 
+/* Immortal Names */
+const char *god_labels[NUM_GOD_LABELS + 1] = {
+      " HERO ",
+      " SAINT",
+      " ANGEL",
+      " DEITY",
+      " CREAT",
+      " DEMI ",
+      " LGOD ",
+      " GOD  ",
+      " GRGOD",
+      " IMP  ",
+      "\n"
+};
+
 /** Player flags.
  * @pre Must be in the same order as the defines.
  * Must end array with a single newline. */
