@@ -1132,7 +1132,7 @@ ACMD(do_who)
   char name_search[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH];
   char mode;
   int low = 0, high = LVL_IMPL, localwho = 0, questwho = 0;
-  int showclass = 0, short_list = 0, outlaws = 0;
+  int short_list = 0, outlaws = 0;
   int who_room = 0, showgroup = 0, showleader = 0;
 
   struct {
@@ -1183,10 +1183,6 @@ ACMD(do_who)
         who_room = 1;
         strcpy(buf, buf1);   /* strcpy: OK (sizeof: buf1 == buf) */
         break;
-//      case 'c':
-//        half_chop(buf1, arg, buf);
-//        showclass = find_class_bitvector(arg);
-//        break;
       case 'l':
         showleader = 1;
         strcpy(buf, buf1);   /* strcpy: OK (sizeof: buf1 == buf) */
@@ -1224,8 +1220,6 @@ ACMD(do_who)
       if (localwho && world[IN_ROOM(ch)].zone != world[IN_ROOM(tch)].zone)
         continue;
       if (who_room && (IN_ROOM(tch) != IN_ROOM(ch)))
-        continue;
-      if (showclass && !(showclass & (1 << GET_CLASS(tch))))
         continue;
       if (showgroup && !GROUP(tch))
         continue;
@@ -1268,8 +1262,6 @@ ACMD(do_who)
       if (localwho && world[IN_ROOM(ch)].zone != world[IN_ROOM(tch)].zone)
         continue;
       if (who_room && (IN_ROOM(tch) != IN_ROOM(ch)))
-        continue;
-      if (showclass && !(showclass & (1 << GET_CLASS(tch))))
         continue;
       if (showgroup && !GROUP(tch))
         continue;
