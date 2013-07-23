@@ -55,45 +55,84 @@ const char *pc_race_types[] = {
 	    "\n"
 	};
 
+const char *ele_subrace_types[] = {
+		"None",
+		"Fire Elemental",
+		"Air Elementa",
+		"Water Elemental",
+		"Earth Elemental"
+};
+
+const char *drc_subrace_types[] = {
+		"None",				"Red Dragon", 		"Green Dragon",
+		"White Dragon", 	"Black Dragon",		"Blue Dragon",
+		/* Below are for NPC only, used in medit */
+		"Chromatic Dragon", "Gold Dragon", 		"Silver Dragon",
+		"Bronze Dragon", 	"Copper Dragon", 	"Brass Dragon",
+		"Shadow Dragon",	"Mist Dragon",
+};
+
 const char *race_abbrevs[NUM_RACES + 1] = {
-    "Hum",		/* (0) - HUMAN		*/
-    "\tGPlt\tn",	/* (1) - PLANT		*/
-    "Ani",		/* (2) - ANIMAL		*/
+    "Hum",				/* (0) - HUMAN		*/
+    "\tGPlt\tn",		/* (1) - PLANT		*/
+    "Ani",				/* (2) - ANIMAL		*/
     "\tR\t=\tYDrg\tn",	/* (3) - DRAGON		*/
-    "\twUnd\tn",	/* (4) - UNDEAD		*/
-    "\tRVam\tn",	/* (5) - VAMPIRE	*/
-    "Hlf",		/* (6) - HALFLING	*/
-    "Elf",		/* (7) - ELF		*/
-    "Dwf",		/* (8) - DWARF		*/
-    "\tmGia\tn",	/* (9) - GIANT		*/
-    "Min",		/* (10) - MINOTAUR	*/
-    "\tcDem\tn",	/* (11) - DEMON		*/
-    "Ogr",		/* (12) - OGRE		*/
-    "Tro",		/* (13) - TROLL		*/
-    "\tyWer\tn",	/* (14) - WEREWOLF	*/
-    "\tWEle\tn",	/* (15) - ELEMENTAL	*/
-    "Orc",		/* (16) - ORC		*/
-    "Gnm",		/* (17) - GNOME		*/
-    "Drc",		/* (18) - DRACONIAN	*/
-    "\tCFae\tn",	/* (19) - FAERIE	*/
-    "\tBAma\tn",	/* (20) - AMARA 	*/
-    "\tYIza\tn",	/* (21) - IZARTI	*/
+    "\twUnd\tn",		/* (4) - UNDEAD		*/
+    "\tRVam\tn",		/* (5) - VAMPIRE	*/
+    "Hlf",				/* (6) - HALFLING	*/
+    "Elf",				/* (7) - ELF		*/
+    "Dwf",				/* (8) - DWARF		*/
+    "\tmGia\tn",		/* (9) - GIANT		*/
+    "Min",				/* (10) - MINOTAUR	*/
+    "\tcDem\tn",		/* (11) - DEMON		*/
+    "Ogr",				/* (12) - OGRE		*/
+    "Tro",				/* (13) - TROLL		*/
+    "\tyWer\tn",		/* (14) - WEREWOLF	*/
+    "\tWEle\tn",		/* (15) - ELEMENTAL	*/
+    "Orc",				/* (16) - ORC		*/
+    "Gnm",				/* (17) - GNOME		*/
+    "Drc",				/* (18) - DRACONIAN	*/
+    "\tCFae\tn",		/* (19) - FAERIE	*/
+    "\tBAma\tn",		/* (20) - AMARA 	*/
+    "\tYIza\tn",		/* (21) - IZARTI	*/
     "Drw",              /* (22) - DROW		*/
     "\tBHum\tn",        /* (23) - SHUMAN	*/
-    "\tB\t=\tGHlf\tn",     /* (24) - SHALFLING	*/
+    "\tB\t=\tGHlf\tn",  /* (24) - SHALFLING	*/
     "\tGElf\tn",        /* (25) - SELF		*/
     "\twDrw\tn",        /* (26) - SDROW		*/
     "\tyDwf\tn",        /* (27) - SDWARF	*/
-    "\tR\t=\tWMin\tn",     /* (28) - SMINOTAUR	*/
+    "\tR\t=\tWMin\tn",  /* (28) - SMINOTAUR	*/
     "\tWOgr\tn",        /* (29) - SOGRE		*/
     "\tGTro\tn",        /* (30) - STROLL	*/
-    "\tRDrc\tn",        /* (31) - SDRACONIAN	*/
+    "\tRDrc\tn",        /* (31) - SDRACONIAN*/
     "\tbGnm\tn",        /* (32) - SGNOME	*/
     "\trOrc\tn",        /* (33) - SORC		*/
-    "\tB\t=\twTrn\tn",     /*  34    TERRAN        */
-    "\tG\t=\tWZrg\tn",
-    "\tW\t=\tDPro\tn",
+    "\tB\t=\twTrn\tn",  /* (34) - TERRAN    */
+    "\tG\t=\tWZrg\tn",  /* (35) - ZERG      */
+    "\tW\t=\tDPro\tn",  /* (36) - PROTOSS   */
     "\n"
+};
+/*
+ * Elementals sub-races name abbreviation table
+ */
+const char *ele_subrace_abbrevs[] = {
+        "Ele", /* (0) - UNDEFINED!?! */
+        "\trEle\tn", /* (1) - Fire         */
+        "\tWEle\tn", /* (2) - Air          */
+        "\tBEle\tn", /* (3) - Water        */
+        "\tyEle\tn", /* (4) - Earth        */
+};
+
+/*
+ * Dragonspawn sub-races name abbreviation table
+ */
+const char *drc_subrace_abbrevs[] = {
+    "Drc",           /* (0) - UNDEFINED!?! */
+    "\tG\t=\tRDrc\tn", /* (1) - red_dragon */
+    "\tG\t=\tYDrc\tn", /* (2) - green_dragon */
+    "\tG\t=\tBDrc\tn", /* (3) - white_dragon */
+    "\tG\t=\tMDrc\tn", /* (4) - black_dragon */
+    "\tR\t=\tGDrc\tn", /* (5) - blue_dragon */
 };
 
 const char *race_menu =
@@ -115,6 +154,18 @@ const char *race_menu =
 "  [W] - Dwarf\r\n"
 "  [X] - Drow\r\n"
 ;
+
+/*
+ * Draconian breath selection menu.
+ */
+const char *breath_menu =
+"\r\n"
+"Select a breath weapon : \r\n"
+"  [1] - Fire\r\n"
+"  [2] - Gas\r\n"
+"  [3] - Frost\r\n"
+"  [4] - Acid\r\n"
+"  [5] - Lightning\r\n";
 
 const int  raceStatsLimit[NUM_RACES][NUM_STATS] = {
 /*	 S   %    I   W   D   C   Ch				*/
@@ -223,6 +274,40 @@ int	parse_race (char arg) {
 	}
 
 	return race;
+}
+
+/*
+ * Returns the race code equivalent of the given arg.
+ * This is used in parse_mobile() in db.c
+ */
+int parse_race_all(char arg) {
+	switch (LOWER(arg))
+	{
+	case 'a': return RACE_ANIMAL;
+	case 'b': return RACE_GNOME;
+	case 'c': return RACE_ORC;
+	case 'd': return RACE_DRAGON;
+	case 'e': return RACE_ELF;
+	case 'x': return RACE_DROW;
+	case 'f': return RACE_ELEMENTAL;
+	case 'g': return RACE_GIANT;
+	case 'h': return RACE_HUMAN;
+	case 'i': return RACE_DRACONIAN;
+	case 'j': return RACE_FAERIE;
+	case 'k': return RACE_AMARA;
+	case 'l': return RACE_HALFLING;
+	case 'm': return RACE_MINOTAUR;
+	case 'n': return RACE_DEMON;
+	case 'o': return RACE_OGRE;
+	case 'p': return RACE_PLANT;
+	case 'r': return RACE_WEREWOLF;
+	case 't': return RACE_TROLL;
+	case 'u': return RACE_UNDEAD;
+	case 'v': return RACE_VAMPIRE;
+	case 'w': return RACE_DWARF;
+	case 'z': return RACE_IZARTI;
+	default: return RACE_UNDEFINED;
+	}
 }
 
 /**

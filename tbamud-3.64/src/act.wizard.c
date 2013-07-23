@@ -758,9 +758,18 @@ static void do_stat_character(struct char_data *ch, struct char_data *k)
 
   send_to_char(ch, "D-Des: %s", k->player.description ? k->player.description : "<None>\r\n");
 
+  sprinttype(k->player.chrace, pc_race_types, buf, sizeof(buf));
+  send_to_char(ch,"Race: [%s%s%s] ",QYEL, buf, QNRM);
+  if(IS_ELEMENTAL(k)) {
+	  sprinttype(k->char_specials.saved.sub_race, ele_subrace_types, buf, sizeof(buf));
+	  send_to_char(ch,"Subrace: [%s%s%s] ",QYEL, buf, QNRM);
+  } else if(IS_DRACONIAN(k) || IS_DRAGON(k)) {
+	  sprinttype(k->char_specials.saved.sub_race, drc_subrace_types, buf, sizeof(buf));
+	  send_to_char(ch,"Subrace: [%s%s%s] ",QYEL, buf, QNRM);
+  }
   sprinttype(k->player.chclass, pc_class_types, buf, sizeof(buf));
-  send_to_char(ch, "%s%s, Lev: [%s%2d%s], XP: [%s%7d%s], Align: [%4d]\r\n",
-	IS_NPC(k) ? "Mobile" : "Class: ", IS_NPC(k) ? "" : buf, CCYEL(ch, C_NRM), GET_LEVEL(k), CCNRM(ch, C_NRM),
+  send_to_char(ch, "Class: [%s%s%s]\r\nLev: [%s%2d%s], XP: [%s%7d%s], Align: [%4d]\r\n",
+	QYEL, buf, QNRM, CCYEL(ch, C_NRM), GET_LEVEL(k), CCNRM(ch, C_NRM),
 	CCYEL(ch, C_NRM), GET_EXP(k), CCNRM(ch, C_NRM), GET_ALIGNMENT(k));
 
   if (!IS_NPC(k)) {
@@ -2843,6 +2852,7 @@ ACMD(do_show)
    { "questpoints",     LVL_GOD,        PC,     NUMBER },
    { "questhistory",    LVL_GOD,        PC,   NUMBER },
    { "race",        LVL_BUILDER, BOTH, MISC},
+   { "subrace",     LVL_BUILDER, BOTH, MISC},
    { "\n", 0, BOTH, MISC }
   };
 
@@ -3263,6 +3273,34 @@ static int perform_set(struct char_data *ch, struct char_data *vict, int mode, c
     	}
     	GET_RACE(vict) = i;
     	send_to_char(ch, "%s's race is now %s.\r\n", GET_NAME(vict), pc_race_types[(int)GET_RACE(vict)]);
+    	break;
+    case 59: /* subrace */
+    	i = atoi(val_arg);
+    	if(IS_ELEMENTAL(vict) && (i <= SUBRACE_ELE_UNDEFINED || i >= NUM_ELE_SUBRACE)) {
+    		send_to_char(ch,"That is not a valid Elemental subrace.\r\n");
+    		return(0);
+    	}
+
+    	if(IS_DRACONIAN(vict) && (i <= SUBRACE_DRC_UNDEFINED || i >= SUBRACE_CHROMATIC_DRAGON)) {
+    		send_to_char(ch,"That is not a valid Draconian or Dragonspawn subrace.\r\n");
+    		return(0);
+    	}
+
+    	if(IS_DRAGON(vict) && (i <= SUBRACE_DRC_UNDEFINED || i >= NUM_DRC_SUBRACE)) {
+    		send_to_char(ch,"That is not a valid Draconian or Dragonspawn subrace.\r\n");
+    		return(0);
+    	}
+
+    	if(!IS_ELEMENTAL(vict) && !IS_DRACONIAN(vict) && !IS_DRAGON(vict)){
+    		send_to_char(ch,"This field does not apply to %s's race.\r\n", GET_NAME(ch));
+    		return(0);
+    	}
+
+    	GET_SUBRACE(vict) = i;
+    	send_to_char(ch,"%s's subrace is now %s.\r\n", GET_NAME(vict),
+    			(IS_ELEMENTAL(vict) ? ele_subrace_types[(int)GET_SUBRACE(vict)]
+    			: drc_subrace_types[(int)GET_SUBRACE(vict)]));
+
     	break;
     default:
       send_to_char(ch, "Can't set that!\r\n");

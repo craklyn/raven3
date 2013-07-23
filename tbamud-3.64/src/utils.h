@@ -489,6 +489,8 @@ do                                                              \
 #define GET_CLASS(ch)   ((ch)->player.chclass)
 /** Race of ch. */
 #define GET_RACE(ch)	((ch)->player.chrace)
+/** Subrace of ch (if Ele or Drc) */
+#define GET_SUBRACE(ch)  ((ch)->char_specials.saved.sub_race)
 /** Height of ch. */
 #define GET_HEIGHT(ch)	((ch)->player.height)
 /** Weight of ch. */
@@ -855,8 +857,27 @@ do                                                              \
 /** Return the class abbreviation for ch. */
 #define CLASS_ABBR(ch) (class_abbrevs[(int)GET_CLASS(ch)])
 
+/** Returns the subrace abbrevation of ch if ch is Ele or Drc */
+#define SUBRACE_ABBR(ch) ((GET_RACE(ch) == RACE_ELEMENTAL)  ? \
+		ele_subrace_abbrevs[(int)GET_SUBRACE(ch)] : \
+		drc_subrace_abbrevs[(int)GET_SUBRACE(ch)])
+
 /** Return the race abbreviation of ch */
-#define RACE_ABBR(ch)  (race_abbrevs[(int)GET_RACE(ch)])
+#define RACE_ABBR(ch)  ((GET_RACE(ch) == RACE_ELEMENTAL || GET_RACE(ch) == RACE_SDRACONIAN) ? \
+		SUBRACE_ABBR(ch) : \
+		race_abbrevs[(int)GET_RACE(ch)])
+
+/** Race specific utility macros */
+/** 1 if ch is Draconian or Dragonspawn, 0 if not */
+#define IS_DRACONIAN(ch) (GET_RACE(ch) == RACE_DRACONIAN || GET_RACE(ch) == RACE_SDRACONIAN)
+
+/** 1 if ch is a Dragon, 0 if not */
+#define IS_DRAGON(ch)    (GET_RACE(ch) == RACE_DRAGON)
+
+/** 1 id ch is Elemental, 0 if not */
+#define IS_ELEMENTAL(ch) (GET_RACE(ch) == RACE_ELEMENTAL)
+
+
 
 /** 1 if ch is magic user class, 0 if not. */
 #define IS_MAGIC_USER(ch)	(!IS_NPC(ch) && \
