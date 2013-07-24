@@ -262,6 +262,8 @@ int load_char(const char *name, struct char_data *ch)
       GET_SKILL(ch, i) = 0;
     GET_SEX(ch) = PFDEF_SEX;
     GET_CLASS(ch) = PFDEF_CLASS;
+    GET_RACE(ch) = PFDEF_RACE;
+    GET_SUBRACE(ch) = PFDEF_SUBRACE;
     GET_LEVEL(ch) = PFDEF_LEVEL;
     GET_HEIGHT(ch) = PFDEF_HEIGHT;
     GET_WEIGHT(ch) = PFDEF_WEIGHT;
@@ -445,11 +447,12 @@ int load_char(const char *name, struct char_data *ch)
 	  break;
 
       case 'S':
-	     if (!strcmp(tag, "Sex "))	GET_SEX(ch)		= atoi(line);
-  else if (!strcmp(tag, "ScrW"))  GET_SCREEN_WIDTH(ch) = atoi(line);
-	else if (!strcmp(tag, "Skil"))	load_skills(fl, ch);
-	else if (!strcmp(tag, "Str "))	load_HMVS(ch, line, LOAD_STRENGTH);
-	break;
+    	  if (!strcmp(tag, "Sex "))	GET_SEX(ch)		= atoi(line);
+    	  else if (!strcmp(tag, "ScrW"))  GET_SCREEN_WIDTH(ch) = atoi(line);
+    	  else if (!strcmp(tag, "Skil"))	load_skills(fl, ch);
+    	  else if (!strcmp(tag, "Str "))	load_HMVS(ch, line, LOAD_STRENGTH);
+    	  else if (!strcmp(tag, "SubR")) GET_SUBRACE(ch) = atoi(line);
+      break;
 
       case 'T':
 	     if (!strcmp(tag, "Thir"))	GET_COND(ch, THIRST)	= atoi(line);
@@ -583,12 +586,13 @@ void save_char(struct char_data * ch)
     strip_cr(buf);
     fprintf(fl, "Desc:\n%s~\n", buf);
   }
-  if (POOFIN(ch))				fprintf(fl, "PfIn: %s\n", POOFIN(ch));
-  if (POOFOUT(ch))				fprintf(fl, "PfOt: %s\n", POOFOUT(ch));
-  if (GET_SEX(ch)   != PFDEF_SEX)	fprintf(fl, "Sex : %d\n", GET_SEX(ch));
-  if (GET_CLASS(ch) != PFDEF_CLASS)	fprintf(fl, "Clas: %d\n", GET_CLASS(ch));
-  if (GET_RACE(ch)  != PFDEF_RACE)  fprintf(fl, "Race: %d\n", GET_RACE(ch));
-  if (GET_LEVEL(ch)	!= PFDEF_LEVEL)	fprintf(fl, "Levl: %d\n", GET_LEVEL(ch));
+  if (POOFIN(ch))							fprintf(fl, "PfIn: %s\n", POOFIN(ch));
+  if (POOFOUT(ch))							fprintf(fl, "PfOt: %s\n", POOFOUT(ch));
+  if (GET_SEX(ch)   != PFDEF_SEX)			fprintf(fl, "Sex : %d\n", GET_SEX(ch));
+  if (GET_CLASS(ch) != PFDEF_CLASS)			fprintf(fl, "Clas: %d\n", GET_CLASS(ch));
+  if (GET_RACE(ch)  != PFDEF_RACE)  		fprintf(fl, "Race: %d\n", GET_RACE(ch));
+  if (GET_SUBRACE(ch)  != PFDEF_SUBRACE)  	fprintf(fl, "SubR: %d\n", GET_SUBRACE(ch));
+  if (GET_LEVEL(ch)	!= PFDEF_LEVEL)			fprintf(fl, "Levl: %d\n", GET_LEVEL(ch));
 
   fprintf(fl, "Id  : %ld\n", GET_IDNUM(ch));
   fprintf(fl, "Brth: %ld\n", (long)ch->player.time.birth);

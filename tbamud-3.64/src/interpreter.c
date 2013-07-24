@@ -1649,7 +1649,12 @@ void nanny(struct descriptor_data *d, char *arg)
 	  if(load_result == RACE_UNDEFINED) {
 		  write_to_output(d, "\r\nThat is not a valid race.\r\nRace: ");
 		  return;
-	  } else {
+	  } else if (load_result == RACE_DRACONIAN) {
+		  GET_RACE(d->character) = load_result;
+		  write_to_output(d, "%s\r\nBreath: ", breath_menu);
+		  STATE(d) = CON_QBREATH;
+	  }
+	  else {
 		  GET_RACE(d->character) = load_result;
 		  int i;
 		  write_to_output(d, "\r\nSelect a class:\r\n");
@@ -1660,6 +1665,28 @@ void nanny(struct descriptor_data *d, char *arg)
 		  write_to_output(d, "\r\nClass: ");
 		  STATE(d) = CON_QCLASS;
 	  }
+
+	  break;
+  case CON_QBREATH:
+	  switch(*arg){
+	  case '1': GET_SUBRACE(d->character) = SUBRACE_RED_DRAGON;break;
+	  case '2': GET_SUBRACE(d->character) = SUBRACE_GREEN_DRAGON;break;
+	  case '3': GET_SUBRACE(d->character) = SUBRACE_WHITE_DRAGON;break;
+	  case '4': GET_SUBRACE(d->character) = SUBRACE_BLACK_DRAGON;break;
+	  case '5': GET_SUBRACE(d->character) = SUBRACE_BLUE_DRAGON;break;
+	  default:
+		  write_to_output(d, "\r\nInvalid Selection: specify 1, 2, 3, 4 or 5.\r\nBreath :");
+		  return;
+	  }
+
+	  int i;
+	  write_to_output(d, "\r\nSelect a class:\r\n");
+	  for (i = 0; i < NUM_CLASSES; i++)
+		  if (classRaceAllowed[(int) GET_RACE(d->character)][i])
+			  write_to_output(d, class_menu[i]);
+	  write_to_output(d, "\r\n  [X] - Choose a different race\r\n");
+	  write_to_output(d, "\r\nClass: ");
+	  STATE(d) = CON_QCLASS;
 
 	  break;
 
