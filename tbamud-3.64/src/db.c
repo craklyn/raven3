@@ -1684,8 +1684,7 @@ void parse_mobile(FILE *mob_f, int nr)
   int j, t[10], retval;
   char line[READ_SIZE], *tmpptr, letter;
   char f1[128], f2[128], f3[128], f4[128], f5[128], f6[128], f7[128], f8[128], buf2[128];
-  char *mob_RaceClassSubrace;
-  char mob_race_array[80], first_arg[80], let_array[80];
+  char *mob_RaceClassSubrace, first_arg[80], let_array[80];
   char race, class;
   int subrace;
 
@@ -1703,51 +1702,50 @@ void parse_mobile(FILE *mob_f, int nr)
 
   /*
    * Race Class Subrace
-   * Implementation from RavenMUD code
+   * Implementation from RavenMUD code.
    */
   mob_RaceClassSubrace = fread_string (mob_f, buf2);
-  strcpy(mob_race_array, mob_RaceClassSubrace);
-  if (*mob_race_array) {
-	  half_chop(mob_race_array, first_arg, mob_race_array);
+  if (*mob_RaceClassSubrace) {
+	  half_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
 	  strxfrm(let_array, first_arg, strlen(first_arg));
 	  for (j = 0; j < strlen(first_arg); j++)
-		  if (isalpha(let_array[j])) break; /* found race. */
-	  if (j >= strlen(first_arg)) { /* No race found. */
+		  if (isalpha(let_array[j])) break;
+	  if (j >= strlen(first_arg)) {
 		  log("WARNING: Invalid race entry %s for mob[%d]", first_arg, nr);
-		  race = 'H'; /* default to human */
+		  race = 'H';
 	  }
 	  else
 		  race = let_array[j];
   }
   else {
 	  log("WARNING: No race was entered for mob[%d]", nr);
-	  race = 'H'; /* default to human */
+	  race = 'H';
   }
-  if (*mob_race_array) {
-	  half_chop(mob_race_array, first_arg, mob_race_array);
+  if (*mob_RaceClassSubrace) {
+	  half_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
 	  strxfrm(let_array, first_arg, strlen(first_arg));
 	  for (j = 0; j < strlen(first_arg); j++)
-		  if (isalpha(let_array[j])) break; /* found class. */
-	  if (j >= strlen(first_arg)) { /* No class found. */
+		  if (isalpha(let_array[j])) break;
+	  if (j >= strlen(first_arg)) {
 		  log("WARNING: Invalid class entry %s for mob[%d]", first_arg, nr);
-		  class = 'W'; /* default to warrior */
+		  class = 'W';
 	  }
 	  else
 		  class = let_array[j];
   }
   else {
 	  log("WARNING: No class was entered for mob[%d]", nr);
-	  class = 'W'; /* default to warrior */
+	  class = 'W';
   }
-  if (*mob_race_array) { /* We have either a sub_race or a ~ */
-	  half_chop(mob_race_array, first_arg, mob_race_array);
+  if (*mob_RaceClassSubrace) {
+	  half_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
 	  if (is_number(first_arg))
 		  subrace = atoi(first_arg);
 	  else
 		  subrace = 0;
   }
-  else { /* We did'nt get a sub_race or a tilde, but it don't really matter. */
-	  subrace = 0; /* default to no sub race */
+  else {
+	  subrace = 0;
   }
 
   mob_proto[i].player.chclass = parse_class(class);

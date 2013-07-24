@@ -3271,6 +3271,13 @@ static int perform_set(struct char_data *ch, struct char_data *vict, int mode, c
     		send_to_char(ch, "That is not a race.\r\n");
     		return (0);
     	}
+    	/*
+    	 * Set the subrace to 0 first. This will crash the game if the previous
+    	 * subrace of vict is beyond the subrace limit of the new race.
+    	 * e.g. from Mist Dragon(subrace 13) to ELemental which only has upto
+    	 * subrace 4.
+    	 */
+    	GET_SUBRACE(vict) = 0;
     	GET_RACE(vict) = i;
     	send_to_char(ch, "%s's race is now %s.\r\n", GET_NAME(vict), pc_race_types[(int)GET_RACE(vict)]);
     	break;
@@ -3287,7 +3294,7 @@ static int perform_set(struct char_data *ch, struct char_data *vict, int mode, c
     	}
 
     	if(IS_DRAGON(vict) && (i <= SUBRACE_DRC_UNDEFINED || i >= NUM_DRC_SUBRACE)) {
-    		send_to_char(ch,"That is not a valid Draconian or Dragonspawn subrace.\r\n");
+    		send_to_char(ch,"That is not a valid Dragon subrace.\r\n");
     		return(0);
     	}
 
