@@ -58,7 +58,7 @@ const char *pc_race_types[] = {
 const char *ele_subrace_types[] = {
 		"None",
 		"Fire Elemental",
-		"Air Elementa",
+		"Air Elemental",
 		"Water Elemental",
 		"Earth Elemental"
 };
