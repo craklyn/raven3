@@ -212,6 +212,34 @@
 /* Total number of available races */
 #define NUM_RACES            37   /* Always update this! */
 
+/* NPC and PC Subraces */
+/* Dragon/Draconian/Dragonspawn */
+#define SUBRACE_DRC_UNDEFINED   	  0
+#define SUBRACE_RED_DRAGON            1
+#define SUBRACE_GREEN_DRAGON          2
+#define SUBRACE_WHITE_DRAGON          3
+#define SUBRACE_BLACK_DRAGON          4
+#define SUBRACE_BLUE_DRAGON           5
+#define SUBRACE_CHROMATIC_DRAGON      6
+#define SUBRACE_GOLD_DRAGON           7
+#define SUBRACE_SILVER_DRAGON         8
+#define SUBRACE_BRONZE_DRAGON         9
+#define SUBRACE_COPPER_DRAGON        10
+#define SUBRACE_BRASS_DRAGON         11
+#define SUBRACE_SHADOW_DRAGON        12
+#define SUBRACE_MIST_DRAGON          13
+/* Number of Dragon subraces */
+#define NUM_DRC_SUBRACE			     14
+
+/* Elementals */
+#define SUBRACE_ELE_UNDEFINED		  0
+#define SUBRACE_FIRE_ELEMENTAL        1
+#define SUBRACE_AIR_ELEMENTAL         2
+#define SUBRACE_WATER_ELEMENTAL       3
+#define SUBRACE_EARTH_ELEMENTAL       4
+/* Number of Elemental subraces */
+#define NUM_ELE_SUBRACE				  5
+
 /* NPC classes (currently unused - feel free to implement!) */
 #define CLASS_OTHER       0    /**< NPC Class Other (or undefined) */
 #define CLASS_UNDEAD      1    /**< NPC Class Undead */
@@ -398,6 +426,7 @@
 #define CON_IBTEDIT      31 /**< OLC mode - idea/bug/typo edit */
 #define CON_MSGEDIT      32 /**< OLC mode - message editor */
 #define CON_GET_PROTOCOL 33 /**< Used at log-in while attempting to get protocols > */
+#define CON_QBREATH		 34 /**< Choose a breath for Draconians */
 
 /* OLC States range - used by IS_IN_OLC and IS_PLAYING */
 #define FIRST_OLC_STATE CON_OEDIT     /**< The first CON_ state that is an OLC */
@@ -991,6 +1020,7 @@ struct char_special_data_saved
   int act[PM_ARRAY_MAX]; /**< act flags for NPC's; player flag for PC's */
   int affected_by[AF_ARRAY_MAX]; /**< Bitvector for spells/skills affected by */
   sh_int apply_saving_throw[5];  /**< Saving throw (Bonuses)		*/
+  byte sub_race;			/** The subrace if char is Ele of SDrac */
 };
 
 /** Special playing constants shared by PCs and NPCs which aren't in pfile */
