@@ -920,6 +920,20 @@ char *any_one_arg(char *argument, char *first_arg)
 
   return (argument);
 }
+/* Same as any_one_argument except that it preserves case. */
+char *case_one_arg(char *argument, char *first_arg)
+{
+  skip_spaces(&argument);
+
+  while (*argument && !isspace(*argument)) {
+    *(first_arg++) = (*argument);
+    argument++;
+  }
+
+  *first_arg = '\0';
+
+  return argument;
+}
 
 /* Same as one_argument except that it takes two args and returns the rest;
  * ignores fill words */
@@ -954,6 +968,16 @@ void half_chop(char *string, char *arg1, char *arg2)
   temp = any_one_arg(string, arg1);
   skip_spaces(&temp);
   strcpy(arg2, temp);	/* strcpy: OK (documentation) */
+}
+
+/* Same as half_chop except preserves case.*/
+void case_chop(char *string, char *arg1, char *arg2)
+{
+  char *temp;
+
+  temp = case_one_arg(string, arg1);
+  skip_spaces(&temp);
+  strcpy(arg2, temp);
 }
 
 /* Used in specprocs, mostly.  (Exactly) matches "command" to cmd number */

@@ -25,6 +25,7 @@ byte saving_throws(int class_num, int type, int level);
 int thaco(int class_num, int level);
 const char *title_female(int chclass, int level);
 const char *title_male(int chclass, int level);
+char getClassChar(int chClass);
 
 /* Global variables */
 

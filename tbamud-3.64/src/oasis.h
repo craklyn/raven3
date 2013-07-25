@@ -287,6 +287,9 @@ extern const char *nrm, *grn, *cyn, *yel;
 #define MEDIT_PETRI                     37
 #define MEDIT_BREATH                    38
 #define MEDIT_SPELL                     39
+#define MEDIT_RACE						40
+#define MEDIT_SUBRACE                   41
+#define MEDIT_CLASS                     42
 
 /* Submodes of SEDIT connectedness. */
 #define SEDIT_MAIN_MENU              	0
