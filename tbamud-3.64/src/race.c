@@ -14,6 +14,53 @@
 
 #define __RACE_C__
 
+/*
+ * Local constants
+ */
+
+/*
+ * Table of race codes. 
+ */
+static const char raceCodes[NUM_RACES] = {
+		'H', /* RACE_HUMAN */
+		'P', /* RACE_PLANT */
+		'A', /* RACE_ANIMAL */
+		'D', /* RACE_DRAGON */
+		'U', /* RACE_UNDEAD */
+		'V', /* RACE_VAMPIRE */
+		'L', /* RACE_HALFLING */
+		'E', /* RACE_ELF */
+		'W', /* RACE_DWARF */
+		'G', /* RACE_GIANT */
+		'M', /* RACE_MINOTAUR */
+		'N', /* RACE_DEMON */
+		'O', /* RACE_OGRE */
+		'T', /* RACE_TROLL */
+		'R', /* RACE_WEREWOLF */
+		'F', /* RACE_ELEMENTAL */
+		'C', /* RACE_ORC */
+		'B', /* RACE_GNOME */
+		'I', /* RACE_DRACONIAN */
+		'J', /* RACE_FAERIE */
+		'A', /* RACE_AMARA */
+		'Z', /* RACE_IZARTI */
+		'X', /* RACE_DROW */
+		'h', /* RACE_SHUMAN */
+		'l', /* RACE_SHALFLING */
+		'e', /* RACE_SELF */
+		'x', /* RACE_SDROW */
+		'w', /* RACE_SDWARF */
+		'm', /* RACE_SMINOTAUR */
+		'o', /* RACE_SOGRE */
+		't', /* RACE_STROLL */
+		'i', /* RACE_DRACONIAN */
+		'b', /* RACE_SGNOME */
+		'c', /* RACE_SORC */
+		'z', /* RACE_TERRAN */
+		'y', /* RACE_ZERG */
+		'u' /* RACE_PROTOSS */
+};
+
 const char *pc_race_types[] = {
 	    "Human",
 	    "Plant",
@@ -281,33 +328,22 @@ int	parse_race (char arg) {
  * This is used in parse_mobile() in db.c
  */
 int parse_race_all(char arg) {
-	switch (LOWER(arg))
-	{
-	case 'a': return RACE_ANIMAL;
-	case 'b': return RACE_GNOME;
-	case 'c': return RACE_ORC;
-	case 'd': return RACE_DRAGON;
-	case 'e': return RACE_ELF;
-	case 'x': return RACE_DROW;
-	case 'f': return RACE_ELEMENTAL;
-	case 'g': return RACE_GIANT;
-	case 'h': return RACE_HUMAN;
-	case 'i': return RACE_DRACONIAN;
-	case 'j': return RACE_FAERIE;
-	case 'k': return RACE_AMARA;
-	case 'l': return RACE_HALFLING;
-	case 'm': return RACE_MINOTAUR;
-	case 'n': return RACE_DEMON;
-	case 'o': return RACE_OGRE;
-	case 'p': return RACE_PLANT;
-	case 'r': return RACE_WEREWOLF;
-	case 't': return RACE_TROLL;
-	case 'u': return RACE_UNDEAD;
-	case 'v': return RACE_VAMPIRE;
-	case 'w': return RACE_DWARF;
-	case 'z': return RACE_IZARTI;
-	default: return RACE_UNDEFINED;
+	//default to Human
+	int race = RACE_HUMAN, i;
+	
+	for(i = RACE_HUMAN; i < NUM_RACES; i++) {
+		if(arg == raceCodes[i]) {
+			race = i;
+			break;
+		}
 	}
+	
+	//log an invalid race
+	if(i >= NUM_RACES) {
+		log("SYSERR: Unknown race code '%c' passed to parse_race_all() in race.c", arg);
+	}
+	
+	return race;
 }
 
 /**
@@ -326,3 +362,22 @@ bitvector_t find_race_bitvector(const char *arg) {
     return (ret);
 }
 
+/**
+ * Returns the code (char) or the given race. If the given race is undefined
+ * return the race code for Human.
+ * @param race the race
+ */
+char getRaceChar(int race) {
+	/*
+	 * Default to Human if the given race is unknown.
+	 */
+	char raceCode = 'H';
+	
+	if(race > RACE_UNDEFINED && race < NUM_RACES) {
+		raceCode = raceCodes[race];
+	} else {
+		log("SYSERR: Unknown race '%d' passed to get_race_code() in race.c", race);
+	}
+	
+	return raceCode;	
+}

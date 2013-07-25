@@ -26,6 +26,8 @@
 #include "screen.h"
 #include "fight.h"
 #include "modify.h"      /* for smash_tilde */
+#include "class.h"
+#include "race.h"
 
 /* local functions */
 static void medit_setup_new(struct descriptor_data *d);
@@ -39,6 +41,9 @@ static int  medit_get_mob_flag_by_number(int num);
 static void medit_disp_mob_flags(struct descriptor_data *d);
 static void medit_disp_aff_flags(struct descriptor_data *d);
 static void medit_disp_menu(struct descriptor_data *d);
+static void medit_disp_race_selection(struct descriptor_data *d);
+static void medit_disp_subrace_selection(struct descriptor_data *d);
+static void medit_disp_class_selection(struct descriptor_data *d);
 
 /*  utility functions */
 ACMD(do_oasis_medit)
@@ -458,31 +463,43 @@ static void medit_disp_menu(struct descriptor_data *d)
 static void medit_disp_stats_menu(struct descriptor_data *d)
 {
   struct char_data *mob;
-  char buf[MAX_STRING_LENGTH];
+  char buf[MAX_STRING_LENGTH], subRaceBuf[MAX_STRING_LENGTH];
 
   mob = OLC_MOB(d);
   get_char_colors(d->character);
   clear_screen(d);
-
+  
+  /* set up subrace string */
+  if(IS_ELEMENTAL(mob)) {
+	  sprintf(subRaceBuf, "%s", ele_subrace_types[(int)GET_SUBRACE(mob)]);
+  } else if(IS_DRACONIAN(mob) || IS_DRAGON(mob)) {
+	  sprintf(subRaceBuf, "%s", drc_subrace_types[(int)GET_SUBRACE(mob)]);
+  } else {
+	  sprintf(subRaceBuf, "N/A");
+  }
+  
   /* Color codes have to be used here, for count_color_codes to work */
   sprintf(buf, "(range \ty%d\tn to \ty%d\tn)", GET_HIT(mob) + GET_MOVE(mob), (GET_HIT(mob) * GET_MANA(mob)) + GET_MOVE(mob));
 
   /* Top section - standard stats */
   write_to_output(d,
   "-- Mob Number:  %s[%s%d%s]%s\r\n"
-  "(%s1%s) Level:       %s[%s%4d%s]%s\r\n"
-  "(%s2%s) %sAuto Set Stats (based on level)%s\r\n\r\n"
+  "(%s1%s) Level: %s[%s%15d%s]%s (%s2%s) Race:    %s[%s%15s%s]%s\r\n"
+  "(%s4%s) Class: %s[%s%15s%s]%s (%s3%s) Subrace: %s[%s%15s%s]%s\r\n"
+  "(%s5%s) %sAuto Set Stats (based on level)%s\r\n\r\n"
   "Hit Points  (xdy+z):        Bare Hand Damage (xdy+z): \r\n"
-  "(%s3%s) HP NumDice:  %s[%s%5d%s]%s    (%s6%s) BHD NumDice:  %s[%s%5d%s]%s\r\n"
-  "(%s4%s) HP SizeDice: %s[%s%5d%s]%s    (%s7%s) BHD SizeDice: %s[%s%5d%s]%s\r\n"
-  "(%s5%s) HP Addition: %s[%s%5d%s]%s    (%s8%s) DamRoll:      %s[%s%5d%s]%s\r\n"
+  "(%s6%s) HP NumDice:  %s[%s%5d%s]%s    (%s9%s) BHD NumDice:  %s[%s%5d%s]%s\r\n"
+  "(%s7%s) HP SizeDice: %s[%s%5d%s]%s    (%sA%s) BHD SizeDice: %s[%s%5d%s]%s\r\n"
+  "(%s8%s) HP Addition: %s[%s%5d%s]%s    (%sB%s) DamRoll:      %s[%s%5d%s]%s\r\n"
   "%-*s(range %s%d%s to %s%d%s)\r\n\r\n"
 
-  "(%sA%s) Armor Class: %s[%s%4d%s]%s        (%sD%s) Hitroll:   %s[%s%5d%s]%s\r\n"
-  "(%sB%s) Exp Points:  %s[%s%10d%s]%s  (%sE%s) Alignment: %s[%s%5d%s]%s\r\n"
-  "(%sC%s) Gold:        %s[%s%10d%s]%s\r\n\r\n",
+  "(%sC%s) Armor Class: %s[%s%4d%s]%s        (%sF%s) Hitroll:   %s[%s%5d%s]%s\r\n"
+  "(%sD%s) Exp Points:  %s[%s%10d%s]%s  (%sG%s) Alignment: %s[%s%5d%s]%s\r\n"
+  "(%sE%s) Gold:        %s[%s%10d%s]%s\r\n\r\n",
       cyn, yel, OLC_NUM(d), cyn, nrm,
-      cyn, nrm, cyn, yel, GET_LEVEL(mob), cyn, nrm,
+      cyn, nrm, cyn, yel, GET_LEVEL(mob),  cyn, nrm, cyn, nrm, cyn, yel, pc_race_types[(int)GET_RACE(mob)],cyn, nrm,
+      cyn, nrm, cyn, yel, pc_class_types[(int)GET_CLASS(mob)], cyn, nrm, 
+      cyn, nrm, cyn, yel, subRaceBuf, cyn, nrm,
       cyn, nrm, cyn, nrm,
       cyn, nrm, cyn, yel, GET_HIT(mob), cyn, nrm,   cyn, nrm, cyn, yel, GET_NDD(mob), cyn, nrm,
       cyn, nrm, cyn, yel, GET_MANA(mob), cyn, nrm,  cyn, nrm, cyn, yel, GET_SDD(mob), cyn, nrm,
@@ -500,12 +517,12 @@ static void medit_disp_stats_menu(struct descriptor_data *d)
   if (CONFIG_MEDIT_ADVANCED) {
     /* Bottom section - non-standard stats, togglable in cedit */
     write_to_output(d,
-    "(%sF%s) Str: %s[%s%2d/%3d%s]%s   Saving Throws\r\n"
-    "(%sG%s) Int: %s[%s%3d%s]%s      (%sL%s) Paralysis     %s[%s%3d%s]%s\r\n"
-    "(%sH%s) Wis: %s[%s%3d%s]%s      (%sM%s) Rods/Staves   %s[%s%3d%s]%s\r\n"
-    "(%sI%s) Dex: %s[%s%3d%s]%s      (%sN%s) Petrification %s[%s%3d%s]%s\r\n"
-    "(%sJ%s) Con: %s[%s%3d%s]%s      (%sO%s) Breath        %s[%s%3d%s]%s\r\n"
-    "(%sK%s) Cha: %s[%s%3d%s]%s      (%sP%s) Spells        %s[%s%3d%s]%s\r\n\r\n",
+    "(%sH%s) Str: %s[%s%2d/%3d%s]%s   Saving Throws\r\n"
+    "(%sI%s) Int: %s[%s%3d%s]%s      (%sN%s) Paralysis     %s[%s%3d%s]%s\r\n"
+    "(%sJ%s) Wis: %s[%s%3d%s]%s      (%sO%s) Rods/Staves   %s[%s%3d%s]%s\r\n"
+    "(%sK%s) Dex: %s[%s%3d%s]%s      (%sP%s) Petrification %s[%s%3d%s]%s\r\n"
+    "(%sL%s) Con: %s[%s%3d%s]%s      (%sR%s) Breath        %s[%s%3d%s]%s\r\n"
+    "(%sM%s) Cha: %s[%s%3d%s]%s      (%sS%s) Spells        %s[%s%3d%s]%s\r\n\r\n",
         cyn, nrm, cyn, yel, GET_STR(mob), GET_ADD(mob), cyn, nrm,
         cyn, nrm, cyn, yel, GET_INT(mob), cyn, nrm,   cyn, nrm, cyn, yel, GET_SAVE(mob, SAVING_PARA), cyn, nrm,
         cyn, nrm, cyn, yel, GET_WIS(mob), cyn, nrm,   cyn, nrm, cyn, yel, GET_SAVE(mob, SAVING_ROD), cyn, nrm,
@@ -519,6 +536,77 @@ static void medit_disp_stats_menu(struct descriptor_data *d)
   write_to_output(d, "(%sQ%s) Quit to main menu\r\nEnter choice : ", cyn, nrm);
 
   OLC_MODE(d) = MEDIT_STATS_MENU;
+}
+
+/*
+ * Display all available races and prompt for an input.
+ */
+static void medit_disp_race_selection(struct descriptor_data *d) {
+	char buf[MAX_STRING_LENGTH];
+	int iRace, cols = 0;
+
+	clear_screen(d);
+	for (iRace = RACE_HUMAN; iRace < NUM_RACES; iRace++) {
+		sprintf(buf, "%s%2d%s) %-15.15s %s", grn, iRace, nrm,
+				pc_race_types[iRace], !(++cols % 4) ? "\r\n" : "");
+		write_to_output(d, buf);
+	}
+	
+	if (cols != 0) write_to_output(d,"\r\n");
+	write_to_output(d,"Enter race number :");
+	OLC_MODE(d) = MEDIT_RACE;
+
+}
+
+/*
+ * Display all available subrace for the mob's race and prompt for an input.
+ */
+static void medit_disp_subrace_selection(struct descriptor_data *d) {
+	char buf[MAX_STRING_LENGTH];
+	int iSubRace, cols = 0;
+	
+	clear_screen(d);
+	//display only the subraces for the mob's race
+	//start with 1 because it doesn't make sense to choose a subrace and 
+	//just select "None"(0).
+	for(iSubRace = 1;;iSubRace++) {
+		
+		if((IS_ELEMENTAL(OLC_MOB(d)) && iSubRace >= NUM_ELE_SUBRACE)
+				|| (IS_DRACONIAN(OLC_MOB(d)) && iSubRace >= SUBRACE_CHROMATIC_DRAGON)
+				|| (IS_DRAGON(OLC_MOB(d)) && iSubRace >= NUM_DRC_SUBRACE))
+			break;
+		
+		sprintf(buf, "%s%2d%s) %-15.15s %s", grn, iSubRace, nrm,
+				(IS_ELEMENTAL(OLC_MOB(d)) ? ele_subrace_types[iSubRace] 
+				                          : drc_subrace_types[iSubRace]),
+				(!(++cols % 4) ? "\r\n" : "") );
+		// display to builder
+		write_to_output(d, buf);		
+	}
+	
+	if(cols != 0) write_to_output(d, "\r\n");
+	write_to_output(d,"Enter subrace number :");
+	OLC_MODE(d) = MEDIT_SUBRACE;
+	
+}
+
+/*
+ * Display all available classes and prompt for input.
+ */
+static void medit_disp_class_selection(struct descriptor_data *d) {
+	char buf[MAX_STRING_LENGTH];
+	int iClass, cols = 0;
+	
+	clear_screen(d);
+	for(iClass = 0; iClass < NUM_CLASSES; iClass++) {
+		sprintf(buf, "%s%2d%s) %-15.15s %s", grn, iClass, nrm, pc_class_types[iClass],
+				(!(++cols % 4) ? "\r\n" : ""));
+		write_to_output(d, buf);
+	}
+	
+	if(cols != 0) write_to_output(d, "\r\n");
+	write_to_output(d, "Enter class numner :");
+	OLC_MODE(d) = MEDIT_CLASS;
 }
 
 void medit_parse(struct descriptor_data *d, char *arg)
@@ -672,76 +760,77 @@ void medit_parse(struct descriptor_data *d, char *arg)
       OLC_MODE(d) = MEDIT_LEVEL;
       i++;
       break;
-    case '2':  /* Autoroll stats */
+    /* race */
+    case '2':
+    	medit_disp_race_selection(d);
+    	return;
+    /* subrace */
+    case '3':
+    	if(IS_ELEMENTAL(OLC_MOB(d)) || IS_DRACONIAN(OLC_MOB(d)) || IS_DRAGON(OLC_MOB(d))) {
+    		medit_disp_subrace_selection(d);
+    		return;;
+    	} 
+    	write_to_output(d, "That option does not apply to this mob's race.\n\r");
+    	medit_disp_stats_menu(d);
+    	return;
+    /* class */
+    case '4':
+    	medit_disp_class_selection(d);
+    	return;
+    case '5':  /* Autoroll stats */
       medit_autoroll_stats(d);
       medit_disp_stats_menu(d);
       OLC_VAL(d) = TRUE;
       return;
-    case '3':
+    case '6':
       OLC_MODE(d) = MEDIT_NUM_HP_DICE;
       i++;
       break;
-    case '4':
+    case '7':
       OLC_MODE(d) = MEDIT_SIZE_HP_DICE;
       i++;
       break;
-    case '5':
+    case '8':
       OLC_MODE(d) = MEDIT_ADD_HP;
       i++;
       break;
-    case '6':
+    case '9':
       OLC_MODE(d) = MEDIT_NDD;
-      i++;
-      break;
-    case '7':
-      OLC_MODE(d) = MEDIT_SDD;
-      i++;
-      break;
-    case '8':
-      OLC_MODE(d) = MEDIT_DAMROLL;
       i++;
       break;
     case 'a':
     case 'A':
-      OLC_MODE(d) = MEDIT_AC;
+      OLC_MODE(d) = MEDIT_SDD;
       i++;
       break;
     case 'b':
     case 'B':
-      OLC_MODE(d) = MEDIT_EXP;
+      OLC_MODE(d) = MEDIT_DAMROLL;
       i++;
       break;
     case 'c':
     case 'C':
-      OLC_MODE(d) = MEDIT_GOLD;
+      OLC_MODE(d) = MEDIT_AC;
       i++;
       break;
     case 'd':
     case 'D':
-      OLC_MODE(d) = MEDIT_HITROLL;
+      OLC_MODE(d) = MEDIT_EXP;
       i++;
       break;
     case 'e':
     case 'E':
-      OLC_MODE(d) = MEDIT_ALIGNMENT;
+      OLC_MODE(d) = MEDIT_GOLD;
       i++;
       break;
     case 'f':
     case 'F':
-      if (!CONFIG_MEDIT_ADVANCED) {
-        write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
-        return;
-	  }
-      OLC_MODE(d) = MEDIT_STR;
+      OLC_MODE(d) = MEDIT_HITROLL;
       i++;
       break;
     case 'g':
     case 'G':
-      if (!CONFIG_MEDIT_ADVANCED) {
-        write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
-        return;
-	  }
-      OLC_MODE(d) = MEDIT_INT;
+      OLC_MODE(d) = MEDIT_ALIGNMENT;
       i++;
       break;
     case 'h':
@@ -750,7 +839,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_WIS;
+      OLC_MODE(d) = MEDIT_STR;
       i++;
       break;
     case 'i':
@@ -759,7 +848,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_DEX;
+      OLC_MODE(d) = MEDIT_INT;
       i++;
       break;
     case 'j':
@@ -768,7 +857,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_CON;
+      OLC_MODE(d) = MEDIT_WIS;
       i++;
       break;
     case 'k':
@@ -777,7 +866,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_CHA;
+      OLC_MODE(d) = MEDIT_DEX;
       i++;
       break;
     case 'l':
@@ -786,7 +875,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_PARA;
+      OLC_MODE(d) = MEDIT_CON;
       i++;
       break;
     case 'm':
@@ -795,7 +884,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_ROD;
+      OLC_MODE(d) = MEDIT_CHA;
       i++;
       break;
     case 'n':
@@ -804,7 +893,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_PETRI;
+      OLC_MODE(d) = MEDIT_PARA;
       i++;
       break;
     case 'o':
@@ -813,11 +902,29 @@ void medit_parse(struct descriptor_data *d, char *arg)
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
 	  }
-      OLC_MODE(d) = MEDIT_BREATH;
+      OLC_MODE(d) = MEDIT_ROD;
       i++;
       break;
     case 'p':
     case 'P':
+      if (!CONFIG_MEDIT_ADVANCED) {
+        write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
+        return;
+	  }
+      OLC_MODE(d) = MEDIT_PETRI;
+      i++;
+      break;
+    case 'r':
+    case 'R':
+      if (!CONFIG_MEDIT_ADVANCED) {
+        write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
+        return;
+	  }
+      OLC_MODE(d) = MEDIT_BREATH;
+      i++;
+      break;
+    case 's':
+    case 'S':
       if (!CONFIG_MEDIT_ADVANCED) {
         write_to_output(d, "Invalid Choice!\r\nEnter Choice : ");
         return;
@@ -1084,6 +1191,50 @@ void medit_parse(struct descriptor_data *d, char *arg)
     } else
       write_to_output(d, "Please answer 'Y' or 'N': ");
     break;
+  case MEDIT_RACE:
+	  if((i = atoi(arg)) > RACE_UNDEFINED && i < NUM_RACES) {
+		  /*
+		   * Reset the subrace to avoid some errors that will crash the game.
+		   */
+		  GET_SUBRACE(OLC_MOB(d)) = 0;
+		  GET_RACE(OLC_MOB(d)) = i;
+		  OLC_VAL(d) = TRUE;
+		  medit_disp_stats_menu(d);
+		  return;
+	  } 
+	  write_to_output(d,"Please select a valid race below:\r\n");
+	  medit_disp_race_selection(d);
+	  return;
+
+  case MEDIT_SUBRACE:
+	  if((i = atoi(arg)) > 0
+		&& ((IS_ELEMENTAL(OLC_MOB(d)) && i < NUM_ELE_SUBRACE)
+			|| (IS_DRACONIAN(OLC_MOB(d)) && i < SUBRACE_CHROMATIC_DRAGON)
+			|| (IS_DRAGON(OLC_MOB(d)) && i < NUM_DRC_SUBRACE))
+		) {
+		  GET_SUBRACE(OLC_MOB(d)) = i;
+		  OLC_VAL(d) = TRUE;
+		  medit_disp_stats_menu(d);
+		  return;
+	  }
+	  /*
+	   * The builder entered 0 or selected a wrong subrace for the current
+	   * mob's race. Alert the builder and display the selection again.
+	   */
+	  write_to_output(d, "Please select a valid subrace below:\r\n");
+	  medit_disp_subrace_selection(d);
+	  return;
+	  
+  case MEDIT_CLASS:
+	  if((i = atoi(arg)) > CLASS_UNDEFINED && i < NUM_CLASSES) {
+		  GET_CLASS(OLC_MOB(d)) = i;
+		  OLC_VAL(d) = TRUE;
+		  medit_disp_stats_menu(d);
+		  return;
+	  }
+	  write_to_output(d, "Please select a valid class below:\r\n");
+	  medit_disp_class_selection(d);
+	  return;
 
   default:
     /* We should never get here. */

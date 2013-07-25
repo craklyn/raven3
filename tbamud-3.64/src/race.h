@@ -12,6 +12,7 @@ bitvector_t find_race_bitvector	(const char *arg);
 int 		invalid_race		(struct char_data *ch, struct obj_data *obj);
 int			parse_race			(char arg);
 int         parse_race_all      (char arg);
+char        getRaceChar         (int race);
 
 #ifndef __RACE_C__
 

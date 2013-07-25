@@ -17,6 +17,8 @@
 #include "genzon.h"
 #include "dg_olc.h"
 #include "spells.h"
+#include "class.h"
+#include "race.h"
 
 /* local functions */
 static void extract_mobile_all(mob_vnum vnum);
@@ -327,6 +329,18 @@ int save_mobiles(zone_rnum rznum)
 
 int write_mobile_espec(mob_vnum mvnum, struct char_data *mob, FILE *fd)
 {
+
+	/*
+	 * This will save us from the horror of parsing race, subrace and class 
+	 * codes from mob files. For future use.
+	 */
+	if(GET_RACE(mob) != RACE_UNDEFINED)
+		fprintf(fd,"Race: %d\n",GET_RACE(mob));
+	if(GET_SUBRACE(mob) != 0)
+		fprintf(fd, "SubRace: %d\n", GET_SUBRACE(mob));
+	if(GET_CLASS(mob) != CLASS_UNDEFINED)
+		fprintf(fd, "Class: %d\n", GET_CLASS(mob));
+	
   if (GET_ATTACK(mob) != 0)
     fprintf(fd, "BareHandAttack: %d\n", GET_ATTACK(mob));
   if (GET_STR(mob) != 11)
@@ -362,18 +376,27 @@ int write_mobile_record(mob_vnum mvnum, struct char_data *mob, FILE *fd)
   char ldesc[MAX_STRING_LENGTH];
   char ddesc[MAX_STRING_LENGTH];
   char buf[MAX_STRING_LENGTH];
+  char raceClassSubraceBuf[MAX_STRING_LENGTH];
 
   ldesc[MAX_STRING_LENGTH - 1] = '\0';
   ddesc[MAX_STRING_LENGTH - 1] = '\0';
   strip_cr(strncpy(ldesc, GET_LDESC(mob), MAX_STRING_LENGTH - 1));
   strip_cr(strncpy(ddesc, GET_DDESC(mob), MAX_STRING_LENGTH - 1));
+  
+  sprintf(raceClassSubraceBuf,
+		  "%c %c %d", 
+		  getRaceChar(GET_RACE(mob)),
+		  getClassChar(GET_CLASS(mob)), 
+		  GET_SUBRACE(mob));
 
   sprintf(buf,	"#%d\n"
 		"%s%c\n"
 		"%s%c\n"
 		"%s%c\n"
+		"%s%c\n"
 		"%s%c\n",
 	mvnum,
+	raceClassSubraceBuf, STRING_TERMINATOR,
 	GET_ALIAS(mob), STRING_TERMINATOR,
 	GET_SDESC(mob), STRING_TERMINATOR,
 	ldesc, STRING_TERMINATOR,
