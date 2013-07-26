@@ -26,6 +26,27 @@
 #include "constants.h"
 #include "act.h"
 
+/*
+ * Local constants
+ */
+
+/*
+ * Table of class codes.
+ */
+const char classCodes[NUM_CLASSES] = {
+		'M', /* CLASS_MAGIC_USER */
+		'C', /* CLASS_CLERIC */
+		'T', /* CLASS_THIEF */
+		'W', /* CLASS_WARRIOR */
+		'R', /* CLASS_RANGER */
+		'A', /* CLASS_ASSASSIN */
+		'S', /* CLASS_SHOULIN */
+		'P', /* CLASS_SOLAMNIC_KNIGH */
+		'D', /* CLASS_DEATH_KNIGHT */
+		'H', /* CLASS_SHADOW_DANCER */
+		'N', /* CLASS_NECROMANCER */
+		'U'  /* CLASS_DRUID */
+};
 
 /* Names first */
 const char *class_abbrevs[] = {
@@ -2139,3 +2160,18 @@ const char *title_female(int chclass, int level)
   return "the Classless";
 }
 
+/**
+ * Returns the code (char) of the given chclass. If the given chclass is undefined
+ * return the class code for Warrior.
+ */
+char getClassChar(int chClass) {
+	char classCode = 'W';
+	
+	if(chClass > CLASS_UNDEFINED && chClass < NUM_CLASSES) {
+		classCode = classCodes[chClass];
+	} else {
+		log("SYSERR: Invalid class '%d' passed to getClassChar() in class.c", chClass);
+	}
+	
+	return classCode;
+}

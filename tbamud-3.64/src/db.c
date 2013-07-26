@@ -1570,6 +1570,42 @@ static void interpret_espec(const char *keyword, const char *value, int i, int n
    * possible, we don't actually have any.  Feel free to make some. */
   if (value)
     num_arg = atoi(value);
+  
+  /*
+   * This will save us from the horror of parsing race, subrace and class 
+   * codes from mob files. For future use.
+   */
+  CASE("Race") {
+	  RANGE(RACE_UNDEFINED + 1, NUM_RACES - 1);
+	  mob_proto[i].player.chrace = num_arg;
+  }
+  
+  CASE("SubRace") {
+	  RANGE(0, NUM_DRC_SUBRACE - 1);
+	  /*
+	   * Check for subrace validity, to avoid some errors
+	   */
+	  if(mob_proto[i].player.chrace == RACE_ELEMENTAL 
+			  && (num_arg <= SUBRACE_ELE_UNDEFINED || num_arg >= NUM_ELE_SUBRACE)) {
+		  //default to first available subrace
+		  num_arg = SUBRACE_ELE_UNDEFINED + 1;
+	  } else if ((mob_proto[i].player.chrace == RACE_DRACONIAN
+			  	  	  && (num_arg <= SUBRACE_DRC_UNDEFINED || num_arg >= SUBRACE_CHROMATIC_DRAGON))
+			  	  || (mob_proto[i].player.chrace == RACE_DRAGON
+					  && (num_arg <= SUBRACE_DRC_UNDEFINED || num_arg >= NUM_DRC_SUBRACE))) {
+		  num_arg = SUBRACE_DRC_UNDEFINED + 1;
+	  } else {		  
+		  // log a friendly warning
+		  log("WARNING: Subrace %d for mob #%d is not applicable.\n", num_arg, nr);
+		  num_arg = 0;
+	  }
+	  mob_proto[i].char_specials.saved.sub_race = num_arg;
+  }
+  
+  CASE("Class") {
+	  RANGE(CLASS_UNDEFINED + 1, NUM_CLASSES - 1);
+	  mob_proto[i].player.chclass = num_arg;
+  }
 
   CASE("BareHandAttack") {
     RANGE(0, NUM_ATTACK_TYPES - 1);
@@ -1706,7 +1742,7 @@ void parse_mobile(FILE *mob_f, int nr)
    */
   mob_RaceClassSubrace = fread_string (mob_f, buf2);
   if (*mob_RaceClassSubrace) {
-	  half_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
+	  case_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
 	  strxfrm(let_array, first_arg, strlen(first_arg));
 	  for (j = 0; j < strlen(first_arg); j++)
 		  if (isalpha(let_array[j])) break;
@@ -1722,7 +1758,7 @@ void parse_mobile(FILE *mob_f, int nr)
 	  race = 'H';
   }
   if (*mob_RaceClassSubrace) {
-	  half_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
+	  case_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
 	  strxfrm(let_array, first_arg, strlen(first_arg));
 	  for (j = 0; j < strlen(first_arg); j++)
 		  if (isalpha(let_array[j])) break;
