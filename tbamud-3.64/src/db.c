@@ -1586,13 +1586,13 @@ static void interpret_espec(const char *keyword, const char *value, int i, int n
 	   * Check for subrace validity, to avoid some errors
 	   */
 	  if(mob_proto[i].player.chrace == RACE_ELEMENTAL 
-			  && (num_arg <= SUBRACE_ELE_UNDEFINED || num_arg >= NUM_ELE_SUBRACE)) {
+			  && (num_arg > SUBRACE_ELE_UNDEFINED && num_arg < NUM_ELE_SUBRACE)) {
 		  //default to first available subrace
 		  num_arg = SUBRACE_ELE_UNDEFINED + 1;
 	  } else if ((mob_proto[i].player.chrace == RACE_DRACONIAN
-			  	  	  && (num_arg <= SUBRACE_DRC_UNDEFINED || num_arg >= SUBRACE_CHROMATIC_DRAGON))
+			  	  	  && (num_arg > SUBRACE_DRC_UNDEFINED && num_arg < SUBRACE_CHROMATIC_DRAGON))
 			  	  || (mob_proto[i].player.chrace == RACE_DRAGON
-					  && (num_arg <= SUBRACE_DRC_UNDEFINED || num_arg >= NUM_DRC_SUBRACE))) {
+					  && (num_arg > SUBRACE_DRC_UNDEFINED && num_arg < NUM_DRC_SUBRACE))) {
 		  num_arg = SUBRACE_DRC_UNDEFINED + 1;
 	  } else {		  
 		  // log a friendly warning
@@ -1720,9 +1720,9 @@ void parse_mobile(FILE *mob_f, int nr)
   int j, t[10], retval;
   char line[READ_SIZE], *tmpptr, letter;
   char f1[128], f2[128], f3[128], f4[128], f5[128], f6[128], f7[128], f8[128], buf2[128];
-  char *mob_RaceClassSubrace, first_arg[80], let_array[80];
-  char race, class;
-  int subrace;
+  char *mob_RaceClassSubrace;//, first_arg[80], let_array[80];
+  char race = -1, class = -1;
+  int subrace = 0, index = 0;
 
   mob_index[i].vnum = nr;
   mob_index[i].number = 0;
@@ -1741,48 +1741,41 @@ void parse_mobile(FILE *mob_f, int nr)
    * Implementation from RavenMUD code.
    */
   mob_RaceClassSubrace = fread_string (mob_f, buf2);
-  if (*mob_RaceClassSubrace) {
-	  case_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
-	  strxfrm(let_array, first_arg, strlen(first_arg));
-	  for (j = 0; j < strlen(first_arg); j++)
-		  if (isalpha(let_array[j])) break;
-	  if (j >= strlen(first_arg)) {
-		  log("WARNING: Invalid race entry %s for mob[%d]", first_arg, nr);
-		  race = 'H';
-	  }
-	  else
-		  race = let_array[j];
+  while(*mob_RaceClassSubrace) {
+    switch(index) {
+    /* race */
+    case 0:
+      if(isalpha(*mob_RaceClassSubrace)) {
+        race = *mob_RaceClassSubrace;
+      } else {
+        log("WARNING: Invalid race '%c' for mob #%d.", *mob_RaceClassSubrace, nr);
+        race = 'H';
+      }
+      break;
+    /* class */
+    case 2:
+      if(isalpha(*mob_RaceClassSubrace)) {
+        class = *mob_RaceClassSubrace;
+      } else {
+        log("WARNING: Invalid class '%c' for mob #%d.", *mob_RaceClassSubrace, nr);
+        class = 'W';
+      }
+      break;
+    /* subrace */
+    case 4:
+      if(isdigit(*mob_RaceClassSubrace)) {
+        subrace = atoi(mob_RaceClassSubrace);
+      } else {
+        log("WARNING: Invalid subrace '%c' for mob #%d", *mob_RaceClassSubrace, nr);
+        subrace = 0;
+      }
+      break;
+    }
+
+    index++;
+    mob_RaceClassSubrace++;
   }
-  else {
-	  log("WARNING: No race was entered for mob[%d]", nr);
-	  race = 'H';
-  }
-  if (*mob_RaceClassSubrace) {
-	  case_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
-	  strxfrm(let_array, first_arg, strlen(first_arg));
-	  for (j = 0; j < strlen(first_arg); j++)
-		  if (isalpha(let_array[j])) break;
-	  if (j >= strlen(first_arg)) {
-		  log("WARNING: Invalid class entry %s for mob[%d]", first_arg, nr);
-		  class = 'W';
-	  }
-	  else
-		  class = let_array[j];
-  }
-  else {
-	  log("WARNING: No class was entered for mob[%d]", nr);
-	  class = 'W';
-  }
-  if (*mob_RaceClassSubrace) {
-	  half_chop(mob_RaceClassSubrace, first_arg, mob_RaceClassSubrace);
-	  if (is_number(first_arg))
-		  subrace = atoi(first_arg);
-	  else
-		  subrace = 0;
-  }
-  else {
-	  subrace = 0;
-  }
+
 
   mob_proto[i].player.chclass = parse_class(class);
   mob_proto[i].player.chrace = parse_race_all(race);

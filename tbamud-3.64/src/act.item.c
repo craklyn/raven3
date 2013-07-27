@@ -1167,59 +1167,71 @@ ACMD(do_pour)
 static void wear_message(struct char_data *ch, struct obj_data *obj, int where)
 {
   const char *wear_messages[][2] = {
-    {"$n lights $p and holds it.",
-    "You light $p and hold it."},
+      {"$n lights $p and holds it.",
+       "You light $p and hold it."},
 
-    {"$n slides $p on to $s right ring finger.",
-    "You slide $p on to your right ring finger."},
+      {"$n slides $p on to $s right ring finger.",
+       "You slide $p on to your right ring finger."},
 
-    {"$n slides $p on to $s left ring finger.",
-    "You slide $p on to your left ring finger."},
+      {"$n slides $p on to $s left ring finger.",
+       "You slide $p on to your left ring finger."},
 
-    {"$n wears $p around $s neck.",
-    "You wear $p around your neck."},
+      {"$n wears $p as $s cloak.",
+       "You start to use $p as your cloak."},
 
-    {"$n wears $p around $s neck.",
-    "You wear $p around your neck."},
+      {"$n wears $p around $s neck.",
+       "You wear $p around your neck."},
 
-    {"$n wears $p on $s body.",
-    "You wear $p on your body."},
+      {"$n wears $p on $s body.",
+       "You wear $p on your body.",},
 
-    {"$n wears $p on $s head.",
-    "You wear $p on your head."},
+      {"$n wears $p on $s head.",
+       "You wear $p on your head."},
 
-    {"$n puts $p on $s legs.",
-    "You put $p on your legs."},
+      {"$n wears $p on $s ears.",
+       "You wear $p on your ears."},
 
-    {"$n wears $p on $s feet.",
-    "You wear $p on your feet."},
+      {"$n wears $p on $s face.",
+       "You wear $p on your face."},
 
-    {"$n puts $p on $s hands.",
-    "You put $p on your hands."},
+      {"$n puts $p on $s legs.",
+       "You put $p on your legs."},
 
-    {"$n wears $p on $s arms.",
-    "You wear $p on your arms."},
+      {"$n puts $p on $s ankles.",
+       "You put $p on your ankles."},
 
-    {"$n straps $p around $s arm as a shield.",
-    "You start to use $p as a shield."},
+      {"$n wears $p on $s feet.",
+       "You wear $p on your feet."},
 
-    {"$n wears $p about $s body.",
-    "You wear $p around your body."},
+      {"$n puts $p on $s hands.",
+       "You put $p on your hands."},
 
-    {"$n wears $p around $s waist.",
-    "You wear $p around your waist."},
+      {"$n wears $p on $s arms.",
+       "You wear $p on your arms."},
 
-    {"$n puts $p on around $s right wrist.",
-    "You put $p on around your right wrist."},
+      {"$n straps $p around $s arm as a shield.",
+       "You start to use $p as a shield."},
 
-    {"$n puts $p on around $s left wrist.",
-    "You put $p on around your left wrist."},
+      {"$n wears $p about $s body.",
+       "You wear $p around your body."},
 
-    {"$n wields $p.",
-    "You wield $p."},
+      {"$n wears $p around $s waist.",
+       "You wear $p around your waist."},
 
-    {"$n grabs $p.",
-    "You grab $p."}
+      {"$n puts $p on around $s right wrist.",
+       "You put $p on around your right wrist."},
+
+      {"$n puts $p on around $s left wrist.",
+       "You put $p on around your left wrist."},
+
+      {"$n wields $p.",
+       "You wield $p."},
+
+      {"$n grabs $p.",
+       "You grab $p."},
+
+      {"$n softly tosses $p and it starts to rotate around $s head.",
+       "You softly toss $p and it starts to rotate around your head."},
   };
 
   act(wear_messages[where][0], TRUE, ch, obj, 0, TO_ROOM);
@@ -1235,32 +1247,37 @@ static void perform_wear(struct char_data *ch, struct obj_data *obj, int where)
    */
 
   int wear_bitvectors[] = {
-    ITEM_WEAR_TAKE, ITEM_WEAR_FINGER, ITEM_WEAR_FINGER, ITEM_WEAR_NECK,
-    ITEM_WEAR_NECK, ITEM_WEAR_BODY, ITEM_WEAR_HEAD, ITEM_WEAR_LEGS,
-    ITEM_WEAR_FEET, ITEM_WEAR_HANDS, ITEM_WEAR_ARMS, ITEM_WEAR_SHIELD,
-    ITEM_WEAR_ABOUT, ITEM_WEAR_WAIST, ITEM_WEAR_WRIST, ITEM_WEAR_WRIST,
-    ITEM_WEAR_WIELD, ITEM_WEAR_TAKE
+      ITEM_WEAR_TAKE, ITEM_WEAR_FINGER, ITEM_WEAR_FINGER, ITEM_WEAR_CLOAK,
+      ITEM_WEAR_NECK, ITEM_WEAR_BODY, ITEM_WEAR_HEAD, ITEM_WEAR_EARS,
+      ITEM_WEAR_FACE, ITEM_WEAR_LEGS, ITEM_WEAR_ANKLES, ITEM_WEAR_FEET,
+      ITEM_WEAR_HANDS, ITEM_WEAR_ARMS, ITEM_WEAR_SHIELD, ITEM_WEAR_ABOUT,
+      ITEM_WEAR_WAIST, ITEM_WEAR_WRIST, ITEM_WEAR_WRIST, ITEM_WEAR_WIELD,
+      ITEM_WEAR_HOLD, ITEM_WEAR_ORBIT
   };
 
   const char *already_wearing[] = {
-    "You're already using a light.\r\n",
-    "YOU SHOULD NEVER SEE THIS MESSAGE.  PLEASE REPORT.\r\n",
-    "You're already wearing something on both of your ring fingers.\r\n",
-    "YOU SHOULD NEVER SEE THIS MESSAGE.  PLEASE REPORT.\r\n",
-    "You can't wear anything else around your neck.\r\n",
-    "You're already wearing something on your body.\r\n",
-    "You're already wearing something on your head.\r\n",
-    "You're already wearing something on your legs.\r\n",
-    "You're already wearing something on your feet.\r\n",
-    "You're already wearing something on your hands.\r\n",
-    "You're already wearing something on your arms.\r\n",
-    "You're already using a shield.\r\n",
-    "You're already wearing something about your body.\r\n",
-    "You already have something around your waist.\r\n",
-    "YOU SHOULD NEVER SEE THIS MESSAGE.  PLEASE REPORT.\r\n",
-    "You're already wearing something around both of your wrists.\r\n",
-    "You're already wielding a weapon.\r\n",
-    "You're already holding something.\r\n"
+      "You're already using a light.\r\n",
+      "YOU SHOULD NEVER SEE THIS MESSAGE.  PLEASE REPORT.\r\n",
+      "You're already wearing something on both of your ring fingers.\r\n",
+      "You are already wearing something as a cloak.\r\n",
+      "You can't wear anything else around your neck.\r\n",
+      "You're already wearing something on your body.\r\n",
+      "You're already wearing something on your head.\r\n",
+      "You're already wearing something on your ears.\r\n",
+      "You're already wearing something on your face.\r\n",
+      "You're already wearing something on your legs.\r\n",
+      "You're already wearing something on your ankles.\r\n",
+      "You're already wearing something on your feet.\r\n",
+      "You're already wearing something on your hands.\r\n",
+      "You're already wearing something on your arms.\r\n",
+      "You're already using a shield.\r\n",
+      "You're already wearing something about your body.\r\n",
+      "You already have something around your waist.\r\n",
+      "YOU SHOULD NEVER SEE THIS MESSAGE.  PLEASE REPORT.\r\n",
+      "You're already wearing something around both of your wrists.\r\n",
+      "You're already wielding a weapon.\r\n",
+      "You're already holding something.\r\n",
+      "Nothing else can orbit your head.\r\n",
   };
 
   /* first, make sure that the wear position is valid. */
@@ -1269,7 +1286,7 @@ static void perform_wear(struct char_data *ch, struct obj_data *obj, int where)
     return;
   }
   /* for neck, finger, and wrist, try pos 2 if pos 1 is already full */
-  if ((where == WEAR_FINGER_R) || (where == WEAR_NECK_1) || (where == WEAR_WRIST_R))
+  if ((where == WEAR_FINGER_R) || (where == WEAR_CLOAK) || (where == WEAR_WRIST_R))
     if (GET_EQ(ch, where))
       where++;
 
@@ -1292,30 +1309,35 @@ int find_eq_pos(struct char_data *ch, struct obj_data *obj, char *arg)
   int where = -1;
 
   const char *keywords[] = {
-    "!RESERVED!",
-    "finger",
-    "!RESERVED!",
-    "neck",
-    "!RESERVED!",
-    "body",
-    "head",
-    "legs",
-    "feet",
-    "hands",
-    "arms",
-    "shield",
-    "about",
-    "waist",
-    "wrist",
-    "!RESERVED!",
-    "!RESERVED!",
-    "!RESERVED!",
-    "\n"
+      "!RESERVED!",
+      "finger",
+      "!RESERVED!",
+      "cloak",
+      "neck",
+      "body",
+      "head",
+      "ears",
+      "face",
+      "legs",
+      "ankles",
+      "feet",
+      "hands",
+      "arms",
+      "shield",
+      "about",
+      "waist",
+      "wrist",
+      "!RESERVED!",
+      "!RESERVED!",
+      "!RESERVED!",
+      "orbit",
+      "\n"
   };
 
   if (!arg || !*arg) {
     if (CAN_WEAR(obj, ITEM_WEAR_FINGER))      where = WEAR_FINGER_R;
-    if (CAN_WEAR(obj, ITEM_WEAR_NECK))        where = WEAR_NECK_1;
+    if (CAN_WEAR(obj, ITEM_WEAR_CLOAK))       where = WEAR_CLOAK;
+    if (CAN_WEAR(obj, ITEM_WEAR_NECK))        where = WEAR_NECK;
     if (CAN_WEAR(obj, ITEM_WEAR_BODY))        where = WEAR_BODY;
     if (CAN_WEAR(obj, ITEM_WEAR_HEAD))        where = WEAR_HEAD;
     if (CAN_WEAR(obj, ITEM_WEAR_LEGS))        where = WEAR_LEGS;
@@ -1326,6 +1348,11 @@ int find_eq_pos(struct char_data *ch, struct obj_data *obj, char *arg)
     if (CAN_WEAR(obj, ITEM_WEAR_ABOUT))       where = WEAR_ABOUT;
     if (CAN_WEAR(obj, ITEM_WEAR_WAIST))       where = WEAR_WAIST;
     if (CAN_WEAR(obj, ITEM_WEAR_WRIST))       where = WEAR_WRIST_R;
+    if (CAN_WEAR(obj, ITEM_WEAR_FACE))        where = WEAR_FACE;
+    if (CAN_WEAR(obj, ITEM_WEAR_EARS))        where = WEAR_EARS;
+    if (CAN_WEAR(obj, ITEM_WEAR_ANKLES))      where = WEAR_ANKLES;
+    if (CAN_WEAR(obj, ITEM_WEAR_ORBIT))       where = WEAR_ORIBIT;
+
   } else if ((where = search_block(arg, keywords, FALSE)) < 0)
     send_to_char(ch, "'%s'?  What part of your body is THAT?\r\n", arg);
 
