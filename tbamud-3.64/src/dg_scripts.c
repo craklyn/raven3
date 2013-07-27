@@ -227,11 +227,14 @@ int find_eq_pos_script(char *arg)
     {"wield",    WEAR_WIELD},
     {"rfinger",  WEAR_FINGER_R},
     {"lfinger",  WEAR_FINGER_L},
-    {"neck1",    WEAR_NECK_1},
-    {"neck2",    WEAR_NECK_2},
+    {"cloak",    WEAR_CLOAK},
+    {"neck2",    WEAR_NECK},
     {"body",     WEAR_BODY},
     {"head",     WEAR_HEAD},
+    {"ears",     WEAR_EARS},
+    {"face",     WEAR_FACE},
     {"legs",     WEAR_LEGS},
+    {"ankles",   WEAR_ANKLES},
     {"feet",     WEAR_FEET},
     {"hands",    WEAR_HANDS},
     {"arms",     WEAR_ARMS},
@@ -240,6 +243,7 @@ int find_eq_pos_script(char *arg)
     {"waist",    WEAR_WAIST},
     {"rwrist",   WEAR_WRIST_R},
     {"lwrist",   WEAR_WRIST_L},
+    {"orbit",    WEAR_ORIBIT},
     {"none", -1}
   };
 
@@ -266,8 +270,8 @@ int can_wear_on_pos(struct obj_data *obj, int pos)
     case WEAR_WIELD:    return CAN_WEAR(obj, ITEM_WEAR_WIELD);
     case WEAR_FINGER_R:
     case WEAR_FINGER_L: return CAN_WEAR(obj, ITEM_WEAR_FINGER);
-    case WEAR_NECK_1:
-    case WEAR_NECK_2:   return CAN_WEAR(obj, ITEM_WEAR_NECK);
+    case WEAR_CLOAK:    return CAN_WEAR(obj, ITEM_WEAR_CLOAK);
+    case WEAR_NECK:     return CAN_WEAR(obj, ITEM_WEAR_NECK);
     case WEAR_BODY:     return CAN_WEAR(obj, ITEM_WEAR_BODY);
     case WEAR_HEAD:     return CAN_WEAR(obj, ITEM_WEAR_HEAD);
     case WEAR_LEGS:     return CAN_WEAR(obj, ITEM_WEAR_LEGS);
@@ -279,6 +283,10 @@ int can_wear_on_pos(struct obj_data *obj, int pos)
     case WEAR_WAIST:    return CAN_WEAR(obj, ITEM_WEAR_WAIST);
     case WEAR_WRIST_R:
     case WEAR_WRIST_L:  return CAN_WEAR(obj, ITEM_WEAR_WRIST);
+    case WEAR_FACE:     return CAN_WEAR(obj, ITEM_WEAR_FACE);
+    case WEAR_EARS:     return CAN_WEAR(obj, ITEM_WEAR_EARS);
+    case WEAR_ANKLES:   return CAN_WEAR(obj, ITEM_WEAR_ANKLES);
+    case WEAR_ORIBIT:  return CAN_WEAR(obj, ITEM_WEAR_ORBIT);
     default: return FALSE;
   }
 }

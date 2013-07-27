@@ -48,7 +48,7 @@ static void medit_disp_class_selection(struct descriptor_data *d);
 /*  utility functions */
 ACMD(do_oasis_medit)
 {
-  int number = NOBODY, save = 0, real_num;
+  int number = NOBODY, save = 0, real_num, all = 0;
   struct descriptor_data *d;
   char *buf3;
   char buf1[MAX_STRING_LENGTH];
@@ -81,16 +81,18 @@ ACMD(do_oasis_medit)
         number = NOWHERE;
       else
         number = genolc_zone_bottom(zlok);
+    } else if(GET_LEVEL(ch) >= LVL_GRGOD && is_abbrev(buf2, "all")) {
+      all = TRUE;
     }
 
-    if (number == NOWHERE) {
+    if (number == NOWHERE && !all) {
       send_to_char(ch, "Save which zone?\r\n");
       return;
     }
   }
 
   /* If a numeric argument was given (like a room number), get it. */
-  if (number == NOBODY)
+  if (number == NOBODY && !all)
     number = atoi(buf1);
 
   /* Check that whatever it is isn't already being edited. */
@@ -117,7 +119,7 @@ ACMD(do_oasis_medit)
 
   /* Find the zone. */
   OLC_ZNUM(d) = save ? real_zone(number) : real_zone_by_thing(number);
-  if (OLC_ZNUM(d) == NOWHERE) {
+  if (OLC_ZNUM(d) == NOWHERE && !all) {
     send_to_char(ch, "Sorry, there is no zone for that number!\r\n");
     free(d->olc);
     d->olc = NULL;
@@ -125,7 +127,7 @@ ACMD(do_oasis_medit)
   }
 
   /* Everyone but IMPLs can only edit zones they have been assigned. */
-  if (!can_edit_zone(ch, OLC_ZNUM(d))) {
+  if (!can_edit_zone(ch, OLC_ZNUM(d)) && !all) {
     send_cannot_edit(ch, zone_table[OLC_ZNUM(d)].number);
     /* Free the OLC structure. */
     free(d->olc);
@@ -135,14 +137,23 @@ ACMD(do_oasis_medit)
 
   /* If save is TRUE, save the mobiles. */
   if (save) {
-    send_to_char(ch, "Saving all mobiles in zone %d.\r\n",
-      zone_table[OLC_ZNUM(d)].number);
-    mudlog(CMP, MAX(LVL_BUILDER, GET_INVIS_LEV(ch)), TRUE,
-      "OLC: %s saves mobile info for zone %d.",
-      GET_NAME(ch), zone_table[OLC_ZNUM(d)].number);
+    zone_rnum iZone = 0, zStart = 0, zEnd = top_of_zone_table + 1;
 
-    /* Save the mobiles. */
-    save_mobiles(OLC_ZNUM(d));
+    if(!all) {
+      zStart = OLC_ZNUM(d);
+      zEnd = OLC_ZNUM(d) + 1;
+    }
+    for(iZone = zStart; iZone < zEnd; iZone++) {
+      OLC_ZNUM(d) = iZone;
+      send_to_char(ch, "Saving all mobiles in zone %d.\r\n",
+          zone_table[OLC_ZNUM(d)].number);
+      mudlog(CMP, MAX(LVL_BUILDER, GET_INVIS_LEV(ch)), TRUE,
+          "OLC: %s saves mobile info for zone %d.",
+          GET_NAME(ch), zone_table[OLC_ZNUM(d)].number);
+
+      /* Save the mobiles. */
+      save_mobiles(OLC_ZNUM(d));
+    }
 
     /* Free the olc structure stored in the descriptor. */
     free(d->olc);

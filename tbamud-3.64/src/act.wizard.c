@@ -3529,7 +3529,12 @@ struct zcheck_armor {
   {ITEM_WEAR_ABOUT,  10, "Cloak"},
   {ITEM_WEAR_WAIST,  10, "Belt"},
   {ITEM_WEAR_WRIST,  10, "Wristwear"},
-  {ITEM_WEAR_HOLD,   10, "Held item"}
+  {ITEM_WEAR_HOLD,   10, "Held item"},
+  {ITEM_WEAR_CLOAK,  10, "Cloak"},
+  {ITEM_WEAR_FACE,   10, "Mask"},
+  {ITEM_WEAR_EARS,    10, "Earrings"},
+  {ITEM_WEAR_ANKLES, 10, "Anklets"},
+  {ITEM_WEAR_ORBIT,  10, "Orbital"},
 };
 
 /*These are strictly boolean*/
