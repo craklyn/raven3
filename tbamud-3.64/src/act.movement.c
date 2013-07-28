@@ -94,17 +94,17 @@ int has_scuba(struct char_data *ch)
   if (GET_LEVEL(ch) > LVL_IMMORT)
     return (1);
 
-  if (AFF_FLAGGED(ch, AFF_SCUBA))
+  if (AFF_FLAGGED(ch, AFF_AIRSPHERE))
     return (1);
 
   /* Non-wearable scuba items in inventory will do it. */
   for (obj = ch->carrying; obj; obj = obj->next_content)
-    if (OBJAFF_FLAGGED(obj, AFF_SCUBA) && (find_eq_pos(ch, obj, NULL) < 0))
+    if (OBJAFF_FLAGGED(obj, AFF_AIRSPHERE) && (find_eq_pos(ch, obj, NULL) < 0))
       return (1);
 
   /* Any equipped objects with AFF_SCUBA will do it too. */
   for (i = 0; i < NUM_WEARS; i++)
-    if (GET_EQ(ch, i) && OBJAFF_FLAGGED(GET_EQ(ch, i), AFF_SCUBA))
+    if (GET_EQ(ch, i) && OBJAFF_FLAGGED(GET_EQ(ch, i), AFF_AIRSPHERE))
       return (1);
 
   return (0);

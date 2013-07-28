@@ -306,7 +306,7 @@
 #define MOB_SENTINEL        1   /**< Mob should not move */
 #define MOB_SCAVENGER       2   /**< Mob picks up stuff on the ground */
 #define MOB_ISNPC           3   /**< (R) Automatically set on all Mobs */
-#define MOB_AWARE	    4   /**< Mob can't be backstabbed */
+#define MOB_AWARE	          4   /**< Mob can't be backstabbed */
 #define MOB_AGGRESSIVE      5   /**< Mob auto-attacks everybody nearby */
 #define MOB_STAY_ZONE       6   /**< Mob shouldn't wander out of zone */
 #define MOB_WIMPY           7   /**< Mob flees if severely injured */
@@ -320,10 +320,25 @@
 #define MOB_NOSLEEP        15   /**< Mob can't be slept */
 #define MOB_NOBASH         16   /**< Mob can't be bashed (e.g. trees) */
 #define MOB_NOBLIND        17   /**< Mob can't be blinded */
-#define MOB_NOKILL         18   /**< Mob can't be attacked */
-#define MOB_NOTDEADYET     19   /**< (R) Mob being extracted */
+#define MOB_CONJURED       18   /**< Mob has been conjured/summoned    */
+#define MOB_SEEKTORMENTOR  19
+#define MOB_SUPERAGG       20   /**< Mob is REALLY pissed off          */
+#define MOB_MOUNT          21   /**< Mob can be ridden.                */
+#define MOB_CLONED         22   /**< Mob is a clone.                   */
+#define MOB_PREDATOR       23   /**< The mob attacks the weakest player in the room */
+#define MOB_GUARD_CLASS    24   /**< Mob will block players not of his class */
+#define MOB_GUARD_RACE     25   /**< Mob will block players not of his race */
+#define MOB_GUARD_BOTH     26   /**< Mob will block players !his race/class */
+#define MOB_QUESTMASTER    27   /**< Mob is allowed to give out quests */
+#define MOB_TELEPORTS      28   /**< Mob can teleport instead of walk */
+#define MOB_TERRORIZE      39   /**< Mob is a bully and a braggart! */
+#define MOB_NONOX          30   /**< Mob not affected by Nox */
+#define MOB_GRENADER       31   /** Mob lobs flashbangs at adjacent rooms */
+#define MOB_EVASIVE        32
+#define MOB_NOTDEADYET     33   /**< (R) Mob being extracted */
+#define MOB_NOKILL         34   /**< Mob can't be attacked */
 
-#define NUM_MOB_FLAGS      19
+#define NUM_MOB_FLAGS      35
 
 /* Preference flags: used by char_data.player_specials.pref */
 #define PRF_BRIEF         0   /**< Room descs won't normally be shown */
@@ -366,30 +381,63 @@
 /* Affect bits: used in char_data.char_specials.saved.affected_by */
 /* WARNING: In the world files, NEVER set the bits marked "R" ("Reserved") */
 #define AFF_DONTUSE         0   /**< DON'T USE! */
-#define AFF_BLIND           1   /**< (R) Char is blind */
-#define AFF_INVISIBLE       2   /**< Char is invisible */
-#define AFF_DETECT_ALIGN    3   /**< Char is sensitive to align */
-#define AFF_DETECT_INVIS    4   /**< Char can see invis chars */
-#define AFF_DETECT_MAGIC    5   /**< Char is sensitive to magic */
-#define AFF_SENSE_LIFE      6   /**< Char can sense hidden life */
-#define AFF_WATERWALK       7   /**< Char can walk on water */
-#define AFF_SANCTUARY       8   /**< Char protected by sanct */
-#define AFF_UNUSED          9   /**< (R) Char is grouped */
-#define AFF_CURSE          10   /**< Char is cursed */
-#define AFF_INFRAVISION    11   /**< Char can see in dark */
-#define AFF_POISON         12   /**< (R) Char is poisoned */
-#define AFF_PROTECT_EVIL   13   /**< Char protected from evil */
-#define AFF_PROTECT_GOOD   14   /**< Char protected from good */
-#define AFF_SLEEP          15   /**< (R) Char magically asleep */
-#define AFF_NOTRACK        16   /**< Char can't be tracked */
-#define AFF_FLYING         17   /**< Char is flying */
-#define AFF_SCUBA          18   /**< Room for future expansion */
-#define AFF_SNEAK          19   /**< Char can move quietly */
-#define AFF_HIDE           20   /**< Char is hidden */
-#define AFF_FREE           21   /**< Room for future expansion */
-#define AFF_CHARM          22   /**< Char is charmed */
+#define AFF_INVISIBLE       1   /**< Char is invisible */
+#define AFF_DETECT_ALIGN    2   /**< Char is sensitive to align */
+#define AFF_DETECT_INVIS    3   /**< Char can see invis chars */
+#define AFF_DETECT_MAGIC    4   /**< Char is sensitive to magic */
+#define AFF_SENSE_LIFE      5   /**< Char can sense hidden life */
+#define AFF_SHADOW_WALK     6   /**< Char can walk on water */
+#define AFF_SANCTUARY       7   /**< Char protected by sanct */
+#define AFF_GROUP           8   /**< (R) Char is grouped */
+#define AFF_CURSE           9   /**< Char is cursed */
+#define AFF_INFRAVISION    10   /**< Char can see in dark */
+#define AFF_POISON         11   /**< (R) Char is poisoned */
+#define AFF_PROTECT_EVIL   12   /**< Char protected from evil */
+#define AFF_PROTECT_GOOD   13   /**< Char protected from good */
+#define AFF_SLEEP          14   /**< (R) Char magically asleep */
+#define AFF_NOTRACK        15   /**< Char can't be tracked */
+#define AFF_FLYING         16   /**< Char is flying */
+#define AFF_REGENERATE     17   /**< Char is regenerating       */
+#define AFF_SNEAK          18   /**< Char can move quietly  */
+#define AFF_HIDE           19   /**< Char is hidden   */
+#define AFF_HASTE          20   /**< Char is hasted/slowed */
+#define AFF_CHARM          21   /**< Char is charmed    */
+#define AFF_SHIELD         22   /**< Char is shielded          */
+#define AFF_PARALYZE       23   /**< Char is paralyzed         */
+#define AFF_AIRSPHERE      24   /**< Char can breathe water    */
+#define AFF_PLAGUE         25   /**< It has he PLAGUE!         */
+#define AFF_SHIELDBLOCK    26   /**< Char is shieldblocking    */
+#define AFF_SILENCE        27   /**< Char is silent            */
+#define AFF_MOUNTED        28   /**< Char is riding a mount    */
+#define AFF_WARD           29   /**< Char is warded            */
+#define AFF_SHADOW_SPHERE  30   /**< Char is in shadow sphere  */
+#define AFF_BERSERK        31   /**< Char is berserk!          */
+#define AFF_NO_HOT         32   /**< Char can withstand hot  */
+#define AFF_NO_COLD        33   /**< Char can withstand cold */
+#define AFF_NO_DRY         34   /**< Char can withstand dry */
+#define AFF_BLIND          35   /**< Char is blind */
+#define AFF_WEB            36   /**< Char is Webbed */
+#define AFF_BLINK          37   /**< Char has dodge for a while */
+#define AFF_FEEBLE         38   /**< Char is feebleminded */
+#define AFF_ASSISTANT      39   /**< Char has a divine assistant */
+#define AFF_FORTIFY        40   /**< Char is being fortified */
+#define AFF_HAMSTRUNG      41   /**< Char has been hamstrung */
+#define AFF_PULSE_HIT      42   /**< Pulse heal hitpoints */
+#define AFF_PULSE_MANA     43   /**< Pulse heal mana */
+#define AFF_DISTRACT       44   /**< distracted */
+#define AFF_CRUSADE        45   /**< crusading */
+#define AFF_APOCALYPSE     46   /**< Char has an Aura of Apocalypse */
+#define AFF_MISSION        47   /**< Char is on a Divine Mission */
+#define AFF_UNUSED         48   /**< UNUSED! ex-SHIELDSTUN */
+#define AFF_LORE           49   /**< Char is using forest lore */
+#define AFF_LEARNING       50   /**< Char gets a 2x boost to exp */
+#define AFF_FLAME_BLADE    51   /**< 1d4+level/10 to damage, type burn */
+#define AFF_UNUSED2        52   /**< Not currently used.  Used to be sunvisor*/
+#define AFF_WRAITHFORM     53   /**< Not entirely pyhsically present */
+#define AFF_DISEASE        54   /**< A much nastier form of poison */
+#define AFF_WATERWALK      55   /**< Char can walk on water */
 /** Total number of affect flags not including the don't use flag. */
-#define NUM_AFF_FLAGS   22
+#define NUM_AFF_FLAGS   56
 
 /* Modes of connectedness: used by descriptor_data.state 		*/
 #define CON_PLAYING       0 /**< Playing - Nominal state 		*/
@@ -464,6 +512,7 @@
 
 /* object-related defines */
 /* Item types: used by obj_data.obj_flags.type_flag */
+#define ITEM_UNDEFINED  0   /**< Items is undefined */
 #define ITEM_LIGHT      1		/**< Item is a light source	*/
 #define ITEM_SCROLL     2		/**< Item is a scroll		*/
 #define ITEM_WAND       3		/**< Item is a wand		*/
@@ -487,8 +536,13 @@
 #define ITEM_PEN       21		/**< Item is a pen		*/
 #define ITEM_BOAT      22		/**< Item is a boat		*/
 #define ITEM_FOUNTAIN  23		/**< Item is a fountain		*/
+#define ITEM_PORTAL    24   /**< Item is a portal of some kind.  */
+#define ITEM_SCRIBE    25   /**< Item is paper for scribing    */
+#define ITEM_AFFECT    26   /**< Item is has a room/spell affect */
+#define ITEM_DUST      27   /**< Item is a pile of dust          */
+#define ITEM_POLE      28   /**< Item is a fishing pole          */
 /** Total number of item types.*/
-#define NUM_ITEM_TYPES    24
+#define NUM_ITEM_TYPES 29
 
 /* Take/Wear flags: used by obj_data.obj_flags.wear_flags */
 #define ITEM_WEAR_TAKE      0   /**< Item can be taken */
@@ -515,26 +569,67 @@
 #define NUM_ITEM_WEARS    20
 
 /* Extra object flags: used by obj_data.obj_flags.extra_flags */
-#define ITEM_GLOW              0   /**< Item is glowing */
-#define ITEM_HUM               1   /**< Item is humming */
-#define ITEM_NORENT            2   /**< Item cannot be rented */
-#define ITEM_NODONATE          3   /**< Item cannot be donated */
-#define ITEM_NOINVIS           4   /**< Item cannot be made invis	*/
-#define ITEM_INVISIBLE         5   /**< Item is invisible */
-#define ITEM_MAGIC             6   /**< Item is magical */
-#define ITEM_NODROP            7   /**< Item is cursed: can't drop */
-#define ITEM_BLESS             8   /**< Item is blessed */
-#define ITEM_ANTI_GOOD         9   /**< Not usable by good people	*/
-#define ITEM_ANTI_EVIL        10   /**< Not usable by evil people	*/
-#define ITEM_ANTI_NEUTRAL     11   /**< Not usable by neutral people */
-#define ITEM_ANTI_MAGIC_USER  12   /**< Not usable by mages */
-#define ITEM_ANTI_CLERIC      13   /**< Not usable by clerics */
-#define ITEM_ANTI_THIEF	      14   /**< Not usable by thieves */
-#define ITEM_ANTI_WARRIOR     15   /**< Not usable by warriors */
-#define ITEM_NOSELL           16   /**< Shopkeepers won't touch it */
-#define ITEM_QUEST            17   /**< Item is a quest item         */
+#define ITEM_GLOW                  0  /**< Item is glowing */
+#define ITEM_HUM                   1  /**< Item is humming */
+#define ITEM_NORENT                2  /**< Item cannot be rented */
+#define ITEM_NODONATE              3  /**< Item cannot be donated */
+#define ITEM_NOINVIS               4  /**< Item cannot be made invis	*/
+#define ITEM_INVISIBLE             5  /**< Item is invisible */
+#define ITEM_MAGIC                 6  /**< Item is magical */
+#define ITEM_NODROP                7  /**< Item is cursed: can't drop */
+#define ITEM_BLESS                 8  /**< Item is blessed */
+#define ITEM_ANTI_GOOD             9  /**< Not usable by good people	*/
+#define ITEM_ANTI_EVIL            10  /**< Not usable by evil people	*/
+#define ITEM_ANTI_NEUTRAL         11  /**< Not usable by neutral people */
+#define ITEM_ANTI_MAGIC_USER      12  /**< Not usable by mages */
+#define ITEM_ANTI_CLERIC          13  /**< Not usable by clerics */
+#define ITEM_ANTI_THIEF	          14  /**< Not usable by thieves */
+#define ITEM_ANTI_WARRIOR         15  /**< Not usable by warriors */
+#define ITEM_NOSELL               16  /**< Shopkeepers won't touch it */
+#define ITEM_ANTI_RANGER          17  /**< Not usable by rangers  */
+#define ITEM_ANTI_ASSASSIN        18  /**< Not usable by assassins  */
+#define ITEM_ANTI_SHOU_LIN        19  /**< Not usable by shou lin */
+#define ITEM_ANTI_SOLAMNIC_KNIGHT 20  /**< Not usable by solamnic knights */
+#define ITEM_ANTI_DEATH_KNIGHT    21  /**< Not usable by death knights  */
+#define ITEM_ANTI_SHADOW_DANCER   22  /**< Not usable by shadow dancers */
+#define ITEM_TIMED                23  /**< Item will disappear when its timer reaches 0 */
+#define ITEM_EXPLODES             24  /**< Explodable */
+#define ITEM_ARTIFACT             25  /**< This is an artifact */
+#define ITEM_NOLOCATE             26  /**< Item can't be located */
+#define ITEM_ANTI_MINOTAUR        27  /**< Item can't be worn by minotaurs */
+#define ITEM_ANTI_GNOME           28  /**< Item can't be worn by gnomes */
+#define ITEM_ANTI_ORC             29  /**< Item can't be worn by orcs */
+#define ITEM_ANTI_ELF             30  /**< Item can't be worn by elfs */
+#define ITEM_ANTI_DRACONIAN       31  /**< Item can't be worn by draconians */
+#define ITEM_ANTI_HALFLING        32  /**< Item can't be worn by halflings */
+#define ITEM_ANTI_OGRE            33  /**< Item can't be worn by ogres */
+#define ITEM_ANTI_TROLL           34  /**< Item can't be worn by trolls */
+#define ITEM_ANTI_DWARF           35  /**< Item can't be worn by dwarfs */
+#define ITEM_ANTI_HUMAN           36  /**< Item can't be worn by humans */
+#define ITEM_ANTI_NECROMANCER     37  /**< Item can't be worn by necros */
+#define ITEM_MAIN_PART            38  /**< Item is main part for inserts */
+#define ITEM_INSERT               39  /**< Item can be inserted into other items*/
+#define ITEM_ARENA                40  /**< Item is for arena use */
+#define ITEM_ANTI_DEMON           41  /**< Item can't be worn by demons */
+#define ITEM_ANTI_IZARTI          42  /**< Item can't be worn by izarti */
+#define ITEM_ANTI_VAMPIRE         43  /**< Item can't be worn by vampires */
+#define ITEM_ANTI_WEREWOLF        44  /**< Item can't be worn by werewolves */
+#define ITEM_ANTI_ELEMENTAL       45  /**< Item can't be worn by elementals */
+#define ITEM_ANTI_GIANT           46  /**< Item can't be worn by giants */
+#define ITEM_ANTI_FAERIE          47  /**< Item can't be worn by faeries */
+#define ITEM_ANTI_AMARA           48  /**< Item can't be worn by amara */
+#define ITEM_ANTI_UNDEAD          49  /**< Item can't be worn by undead */
+#define ITEM_ANTI_DROW            50  /**< Item can't be worn by drow */
+#define ITEM_LOOTED               51  /**< Corpse has been looted by a player */
+#define ITEM_IDENTIFIED           52  /**< Item has been identified   */
+#define ITEM_RANDOMIZED           53  /**< Items' stats are randomized */
+#define ITEM_SOULBOUND            54  /**< Item cannot be transfered   */
+#define ITEM_ANTI_REMORT          55  /**< Item cannot be worn by remorts */
+#define ITEM_ANTI_PREMORT         56  /**< Item cannot be worn by premorts */
+#define ITEM_TROPHY               57  /**< Item is a trophy, and will dissapear eventually */
+#define ITEM_QUEST                58  /**< Item is a quest item         */
 /** Total number of item flags */
-#define NUM_ITEM_FLAGS    18
+#define NUM_ITEM_FLAGS            59
 
 /* Modifier constants used with obj affects ('A' fields) */
 #define APPLY_NONE              0	/**< No effect			*/
@@ -562,8 +657,17 @@
 #define APPLY_SAVING_PETRI     22	/**< Apply to save throw: petrif	*/
 #define APPLY_SAVING_BREATH    23	/**< Apply to save throw: breath	*/
 #define APPLY_SAVING_SPELL     24	/**< Apply to save throw: spells	*/
+#define APPLY_POISON           25 /**< Item can poison vistim       */
+#define APPLY_PLAGUE           26 /**< Item can plague victim       */
+#define APPLY_SPELL_COST       27 /**< Item reduces cost of spells  */
+#define APPLY_SPELL_SAVE       28 /**< Affects victims saving throw */
+#define APPLY_SPELL_DAMAGE     29 /**< Will increase spell damage   */
+#define APPLY_SPELL_DURATION   30 /**< Will increase spell duration */
+#define APPLY_SKILL_SUCCESS    31 /**< Affects chance of spells working */
+#define APPLY_UNUSED           32 /**< Affects chance of skills working */
+#define APPLY_USELEVEL         33 /**< min/max level to use an object */
 /** Total number of applies */
-#define NUM_APPLIES   25
+#define NUM_APPLIES            34
 
 /* Equals the total number of SAVING_* defines in spells.h */
 #define NUM_OF_SAVING_THROWS  5

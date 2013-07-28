@@ -566,8 +566,8 @@ static void oedit_disp_extra_menu(struct descriptor_data *d)
   clear_screen(d);
 
   for (counter = 0; counter < NUM_ITEM_FLAGS; counter++) {
-    write_to_output(d, "%s%2d%s) %-20.20s %s", grn, counter + 1, nrm,
-		extra_bits[counter], !(++columns % 2) ? "\r\n" : "");
+    write_to_output(d, "%s%2d%s) %-15.15s %s", grn, counter + 1, nrm,
+		extra_bits[counter], !(++columns % 4) ? "\r\n" : "");
   }
   sprintbitarray(GET_OBJ_EXTRA(OLC_OBJ(d)), extra_bits, EF_ARRAY_MAX, bits);
   write_to_output(d, "\r\nObject flags: %s%s%s\r\n"
