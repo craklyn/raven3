@@ -36,14 +36,37 @@ static void medit_save_to_disk(zone_vnum zone_num);
 static void medit_disp_positions(struct descriptor_data *d);
 static void medit_disp_sex(struct descriptor_data *d);
 static void medit_disp_attack_types(struct descriptor_data *d);
-static bool medit_illegal_mob_flag(int fl);
-static int  medit_get_mob_flag_by_number(int num);
+static bool medit_illegal_flag(int fl, int num_illegal_flags, const int illegal_flags[]);
+static int  medit_get_flag_by_number(int num, int num_flags, int num_illegal_flags, const int illegal_flags[]);
 static void medit_disp_mob_flags(struct descriptor_data *d);
 static void medit_disp_aff_flags(struct descriptor_data *d);
 static void medit_disp_menu(struct descriptor_data *d);
 static void medit_disp_race_selection(struct descriptor_data *d);
 static void medit_disp_subrace_selection(struct descriptor_data *d);
 static void medit_disp_class_selection(struct descriptor_data *d);
+
+/* Illegal mob flags */
+const int illegal_mob_flags[] = {
+    MOB_ISNPC,
+    MOB_CONJURED,
+    MOB_CLONED,
+    MOB_NOTDEADYET,
+};
+
+#define NUM_ILLEGAL_MOB_FLAGS 4
+
+/* Illegal mob affects */
+const int illegal_aff_flags[] = {
+    AFF_DONTUSE,
+    AFF_GROUP,
+    AFF_CHARM,
+    AFF_ASSISTANT,
+    AFF_FORTIFY,
+    AFF_UNUSED,
+    AFF_UNUSED2,
+};
+
+#define NUM_ILLEGAL_AFF_FLAGS 7
 
 /*  utility functions */
 ACMD(do_oasis_medit)
@@ -346,38 +369,27 @@ static void medit_disp_attack_types(struct descriptor_data *d)
   write_to_output(d, "Enter attack type : ");
 }
 
-/* Find mob flags that shouldn't be set by builders */
-static bool medit_illegal_mob_flag(int fl)
-{
+/* Find flags that shouldn't be set by builders */
+static bool medit_illegal_flag(int fl, int num_illegal_flags, const int illegal_flags[]) {
   int i;
-
-  /* add any other flags you dont want them setting */
-  const int illegal_flags[] = {
-    MOB_ISNPC,
-    MOB_NOTDEADYET,
-  };
-
-  const int num_illegal_flags = sizeof(illegal_flags)/sizeof(int);
-
 
   for (i=0; i < num_illegal_flags;i++)
     if (fl == illegal_flags[i])
-      return (TRUE);
+      return TRUE;
 
-  return (FALSE);
-
+  return FALSE;
 }
 
-/* Due to illegal mob flags not showing in the mob flags list,
+/* Due to some illegal flags not showing in some flags list,
    we need this to convert the list number back to flag value */
-static int medit_get_mob_flag_by_number(int num)
-{
+static int medit_get_flag_by_number(int num,int num_flags, int num_illegal_flags, const int illegal_flags[]) {
   int i, count = 0;
-  for (i = 0; i < NUM_MOB_FLAGS; i++) {
-    if (medit_illegal_mob_flag(i)) continue;
-    if ((++count) == num) return i;
+
+  for (i = 0; i < num_flags; i++) {
+    if (medit_illegal_flag(i, num_illegal_flags, illegal_flags)) continue;
+    if((++count) == num) return i;
   }
-  /* Return 'illegal flag' value */
+
   return -1;
 }
 
@@ -392,9 +404,9 @@ static void medit_disp_mob_flags(struct descriptor_data *d)
 
   /* Mob flags has special handling to remove illegal flags from the list */
   for (i = 0; i < NUM_MOB_FLAGS; i++) {
-    if (medit_illegal_mob_flag(i)) continue;
-    write_to_output(d, "%s%2d%s) %-20.20s  %s", grn, ++count, nrm, action_bits[i],
-                !(++columns % 2) ? "\r\n" : "");
+    if (medit_illegal_flag(i, NUM_ILLEGAL_MOB_FLAGS, illegal_mob_flags)) continue;
+    write_to_output(d, "%s%2d%s) %-15.15s  %s", grn, ++count, nrm, action_bits[i],
+                !(++columns % 4) ? "\r\n" : "");
   }
 
   sprintbitarray(MOB_FLAGS(OLC_MOB(d)), action_bits, AF_ARRAY_MAX, flags);
@@ -404,12 +416,18 @@ static void medit_disp_mob_flags(struct descriptor_data *d)
 /* Display affection flags menu. */
 static void medit_disp_aff_flags(struct descriptor_data *d)
 {
+  int i, count = 0, columns = 0;
   char flags[MAX_STRING_LENGTH];
 
   get_char_colors(d->character);
   clear_screen(d);
-  /* +1 since AFF_FLAGS don't start at 0. */
-  column_list(d->character, 0, affected_bits + 1, NUM_AFF_FLAGS, TRUE);
+
+  for (i = 0; i < NUM_AFF_FLAGS; i++) {
+    if (medit_illegal_flag(i, NUM_ILLEGAL_AFF_FLAGS, illegal_aff_flags)) continue;
+    write_to_output(d, "%s%2d%s) %-15.15s  %s", grn, ++count, nrm, affected_bits[i],
+        !(++columns % 4) ? "\r\n" : "");
+  }
+
   sprintbitarray(AFF_FLAGS(OLC_MOB(d)), affected_bits, AF_ARRAY_MAX, flags);
   write_to_output(d, "\r\nCurrent flags   : %s%s%s\r\nEnter aff flags (0 to quit) : ",
                           cyn, flags, nrm);
@@ -1000,7 +1018,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
   case MEDIT_NPC_FLAGS:
     if ((i = atoi(arg)) <= 0)
       break;
-    else if ( (j = medit_get_mob_flag_by_number(i)) == -1) {
+    else if ( (j = medit_get_flag_by_number(i, NUM_MOB_FLAGS, NUM_ILLEGAL_MOB_FLAGS, illegal_mob_flags)) == -1) {
        write_to_output(d, "Invalid choice!\r\n");
        write_to_output(d, "Enter mob flags (0 to quit) :");
        return;
@@ -1013,13 +1031,14 @@ void medit_parse(struct descriptor_data *d, char *arg)
   case MEDIT_AFF_FLAGS:
     if ((i = atoi(arg)) <= 0)
       break;
-    else if (i <= NUM_AFF_FLAGS)
-      TOGGLE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), i);
+    else if((j = medit_get_flag_by_number(i, NUM_AFF_FLAGS, NUM_ILLEGAL_AFF_FLAGS, illegal_aff_flags)) == -1) {
+      write_to_output(d, "Invalid choice!\r\n");
+      write_to_output(d, "Enter affected flags (0 to quit) :");
+      return;
+    }
+    else if (j <= NUM_AFF_FLAGS)
+      TOGGLE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), j);
 
-    /* Remove unwanted bits right away. */
-    REMOVE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), AFF_CHARM);
-    REMOVE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), AFF_POISON);
-    REMOVE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), AFF_SLEEP);
     medit_disp_aff_flags(d);
     return;
 
