@@ -1720,9 +1720,6 @@ void parse_mobile(FILE *mob_f, int nr)
   int j, t[10], retval;
   char line[READ_SIZE], *tmpptr, letter;
   char f1[128], f2[128], f3[128], f4[128], f5[128], f6[128], f7[128], f8[128], buf2[128];
-  char *mob_RaceClassSubrace;//, first_arg[80], let_array[80];
-  char race = -1, class = -1;
-  int subrace = 0, index = 0;
 
   mob_index[i].vnum = nr;
   mob_index[i].number = 0;
@@ -1735,51 +1732,6 @@ void parse_mobile(FILE *mob_f, int nr)
    * structure is to save newbie coders from themselves. -gg */
   mob_proto[i].player_specials = &dummy_mob;
   sprintf(buf2, "mob vnum %d", nr);	/* sprintf: OK (for 'buf2 >= 19') */
-
-  /*
-   * Race Class Subrace
-   * Implementation from RavenMUD code.
-   */
-  mob_RaceClassSubrace = fread_string (mob_f, buf2);
-  while(*mob_RaceClassSubrace) {
-    switch(index) {
-    /* race */
-    case 0:
-      if(isalpha(*mob_RaceClassSubrace)) {
-        race = *mob_RaceClassSubrace;
-      } else {
-        log("WARNING: Invalid race '%c' for mob #%d.", *mob_RaceClassSubrace, nr);
-        race = 'H';
-      }
-      break;
-    /* class */
-    case 2:
-      if(isalpha(*mob_RaceClassSubrace)) {
-        class = *mob_RaceClassSubrace;
-      } else {
-        log("WARNING: Invalid class '%c' for mob #%d.", *mob_RaceClassSubrace, nr);
-        class = 'W';
-      }
-      break;
-    /* subrace */
-    case 4:
-      if(isdigit(*mob_RaceClassSubrace)) {
-        subrace = atoi(mob_RaceClassSubrace);
-      } else {
-        log("WARNING: Invalid subrace '%c' for mob #%d", *mob_RaceClassSubrace, nr);
-        subrace = 0;
-      }
-      break;
-    }
-
-    index++;
-    mob_RaceClassSubrace++;
-  }
-
-
-  mob_proto[i].player.chclass = parse_class(class);
-  mob_proto[i].player.chrace = parse_race_all(race);
-  mob_proto[i].char_specials.saved.sub_race = subrace;
 
   /* String data */
   mob_proto[i].player.name = fread_string(mob_f, buf2);
