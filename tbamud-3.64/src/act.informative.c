@@ -160,16 +160,16 @@ static void show_obj_modifiers(struct obj_data *obj, struct char_data *ch)
     send_to_char(ch, " (invisible)");
 
   if (OBJ_FLAGGED(obj, ITEM_BLESS) && AFF_FLAGGED(ch, AFF_DETECT_ALIGN))
-    send_to_char(ch, " ..It glows blue!");
+    send_to_char(ch, " (blue aura)");
 
   if (OBJ_FLAGGED(obj, ITEM_MAGIC) && AFF_FLAGGED(ch, AFF_DETECT_MAGIC))
-    send_to_char(ch, " ..It glows yellow!");
+    send_to_char(ch, " (yellow aura)");
 
-  if (OBJ_FLAGGED(obj, ITEM_GLOW))
-    send_to_char(ch, " ..It has a soft glowing aura!");
+  if (OBJ_FLAGGED(obj, ITEM_GLOW) && AFF_FLAGGED(ch, AFF_DETECT_MAGIC))
+      send_to_char(ch, " (glowing)");
 
-  if (OBJ_FLAGGED(obj, ITEM_HUM))
-    send_to_char(ch, " ..It emits a faint humming sound!");
+  if (OBJ_FLAGGED(obj, ITEM_HUM) && AFF_FLAGGED(ch, AFF_DETECT_MAGIC))
+      send_to_char(ch, " (humming)");
 }
 
 static void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode, int show)
@@ -964,7 +964,7 @@ ACMD(do_equipment)
         send_to_char(ch, "%s", wear_where[i]);
         send_to_char(ch, "Something.\r\n");
       }
-    } else {
+    } else if (i < WEAR_ORIBIT) {
   	  send_to_char(ch, "%s Nothing.\r\n", wear_where[i]);
     }
   }

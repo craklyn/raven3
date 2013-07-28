@@ -440,23 +440,27 @@
 #define WEAR_LIGHT      0  /**< Equipment Location Light */
 #define WEAR_FINGER_R   1  /**< Equipment Location Right Finger */
 #define WEAR_FINGER_L   2  /**< Equipment Location Left Finger */
-#define WEAR_NECK_1     3  /**< Equipment Location Neck #1 */
-#define WEAR_NECK_2     4  /**< Equipment Location Neck #2 */
+#define WEAR_CLOAK      3  /**< Equipment Location Cloak */
+#define WEAR_NECK       4  /**< Equipment Location Neck #2 */
 #define WEAR_BODY       5  /**< Equipment Location Body */
 #define WEAR_HEAD       6  /**< Equipment Location Head */
-#define WEAR_LEGS       7  /**< Equipment Location Legs */
-#define WEAR_FEET       8  /**< Equipment Location Feet */
-#define WEAR_HANDS      9  /**< Equipment Location Hands */
-#define WEAR_ARMS      10  /**< Equipment Location Arms */
-#define WEAR_SHIELD    11  /**< Equipment Location Shield */
-#define WEAR_ABOUT     12  /**< Equipment Location about body (like a cape)*/
-#define WEAR_WAIST     13  /**< Equipment Location Waist */
-#define WEAR_WRIST_R   14  /**< Equipment Location Right Wrist */
-#define WEAR_WRIST_L   15  /**< Equipment Location Left Wrist */
-#define WEAR_WIELD     16  /**< Equipment Location Weapon */
-#define WEAR_HOLD      17  /**< Equipment Location held in offhand */
+#define WEAR_EARS       7  /**< Equipment Location Ears */
+#define WEAR_FACE       8  /**< Equipment Location Face */
+#define WEAR_LEGS       9  /**< Equipment Location Legs */
+#define WEAR_ANKLES    10  /**< Equipment Location Ankles */
+#define WEAR_FEET      11  /**< Equipment Location Feet */
+#define WEAR_HANDS     12  /**< Equipment Location Hands */
+#define WEAR_ARMS      13  /**< Equipment Location Arms */
+#define WEAR_SHIELD    14  /**< Equipment Location Shield */
+#define WEAR_ABOUT     15  /**< Equipment Location about body (like a cape)*/
+#define WEAR_WAIST     16  /**< Equipment Location Waist */
+#define WEAR_WRIST_R   17  /**< Equipment Location Right Wrist */
+#define WEAR_WRIST_L   18  /**< Equipment Location Left Wrist */
+#define WEAR_WIELD     19  /**< Equipment Location Weapon */
+#define WEAR_HOLD      20  /**< Equipment Location held in offhand */
+#define WEAR_ORIBIT    21  /**< Equipment Location orbitting around head */
 /** Total number of available equipment lcoations */
-#define NUM_WEARS      18
+#define NUM_WEARS      22
 
 /* object-related defines */
 /* Item types: used by obj_data.obj_flags.type_flag */
@@ -489,7 +493,7 @@
 /* Take/Wear flags: used by obj_data.obj_flags.wear_flags */
 #define ITEM_WEAR_TAKE      0   /**< Item can be taken */
 #define ITEM_WEAR_FINGER    1   /**< Item can be worn on finger */
-#define ITEM_WEAR_NECK      2   /**< Item can be worn around neck */
+#define ITEM_WEAR_CLOAK     2   /**< Item can be worn around neck */
 #define ITEM_WEAR_BODY      3   /**< Item can be worn on body */
 #define ITEM_WEAR_HEAD      4   /**< Item can be worn on head */
 #define ITEM_WEAR_LEGS      5   /**< Item can be worn on legs */
@@ -502,8 +506,13 @@
 #define ITEM_WEAR_WRIST	   12   /**< Item can be worn on wrist */
 #define ITEM_WEAR_WIELD	   13   /**< Item can be wielded */
 #define ITEM_WEAR_HOLD     14   /**< Item can be held */
+#define ITEM_WEAR_NECK     15   /**< Item can be worn around neck   */
+#define ITEM_WEAR_ORBIT    16   /**< Item can orbit around head */
+#define ITEM_WEAR_ANKLES   17   /**< Item can be worn on ankles */
+#define ITEM_WEAR_EARS     18   /**< Item can be worn on ears */
+#define ITEM_WEAR_FACE     19   /**< Item can be worn on face */
 /** Total number of item wears */
-#define NUM_ITEM_WEARS    15
+#define NUM_ITEM_WEARS    20
 
 /* Extra object flags: used by obj_data.obj_flags.extra_flags */
 #define ITEM_GLOW              0   /**< Item is glowing */
