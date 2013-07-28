@@ -1286,7 +1286,7 @@ static void perform_wear(struct char_data *ch, struct obj_data *obj, int where)
     return;
   }
   /* for neck, finger, and wrist, try pos 2 if pos 1 is already full */
-  if ((where == WEAR_FINGER_R) || (where == WEAR_CLOAK) || (where == WEAR_WRIST_R))
+  if ((where == WEAR_FINGER_R) || (where == WEAR_WRIST_R))
     if (GET_EQ(ch, where))
       where++;
 
@@ -1462,14 +1462,19 @@ ACMD(do_grab)
     send_to_char(ch, "You are not experienced enough to use that.\r\n");
   else {
     if (GET_OBJ_TYPE(obj) == ITEM_LIGHT)
-      perform_wear(ch, obj, WEAR_LIGHT);
+      if(GET_EQ(ch, WEAR_HOLD))
+        send_to_char(ch, "You are already holding something in your hand.\r\n");
+      else
+        perform_wear(ch, obj, WEAR_LIGHT);
     else {
       if (!CAN_WEAR(obj, ITEM_WEAR_HOLD) && GET_OBJ_TYPE(obj) != ITEM_WAND &&
-      GET_OBJ_TYPE(obj) != ITEM_STAFF && GET_OBJ_TYPE(obj) != ITEM_SCROLL &&
-	  GET_OBJ_TYPE(obj) != ITEM_POTION)
-	send_to_char(ch, "You can't hold that.\r\n");
+          GET_OBJ_TYPE(obj) != ITEM_STAFF && GET_OBJ_TYPE(obj) != ITEM_SCROLL &&
+	        GET_OBJ_TYPE(obj) != ITEM_POTION)
+        send_to_char(ch, "You can't hold that.\r\n");
+      else if (GET_EQ(ch, WEAR_LIGHT))
+        send_to_char(ch, "You are already holding something in your hand.\r\n");
       else
-	perform_wear(ch, obj, WEAR_HOLD);
+        perform_wear(ch, obj, WEAR_HOLD);
     }
   }
 }
