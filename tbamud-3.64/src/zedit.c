@@ -35,6 +35,19 @@ static void zedit_disp_arg1(struct descriptor_data *d);
 static void zedit_disp_arg2(struct descriptor_data *d);
 static void zedit_disp_arg3(struct descriptor_data *d);
 
+#define NUM_ILLEGAL_ZONE_FLAGS 8
+/* Illegal zone flags */
+static const int illegal_zone_flags[NUM_ILLEGAL_ZONE_FLAGS] = {
+    ZONE_UNDEFINED,
+    ZONE_DIS_LIGHTNING,
+    ZONE_DIS_FIREBALL,
+    ZONE_DIS_WIND,
+    ZONE_DIS_EARTHQUAKE,
+    ZONE_DIS_LAVA,
+    ZONE_DIS_FLOOD,
+    ZONE_QUEST,
+};
+
 ACMD(do_oasis_zedit)
 {
   int number = NOWHERE, save = 0, real_num;
@@ -374,9 +387,15 @@ static int start_change_command(struct descriptor_data *d, int pos)
 void zedit_disp_flag_menu(struct descriptor_data *d)
 {
   char bits[MAX_STRING_LENGTH];
+  const char *allowed_zone_flags[NUM_ZONE_FLAGS];
+  int i = 0, count = 0;
 
   clear_screen(d);
-  column_list(d->character, 0, zone_bits, NUM_ZONE_FLAGS, TRUE);
+  for(i = 0; i < NUM_ZONE_FLAGS; i++) {
+    if(is_illegal_flag(i, NUM_ILLEGAL_ZONE_FLAGS, illegal_zone_flags)) continue;
+    allowed_zone_flags[count++] = strdup(zone_bits[i]);
+  }
+  column_list(d->character, 4, allowed_zone_flags, count, TRUE);
 
   sprintbitarray(OLC_ZONE(d)->zone_flags, zone_bits, ZN_ARRAY_MAX, bits);
   write_to_output(d, "\r\nZone flags: \tc%s\tn\r\n"
@@ -1203,18 +1222,18 @@ void zedit_parse(struct descriptor_data *d, char *arg)
 /*-------------------------------------------------------------------*/
   case ZEDIT_ZONE_FLAGS:
     number = atoi(arg);
-    if (number < 0 || number > NUM_ZONE_FLAGS) {
-      write_to_output(d, "That is not a valid choice!\r\n");
-      zedit_disp_flag_menu(d);
-    } else if (number == 0) {
+    if (number == 0) {
       zedit_disp_menu(d);
       break;
-      }
+    } else if ((number = get_flag_by_number(number, NUM_ZONE_FLAGS, NUM_ILLEGAL_ZONE_FLAGS, illegal_zone_flags)) == -1) {
+      write_to_output(d, "That is not a valid choice!\r\n");
+      zedit_disp_flag_menu(d);
+    }
     else {
       /*
        * Toggle the bit.
        */
-      TOGGLE_BIT_AR(OLC_ZONE(d)->zone_flags, number - 1);
+      TOGGLE_BIT_AR(OLC_ZONE(d)->zone_flags, number);
       OLC_ZONE(d)->number = 1;
       zedit_disp_flag_menu(d);
     }

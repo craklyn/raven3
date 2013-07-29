@@ -113,12 +113,28 @@ const char *room_bits[] = {
  * @pre Must be in the same order as the defines in structs.h.
  * Must end array with a single newline. */
 const char *zone_bits[] = {
+  "!UNUSED!",
   "CLOSED",
+  "NO_RECALL",
+  "NO_SUMMON",
+  "NO_PORTAL",
+  "NO_RELOCATE",
+  "NO_MORTAL",
+  "REMORTS",
+  "LIGHTNING",
+  "FIREBALL",
+  "WIND",
+  "EARTHQUAKE",
+  "LAVA",
+  "FLOOD",
+  "PEACEFUL",
+  "SLEEP_TAG",
+  "ARENA",
   "NO_IMMORT",
   "QUEST",
   "GRID",
-  "NOBUILD",
-  "!ASTRAL",
+  "NO_BUILD",
+  "NO_ASTRAL",
   "WORLDMAP",
   "\n"
 };
@@ -180,6 +196,7 @@ const char *position_types[] = {
   "Incapacitated",
   "Stunned",
   "Sleeping",
+  "Meditating",
   "Resting",
   "Sitting",
   "Fighting",

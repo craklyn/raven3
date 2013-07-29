@@ -32,6 +32,8 @@
 #include "shop.h"
 #include "quest.h"
 #include "modify.h"
+#include "class.h"
+#include "race.h"
 
 /* Local defined utility functions */
 /* do_group utility functions */
@@ -320,18 +322,28 @@ ACMD(do_title)
 
 static void print_group(struct char_data *ch)
 {
+  char buf[MAX_STRING_LENGTH];
+  int count = 0, groupCount = 0;
   struct char_data * k;
 
-  send_to_char(ch, "Your group consists of:\r\n");
 
-  while ((k = (struct char_data *) simple_list(ch->group->members)) != NULL)
-    send_to_char(ch, "%-*s: %s[%4d/%-4d]H [%4d/%-4d]M [%4d/%-4d]V%s\r\n",
-	    count_color_chars(GET_NAME(k))+22, GET_NAME(k), 
-	    GROUP_LEADER(GROUP(ch)) == k ? CBGRN(ch, C_NRM) : CCGRN(ch, C_NRM),
-	    GET_HIT(k), GET_MAX_HIT(k),
-	    GET_MANA(k), GET_MAX_MANA(k),
-	    GET_MOVE(k), GET_MAX_MOVE(k),
-	    CCNRM(ch, C_NRM));
+  while ((k = (struct char_data *) simple_list(ch->group->members)) != NULL) {
+    char *colorHit = colorRatio(ch, COLOR_RAW, COLOR_LEV(ch), GET_HIT(k), GET_MAX_HIT(k));
+    char *colorMana = colorRatio(ch, COLOR_RAW, COLOR_LEV(ch), GET_MANA(k), GET_MAX_MANA(k));
+    char *colorMove = colorRatio(ch, COLOR_RAW, COLOR_LEV(ch), GET_MOVE(k), GET_MAX_MOVE(k));
+
+    count += snprintf(buf+count, MAX_STRING_LENGTH-count,"     [%s%4d%sH %s%4d%sM %s%4d%sV] [%2d %2s %3s] %s%s%s %s\r\n",
+        colorHit, GET_HIT(k), QNRM,
+        colorMana, GET_MANA(k), QNRM,
+        colorMove, GET_MOVE(k), QNRM,
+        GET_LEVEL(k), CLASS_ABBR(k), RACE_ABBR(k),
+        (IS_NPC(k) ? "" : colorHit), GET_NAME(k), QNRM,
+        (GROUP_LEADER(GROUP(k)) == k ? "(Head of group)" : "" ));
+    groupCount++;
+  }
+
+  send_to_char(ch, "Your group consists of %d player%s:\r\n", groupCount, groupCount > 1 ? "s" : "");
+  send_to_char(ch, buf);
 }
 
 static void display_group_list(struct char_data * ch)
