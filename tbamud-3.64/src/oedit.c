@@ -48,6 +48,43 @@ static void oedit_save_to_disk(int zone_num);
 /* handy macro */
 #define S_PRODUCT(s, i) ((s)->producing[(i)])
 
+#define NUM_ILLEGAL_APPLIES 5
+/* Illegal obj applies */
+static const int illegal_applies[NUM_ILLEGAL_APPLIES] = {
+    APPLY_NONE,
+    APPLY_UNUSED1,
+    APPLY_UNUSED2,
+    APPLY_UNUSED3,
+    APPLY_UNUSED4
+};
+
+#define NUM_ILLEGAL_AFF_FLAGS 15
+/* Illegal obj perm affects */
+static const int illegal_aff_flags[NUM_ILLEGAL_AFF_FLAGS] = {
+    AFF_DONTUSE,
+    AFF_GROUP,
+    AFF_CHARM,
+    AFF_PARALYZE,
+    AFF_PLAGUE,
+    AFF_SHIELDBLOCK,
+    AFF_MOUNTED,
+    AFF_UNUSED1,
+    AFF_UNUSED2,
+    AFF_UNUSED3,
+    AFF_ASSISTANT,
+    AFF_HAMSTRUNG,
+    AFF_DISTRACT,
+    AFF_UNUSED4,
+    AFF_UNUSED5
+};
+
+#define NUM_ILLEGAL_ITEM_TYPES 2
+/* Illegal item types */
+static const int illegal_item_types[NUM_ILLEGAL_ITEM_TYPES] = {
+    ITEM_UNDEFINED,
+    ITEM_FREE2
+};
+
 /* Utility and exported functions */
 ACMD(do_oasis_oedit)
 {
@@ -359,9 +396,16 @@ static void oedit_liquid_type(struct descriptor_data *d)
 /* The actual apply to set. */
 static void oedit_disp_apply_menu(struct descriptor_data *d)
 {
+  int i, count = 0;
+  const char *allowed_applies[NUM_APPLIES];
   get_char_colors(d->character);
   clear_screen(d);
-  column_list(d->character, 0, apply_types, NUM_APPLIES, TRUE);
+
+  for (i = 0; i < NUM_APPLIES; i++) {
+    if (is_illegal_flag(i, NUM_ILLEGAL_APPLIES, illegal_applies)) continue;
+    allowed_applies[count++] = strdup(apply_types[i]);
+  }
+  column_list(d->character, 4, allowed_applies, count, TRUE);
   write_to_output(d, "\r\nEnter apply type (0 is no apply) : ");
   OLC_MODE(d) = OEDIT_APPLY;
 }
@@ -443,7 +487,6 @@ static void oedit_disp_val1_menu(struct descriptor_data *d)
   case ITEM_KEY:
   case ITEM_PEN:
   case ITEM_BOAT:
-  case ITEM_FREE:   /* Not implemented, but should be handled here */
   case ITEM_FREE2:  /* Not implemented, but should be handled here */
     oedit_disp_menu(d);
     break;
@@ -544,15 +587,17 @@ static void oedit_disp_val4_menu(struct descriptor_data *d)
 /* Object type. */
 static void oedit_disp_type_menu(struct descriptor_data *d)
 {
-  int counter, columns = 0;
+  int i = 0, count = 0;
+  const char *allowed_item_types[NUM_ITEM_TYPES];
 
   get_char_colors(d->character);
   clear_screen(d);
-
-  for (counter = 0; counter < NUM_ITEM_TYPES; counter++) {
-    write_to_output(d, "%s%2d%s) %-20.20s %s", grn, counter, nrm,
-		item_types[counter], !(++columns % 2) ? "\r\n" : "");
+  for(i = 0; i < NUM_ITEM_TYPES; i++) {
+    if(is_illegal_flag(i, NUM_ILLEGAL_ITEM_TYPES, illegal_item_types)) continue;
+    allowed_item_types[count++] = strdup(item_types[i]);
   }
+
+  column_list(d->character, 4, allowed_item_types, count, TRUE);
   write_to_output(d, "\r\nEnter object type : ");
 }
 
@@ -560,15 +605,10 @@ static void oedit_disp_type_menu(struct descriptor_data *d)
 static void oedit_disp_extra_menu(struct descriptor_data *d)
 {
   char bits[MAX_STRING_LENGTH];
-  int counter, columns = 0;
 
   get_char_colors(d->character);
   clear_screen(d);
-
-  for (counter = 0; counter < NUM_ITEM_FLAGS; counter++) {
-    write_to_output(d, "%s%2d%s) %-15.15s %s", grn, counter + 1, nrm,
-		extra_bits[counter], !(++columns % 4) ? "\r\n" : "");
-  }
+  column_list(d->character, 4, extra_bits, NUM_ITEM_FLAGS, TRUE);
   sprintbitarray(GET_OBJ_EXTRA(OLC_OBJ(d)), extra_bits, EF_ARRAY_MAX, bits);
   write_to_output(d, "\r\nObject flags: %s%s%s\r\n"
 	  "Enter object extra flag (0 to quit) : ",
@@ -579,32 +619,30 @@ static void oedit_disp_extra_menu(struct descriptor_data *d)
 static void oedit_disp_perm_menu(struct descriptor_data *d)
 {
   char bits[MAX_STRING_LENGTH];
-  int counter, columns = 0;
+  int i, count = 0;
+  const char *allowed_perm_affects[NUM_AFF_FLAGS];
 
   get_char_colors(d->character);
   clear_screen(d);
 
-  for (counter = 1; counter < NUM_AFF_FLAGS; counter++) {
-    write_to_output(d, "%s%2d%s) %-20.20s %s", grn, counter, nrm, affected_bits[counter], !(++columns % 2) ? "\r\n" : "");
+  for (i = 0; i < NUM_AFF_FLAGS; i++) {
+    if (is_illegal_flag(i, NUM_ILLEGAL_AFF_FLAGS, illegal_aff_flags)) continue;
+    allowed_perm_affects[count++] = strdup(affected_bits[i]);
   }
+  column_list(d->character, 4, allowed_perm_affects, count, TRUE);
   sprintbitarray(GET_OBJ_PERM(OLC_OBJ(d)), affected_bits, EF_ARRAY_MAX, bits);
   write_to_output(d, "\r\nObject permanent flags: %s%s%s\r\n"
-          "Enter object perm flag (0 to quit) : ", cyn, bits, nrm);
+      "Enter object perm flag (0 to quit) : ", cyn, bits, nrm);
 }
 
 /* Object wear flags. */
 static void oedit_disp_wear_menu(struct descriptor_data *d)
 {
   char bits[MAX_STRING_LENGTH];
-  int counter, columns = 0;
 
   get_char_colors(d->character);
   clear_screen(d);
-
-  for (counter = 0; counter < NUM_ITEM_WEARS; counter++) {
-    write_to_output(d, "%s%2d%s) %-20.20s %s", grn, counter + 1, nrm,
-		wear_bits[counter], !(++columns % 2) ? "\r\n" : "");
-  }
+  column_list(d->character, 2, wear_bits, NUM_ITEM_WEARS, TRUE);
   sprintbitarray(GET_OBJ_WEAR(OLC_OBJ(d)), wear_bits, TW_ARRAY_MAX, bits);
   write_to_output(d, "\r\nWear flags: %s%s%s\r\n"
 	  "Enter wear flag, 0 to quit : ", cyn, bits, nrm);
@@ -872,7 +910,7 @@ void oedit_parse(struct descriptor_data *d, char *arg)
 
   case OEDIT_TYPE:
     number = atoi(arg);
-    if ((number < 0) || (number >= NUM_ITEM_TYPES)) {
+    if ((number = get_flag_by_number(number, NUM_ITEM_TYPES, NUM_ILLEGAL_ITEM_TYPES, illegal_item_types)) == -1) {
       write_to_output(d, "Invalid choice, try again : ");
       return;
     } else
@@ -932,11 +970,11 @@ void oedit_parse(struct descriptor_data *d, char *arg)
   case OEDIT_PERM:
     if ((number = atoi(arg)) == 0)
       break;
-    if (number > 0 && number <= NUM_AFF_FLAGS) {
-      /* Setting AFF_CHARM on objects like this is dangerous. */
-      if (number != AFF_CHARM) {
+    if ((number = get_flag_by_number(number, NUM_AFF_FLAGS, NUM_ILLEGAL_AFF_FLAGS, illegal_aff_flags)) != -1) {
         TOGGLE_BIT_AR(GET_OBJ_PERM(OLC_OBJ(d)), number);
-      }
+    } else {
+      write_to_output(d, "Invalid choice!\r\nEnter object perm flag (0 to quit) : ");
+      return;
     }
     oedit_disp_perm_menu(d);
     return;
@@ -1083,7 +1121,7 @@ void oedit_parse(struct descriptor_data *d, char *arg)
     return;
 
   case OEDIT_APPLY:
-    if (((number = atoi(arg)) == 0) || ((number = atoi(arg)) == 1)) {
+    if ((number = atoi(arg)) == 0) {
       OLC_OBJ(d)->affected[OLC_VAL(d)].location = 0;
       OLC_OBJ(d)->affected[OLC_VAL(d)].modifier = 0;
       oedit_disp_prompt_apply_menu(d);
@@ -1102,7 +1140,11 @@ void oedit_parse(struct descriptor_data *d, char *arg)
         }
       }
 
-      OLC_OBJ(d)->affected[OLC_VAL(d)].location = number - 1;
+      if((number = get_flag_by_number(number, NUM_APPLIES, NUM_ILLEGAL_APPLIES, illegal_applies)) == -1) {
+        write_to_output(d, "Invalid choice!\r\nEnter apply type (0 is no apply) : ");
+        return;
+      }
+      OLC_OBJ(d)->affected[OLC_VAL(d)].location = number;
       write_to_output(d, "Modifier : ");
       OLC_MODE(d) = OEDIT_APPLYMOD;
     }
