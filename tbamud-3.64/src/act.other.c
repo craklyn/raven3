@@ -332,7 +332,7 @@ static void print_group(struct char_data *ch)
     char *colorMana = colorRatio(ch, COLOR_RAW, COLOR_LEV(ch), GET_MANA(k), GET_MAX_MANA(k));
     char *colorMove = colorRatio(ch, COLOR_RAW, COLOR_LEV(ch), GET_MOVE(k), GET_MAX_MOVE(k));
 
-    count += snprintf(buf+count, MAX_STRING_LENGTH-count,"     [%s%4d%sH %s%4d%sM %s%4d%sV] [%2d %2s %3s] %s%s%s %s\r\n",
+    count += snprintf(buf+count, sizeof(buf)-count,"     [%s%4d%sH %s%4d%sM %s%4d%sV] [%2d %2s %3s] %s%s%s %s\r\n",
         colorHit, GET_HIT(k), QNRM,
         colorMana, GET_MANA(k), QNRM,
         colorMove, GET_MOVE(k), QNRM,
