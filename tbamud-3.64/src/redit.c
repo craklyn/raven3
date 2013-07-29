@@ -31,6 +31,16 @@ static void redit_disp_flag_menu(struct descriptor_data *d);
 static void redit_disp_sector_menu(struct descriptor_data *d);
 static void redit_disp_menu(struct descriptor_data *d);
 
+#define NUM_ILLEGAL_ROOM_FLAGS 5
+/* Illegal room flags */
+static const int illegal_room_flags[NUM_ILLEGAL_ROOM_FLAGS] = {
+    ROOM_HOUSE,
+    ROOM_HOUSE_CRASH,
+    ROOM_ATRIUM,
+    ROOM_OLC,
+    ROOM_BFS_MARK,
+};
+
 /* Utils and exported functions. */
 ACMD(do_oasis_redit)
 {
@@ -388,11 +398,18 @@ static void redit_disp_exit_flag_menu(struct descriptor_data *d)
 static void redit_disp_flag_menu(struct descriptor_data *d)
 {
   char bits[MAX_STRING_LENGTH];
+  const char *allowed_room_bits[NUM_ROOM_FLAGS];
+  int i, count = 0;
 
   get_char_colors(d->character);
   clear_screen(d);
-  column_list(d->character, 0, room_bits, NUM_ROOM_FLAGS, TRUE);
 
+  for (i = 0; i < NUM_ROOM_FLAGS; i++) {
+    if (is_illegal_flag(i, NUM_ILLEGAL_ROOM_FLAGS, illegal_room_flags)) continue;
+    allowed_room_bits[count++] = strdup(room_bits[i]);
+  }
+
+  column_list(d->character, 3, allowed_room_bits, count, TRUE);
   sprintbitarray(OLC_ROOM(d)->room_flags, room_bits, RF_ARRAY_MAX, bits);
   write_to_output(d, "\r\nRoom flags: %s%s%s\r\n"
 	  "Enter room flags, 0 to quit : ", cyn, bits, nrm);
@@ -403,7 +420,7 @@ static void redit_disp_flag_menu(struct descriptor_data *d)
 static void redit_disp_sector_menu(struct descriptor_data *d)
 {
   clear_screen(d);
-  column_list(d->character, 0, sector_types, NUM_ROOM_SECTORS, TRUE);
+  column_list(d->character, 2, sector_types, NUM_ROOM_SECTORS, TRUE);
   write_to_output(d, "\r\nEnter sector type : ");
   OLC_MODE(d) = REDIT_SECTOR;
 }
@@ -701,14 +718,15 @@ void redit_parse(struct descriptor_data *d, char *arg)
 
   case REDIT_FLAGS:
     number = atoi(arg);
-    if (number < 0 || number > NUM_ROOM_FLAGS) {
+    if (number == 0)
+      break;
+    else if ((number = get_flag_by_number(number, NUM_ROOM_FLAGS, NUM_ILLEGAL_ROOM_FLAGS, illegal_room_flags)) == -1) {
       write_to_output(d, "That is not a valid choice!\r\n");
       redit_disp_flag_menu(d);
-    } else if (number == 0)
-      break;
+    }
     else {
       /* Toggle the bit. */
-      TOGGLE_BIT_AR(OLC_ROOM(d)->room_flags, number - 1);
+      TOGGLE_BIT_AR(OLC_ROOM(d)->room_flags, number);
       redit_disp_flag_menu(d);
     }
     return;
@@ -716,7 +734,7 @@ void redit_parse(struct descriptor_data *d, char *arg)
   case REDIT_SECTOR:
     number = atoi(arg) - 1;
     if (number < 0 || number >= NUM_ROOM_SECTORS) {
-      write_to_output(d, "Invalid choice!");
+      write_to_output(d, "Invalid choice!\r\n");
       redit_disp_sector_menu(d);
       return;
     }

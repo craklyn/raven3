@@ -3557,16 +3557,12 @@ struct zcheck_affs {
   {APPLY_WIS,         -5,   3, "wisdom"},
   {APPLY_CON,         -5,   3, "constitution"},
   {APPLY_CHA,         -5,   3, "charisma"},
-  {APPLY_CLASS,        0,   0, "class"},
-  {APPLY_LEVEL,        0,   0, "level"},
   {APPLY_AGE,        -10,  10, "age"},
   {APPLY_CHAR_WEIGHT,-50,  50, "character weight"},
   {APPLY_CHAR_HEIGHT,-50,  50, "character height"},
   {APPLY_MANA,       -50,  50, "mana"},
   {APPLY_HIT,        -50,  50, "hit points"},
   {APPLY_MOVE,       -50,  50, "movement"},
-  {APPLY_GOLD,         0,   0, "gold"},
-  {APPLY_EXP,          0,   0, "experience"},
   {APPLY_AC,         -10,  10, "magical AC"},
   {APPLY_HITROLL,      0, -99, "hitroll"},       /* Handled seperately below */
   {APPLY_DAMROLL,      0, -99, "damroll"},       /* Handled seperately below */

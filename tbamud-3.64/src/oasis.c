@@ -326,3 +326,27 @@ void send_cannot_edit(struct char_data *ch, zone_vnum zone)
   mudlog(BRF, LVL_IMPL, TRUE, "%s", buf);
 }
 
+
+/* Find flags that shouldn't be set by builders */
+bool is_illegal_flag(int fl, int num_illegal_flags, const int illegal_flags[]) {
+  int i;
+
+  for (i=0; i < num_illegal_flags;i++)
+    if (fl == illegal_flags[i])
+      return TRUE;
+
+  return FALSE;
+}
+
+/* Due to some illegal flags not showing in some flags list,
+   we need this to convert the list number back to flag value */
+int get_flag_by_number(int num,int num_flags, int num_illegal_flags, const int illegal_flags[]) {
+  int i, count = 0;
+
+  for (i = 0; i < num_flags; i++) {
+    if (is_illegal_flag(i, num_illegal_flags, illegal_flags)) continue;
+    if((++count) == num) return i;
+  }
+
+  return -1;
+}

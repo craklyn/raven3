@@ -1025,7 +1025,7 @@ void column_list(struct char_data *ch, int num_cols, const char **list, int list
        if (offset < list_length)
        {
          if (show_nums)
-           temp_len = snprintf(buf+len, sizeof(buf) - len, "%2d) %-*s", offset+1, col_width, list[(offset)]);
+           temp_len = snprintf(buf+len, sizeof(buf) - len, "%s%2d%s) %-*s", QGRN, offset+1, QNRM, col_width, list[(offset)]);
          else
            temp_len = snprintf(buf+len, sizeof(buf) - len, "%-*s", col_width, list[(offset)]);
          len += temp_len;
