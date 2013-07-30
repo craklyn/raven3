@@ -509,7 +509,7 @@ static int export_save_shops(zone_rnum zrnum)
 	      "%s~\n"
 	      "%s~\n"
 	      "%d\n"
-	      "%ld\n"
+	      "%lld\n"
 	      "QQ%02d\n"
 	      "%d\n",
 	      S_NOITEM1(shop) ? S_NOITEM1(shop) : "%s Ke?!",
