@@ -123,15 +123,31 @@
 #define NUM_ROOM_FLAGS           40
 
 /* Zone info: Used in zone_data.zone_flags */
-#define ZONE_CLOSED       0  /**< Zone is closed - players cannot enter */
-#define ZONE_NOIMMORT     1  /**< Immortals (below LVL_GRGOD) cannot enter this zone */
-#define ZONE_QUEST        2  /**< This zone is a quest zone (not implemented) */
-#define ZONE_GRID         3  /**< Zone is 'on the grid', connected, show on 'areas' */
-#define ZONE_NOBUILD      4  /**< Building is not allowed in the zone */
-#define ZONE_NOASTRAL     5  /**< No teleportation magic will work to or from this zone */
-#define ZONE_WORLDMAP     6 /**< Whole zone uses the WORLDMAP by default */
+#define ZONE_UNDEFINED       0  /**< Open in RavenMUD but not setting ZONE_CLOSED should suffice */
+#define ZONE_CLOSED          1  /**< Zone is closed - players cannot enter */
+#define ZONE_NORECALL        2  /**< Can't recall from zone */
+#define ZONE_NOSUMMON        3  /**< Can't summon within zone */
+#define ZONE_NOPORTAL        4  /**< Can't portal into zone */
+#define ZONE_NORELOCATE      5  /**< Can't relocate into zone */
+#define ZONE_NOMORTAL        6  /**< No mortals allowed */
+#define ZONE_REMORT_ONLY     7  /**< Non-remorts not allowed */
+#define ZONE_DIS_LIGHTNING   8
+#define ZONE_DIS_FIREBALL    9
+#define ZONE_DIS_WIND       10
+#define ZONE_DIS_EARTHQUAKE 11
+#define ZONE_DIS_LAVA       12
+#define ZONE_DIS_FLOOD      13
+#define ZONE_PEACEFUL       14
+#define ZONE_SLEEPTAG       15
+#define ZONE_ARENA          16
+#define ZONE_NOIMMORT       17  /**< Immortals (below LVL_GRGOD) cannot enter this zone */
+#define ZONE_QUEST          18  /**< This zone is a quest zone (not implemented) */
+#define ZONE_GRID           19  /**< Zone is 'on the grid', connected, show on 'areas' */
+#define ZONE_NOBUILD        20  /**< Building is not allowed in the zone */
+#define ZONE_NOASTRAL       21  /**< No teleportation magic will work to or from this zone */
+#define ZONE_WORLDMAP       22 /**< Whole zone uses the WORLDMAP by default */
 /** The total number of Zone Flags */
-#define NUM_ZONE_FLAGS    7
+#define NUM_ZONE_FLAGS      23
 
 /* Exit info: used in room_data.dir_option.exit_info */
 #define EX_ISDOOR    (1 << 0) /**< Exit is a door */
@@ -293,12 +309,13 @@
 #define POS_INCAP      2	/**< Position = incapacitated */
 #define POS_STUNNED    3	/**< Position = stunned	*/
 #define POS_SLEEPING   4	/**< Position = sleeping */
-#define POS_RESTING    5	/**< Position = resting	*/
-#define POS_SITTING    6	/**< Position = sitting	*/
-#define POS_FIGHTING   7	/**< Position = fighting */
-#define POS_STANDING   8	/**< Position = standing */
+#define POS_MEDITATE   5  /**< Position = meditating */
+#define POS_RESTING    6	/**< Position = resting	*/
+#define POS_SITTING    7	/**< Position = sitting	*/
+#define POS_FIGHTING   8	/**< Position = fighting */
+#define POS_STANDING   9	/**< Position = standing */
 /** Total number of positions. */
-#define NUM_POSITIONS   9
+#define NUM_POSITIONS   10
 
 /** For future use */
 #define STAT_STR    0	/**< Strength */
@@ -847,7 +864,7 @@
 #define HOST_LENGTH           40     /**< Max hostname resolution length */
 #define PLR_DESC_LENGTH       4096   /**< Max length for PC description */
 #define MAX_SKILLS            300    /**< Max number of skills/spells */
-#define MAX_AFFECT            32     /**< Max number of player affections */
+#define MAX_AFFECT            56     /**< Max number of player affections */
 #define MAX_OBJ_AFFECT        6      /**< Max object affects */
 #define MAX_NOTE_LENGTH       4000   /**< Max length of text on a note obj */
 #define MAX_LAST_ENTRIES      6000   /**< Max log entries?? */
