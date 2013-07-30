@@ -58,7 +58,7 @@ colorRatio( struct char_data *ch, int cookIt, int clvl, int num, int den )
     ** Bail out here if we haven't reached the user's
     ** current color level.
     */
-    if( !clr( ch, clvl ) ){ return( KNRM ); }
+    if( !clr( ch, clvl )){ return( KNRM ); }
 
     /*
     ** Avoid any underflow problems.

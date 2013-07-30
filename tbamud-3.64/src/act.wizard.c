@@ -3551,12 +3551,12 @@ struct zcheck_affs {
   char *message;   /*phrase for error message*/
 } zaffs[] = {
   {APPLY_NONE,         0, -99, "unused0"},
-  {APPLY_STR,         -5,   3, "strength"},
-  {APPLY_DEX,         -5,   3, "dexterity"},
-  {APPLY_INT,         -5,   3, "intelligence"},
-  {APPLY_WIS,         -5,   3, "wisdom"},
-  {APPLY_CON,         -5,   3, "constitution"},
-  {APPLY_CHA,         -5,   3, "charisma"},
+  {APPLY_STR,         -5,   5, "strength"},
+  {APPLY_DEX,         -5,   5, "dexterity"},
+  {APPLY_INT,         -5,   5, "intelligence"},
+  {APPLY_WIS,         -5,   5, "wisdom"},
+  {APPLY_CON,         -5,   5, "constitution"},
+  {APPLY_CHA,         -5,   5, "charisma"},
   {APPLY_AGE,        -10,  10, "age"},
   {APPLY_CHAR_WEIGHT,-50,  50, "character weight"},
   {APPLY_CHAR_HEIGHT,-50,  50, "character height"},
@@ -3570,7 +3570,18 @@ struct zcheck_affs {
   {APPLY_SAVING_ROD,  -2,   2, "saving throw (rod)"},
   {APPLY_SAVING_PETRI,-2,   2, "saving throw (death)"},
   {APPLY_SAVING_BREATH,-2,  2, "saving throw (breath)"},
-  {APPLY_SAVING_SPELL,-2,   2, "saving throw (spell)"}
+  {APPLY_SAVING_SPELL,-2,   2, "saving throw (spell)"},
+  {APPLY_SPELL_COST, 1, 10, "spellcost"},
+  {APPLY_SPELL_SAVE, 1, -20, "spellsave"},
+  {APPLY_SPELL_DAMAGE, 1, 30, "spelldamage"},
+  {APPLY_SPELL_DURATION, -10, 10, "spellduration"},
+  {APPLY_SKILL_SUCCESS, 1, 10, "skillsuccess"},
+  {APPLY_UNUSED1, 0, -99, "unused1"},
+  {APPLY_UNUSED2, 0, -99, "unused2"},
+  {APPLY_UNUSED3, 0, -99, "unused3"},
+  {APPLY_UNUSED4, 0, -99, "unused4"},
+  {APPLY_POISON, 0, -99, "poison"},
+  {APPLY_PLAGUE, 0, -99, "plague"},
 };
 
 /* These are ABS() values. */
@@ -3808,6 +3819,17 @@ ACMD (do_zcheck)
                                zaffs[(int)obj->affected[j].location].min_aff,
                                zaffs[(int)obj->affected[j].location].max_aff);
 
+      for(j = 0; j < MAX_OBJ_AFFECT; j++) {
+        /* check for unused applies */
+        if(obj->affected[j].location == APPLY_UNUSED1
+            || obj->affected[j].location  == APPLY_UNUSED2
+            || obj->affected[j].location  == APPLY_UNUSED3
+            || obj->affected[j].location  == APPLY_UNUSED4) {
+          len += snprintf(buf+len, sizeof(buf) - len,
+              "\tD-----\tRusing apply \tY%s\tn.\r\n", zaffs[(int) obj->affected[j].location].message);
+        }
+      }
+
      /* special handling of +hit and +dam because of +hit_n_dam */
      for (todam=0, tohit=0, j=0;j<MAX_OBJ_AFFECT;j++) {
        if (obj->affected[j].location == APPLY_HITROLL)
@@ -3832,6 +3854,7 @@ ACMD (do_zcheck)
      if (ext2 && (found = 1))
        len += snprintf(buf + len, sizeof(buf) - len,
                        "- has unformatted extra description\r\n");
+
      /* Additional object checks. */
      if (found) {
         send_to_char(ch, "[%5d] %-30s: \r\n", GET_OBJ_VNUM(obj), obj->short_description);
@@ -3874,7 +3897,7 @@ ACMD (do_zcheck)
                             ROOM_FLAGGED(i, ROOM_HOUSE) ? "HOUSE" : "",
                             ROOM_FLAGGED(i, ROOM_HOUSE_CRASH) ? "HCRSH" : "",
                             ROOM_FLAGGED(i, ROOM_OLC) ? "OLC" : "",
-                            ROOM_FLAGGED(i, ROOM_BFS_MARK) ? "*" : "");
+                            ROOM_FLAGGED(i, ROOM_BFS_MARK) ? room_bits[ROOM_BFS_MARK] : "");
 
       if ((MIN_ROOM_DESC_LENGTH) && strlen(world[i].description)<MIN_ROOM_DESC_LENGTH && (found=1))
         len += snprintf(buf + len, sizeof(buf) - len,

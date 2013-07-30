@@ -2487,7 +2487,7 @@ const char *ACTNULL = "<NULL>";
 void perform_act(const char *orig, struct char_data *ch, struct obj_data *obj,
     void *vict_obj, struct char_data *to)
 {
-  const char *i = NULL;
+  const char *i = NULL, *colorHighLight = NULL;
   char lbuf[MAX_STRING_LENGTH], *buf, *j;
   bool uppercasenext = FALSE;
   struct char_data *dg_victim = NULL;
@@ -2500,94 +2500,111 @@ void perform_act(const char *orig, struct char_data *ch, struct obj_data *obj,
     if (*orig == '$') {
       switch (*(++orig)) {
       case 'n':
-	i = PERS(ch, to);
-	break;
+        i = PERS(ch, to);
+        break;
       case 'N':
-	CHECK_NULL(vict_obj, PERS((const struct char_data *) vict_obj, to));
-	dg_victim = (struct char_data *) vict_obj;
-	break;
+        i = PERS((struct char_data *) vict_obj, to);
+        CHECK_NULL(vict_obj, PERS((struct char_data *) vict_obj, to));
+        colorHighLight = IS_NPC((struct char_data *) vict_obj) ? NULL : colorRatio(((struct char_data *) vict_obj),
+                         COLOR_RAW, COLOR_LEV((struct char_data *) vict_obj),
+                         GET_HIT((struct char_data *) vict_obj), GET_MAX_HIT((struct char_data *) vict_obj));
+        dg_victim = (struct char_data *) vict_obj;
+        break;
       case 'm':
-	i = HMHR(ch);
-	break;
+        i = HMHR(ch);
+        break;
       case 'M':
-	CHECK_NULL(vict_obj, HMHR((const struct char_data *) vict_obj));
-	dg_victim = (struct char_data *) vict_obj;
-	break;
+        CHECK_NULL(vict_obj, HMHR((const struct char_data *) vict_obj));
+        dg_victim = (struct char_data *) vict_obj;
+        break;
       case 's':
-	i = HSHR(ch);
-	break;
+        i = HSHR(ch);
+        break;
       case 'S':
-	CHECK_NULL(vict_obj, HSHR((const struct char_data *) vict_obj));
-	dg_victim = (struct char_data *) vict_obj;
-	break;
+        CHECK_NULL(vict_obj, HSHR((const struct char_data *) vict_obj));
+        dg_victim = (struct char_data *) vict_obj;
+        break;
       case 'e':
-	i = HSSH(ch);
-	break;
+        i = HSSH(ch);
+        break;
       case 'E':
-	CHECK_NULL(vict_obj, HSSH((const struct char_data *) vict_obj));
-	dg_victim = (struct char_data *) vict_obj;
-	break;
+        CHECK_NULL(vict_obj, HSSH((const struct char_data *) vict_obj));
+        dg_victim = (struct char_data *) vict_obj;
+        break;
       case 'o':
-	CHECK_NULL(obj, OBJN(obj, to));
-	break;
+        CHECK_NULL(obj, OBJN(obj, to));
+        break;
       case 'O':
-	CHECK_NULL(vict_obj, OBJN((const struct obj_data *) vict_obj, to));
-	dg_target = (struct obj_data *) vict_obj;
-	break;
+        CHECK_NULL(vict_obj, OBJN((const struct obj_data *) vict_obj, to));
+        dg_target = (struct obj_data *) vict_obj;
+        break;
       case 'p':
-	CHECK_NULL(obj, OBJS(obj, to));
-	break;
+        CHECK_NULL(obj, OBJS(obj, to));
+        break;
       case 'P':
-	CHECK_NULL(vict_obj, OBJS((const struct obj_data *) vict_obj, to));
-	dg_target = (struct obj_data *) vict_obj;
-	break;
+        CHECK_NULL(vict_obj, OBJS((const struct obj_data *) vict_obj, to));
+        dg_target = (struct obj_data *) vict_obj;
+        break;
       case 'a':
-	CHECK_NULL(obj, SANA(obj));
-	break;
+        CHECK_NULL(obj, SANA(obj));
+        break;
       case 'A':
-	CHECK_NULL(vict_obj, SANA((const struct obj_data *) vict_obj));
-	dg_target = (struct obj_data *) vict_obj;
-	break;
-       case 'T':
- 	CHECK_NULL(vict_obj, (const char *) vict_obj);
- 	dg_arg = (char *) vict_obj;
-	break;
+        CHECK_NULL(vict_obj, SANA((const struct obj_data *) vict_obj));
+        dg_target = (struct obj_data *) vict_obj;
+        break;
+      case 'T':
+        CHECK_NULL(vict_obj, (const char *) vict_obj);
+        dg_arg = (char *) vict_obj;
+        break;
       case 't':
- 	CHECK_NULL(obj, (char *) obj);
-	break;
+        CHECK_NULL(obj, (char *) obj);
+        break;
       case 'F':
-	CHECK_NULL(vict_obj, fname((const char *) vict_obj));
-	break;
-      /* uppercase previous word */
+        CHECK_NULL(vict_obj, fname((const char *) vict_obj));
+        break;
+        /* uppercase previous word */
       case 'u':
         for (j=buf; j > lbuf && !isspace((int) *(j-1)); j--);
         if (j != buf)
           *j = UPPER(*j);
         i = "";
         break;
-      /* uppercase next word */
+        /* uppercase next word */
       case 'U':
         uppercasenext = TRUE;
         i = "";
         break;
       case '$':
-	i = "$";
-	break;
+        i = "$";
+        break;
       default:
-	log("SYSERR: Illegal $-code to act(): %c", *orig);
-	log("SYSERR: %s", orig);
-	i = "";
-	break;
+        log("SYSERR: Illegal $-code to act(): %c", *orig);
+        log("SYSERR: %s", orig);
+        i = "";
+        break;
       }
+
+      if(colorHighLight) {
+        const char *col = colorHighLight;
+        while ((*buf = *(col++))) buf++;
+        colorHighLight = KNRM;
+      }
+
       while ((*buf = *(i++)))
-        {
+      {
         if (uppercasenext && !isspace((int) *buf))
-          {
+        {
           *buf = UPPER(*buf);
           uppercasenext = FALSE;
-          }
-	buf++;
         }
+        buf++;
+      }
+
+      if (colorHighLight)
+      {
+        const char *col = KNRM;
+        while ((*buf = *(col++))) buf++;
+      }
       orig++;
     } else if (!(*(buf++) = *(orig++))) {
       break;
@@ -2595,6 +2612,7 @@ void perform_act(const char *orig, struct char_data *ch, struct obj_data *obj,
       *(buf-1) = UPPER(*(buf-1));
       uppercasenext = FALSE;
     }
+
   }
 
   *(--buf) = '\r';
