@@ -799,12 +799,11 @@ ACMD(do_examine)
 
 ACMD(do_gold)
 {
-  if (GET_GOLD(ch) == 0)
-    send_to_char(ch, "You're broke!\r\n");
-  else if (GET_GOLD(ch) == 1)
-    send_to_char(ch, "You have one miserable little gold coin.\r\n");
-  else
-    send_to_char(ch, "You have %d gold coins.\r\n", GET_GOLD(ch));
+  send_to_char(ch,"----------------------------\r\n");
+  send_to_char(ch, " Gold in hand: %s%d%s\r\n", QBYEL, GET_GOLD(ch), QNRM);
+  send_to_char(ch, " Gold in bank: %s%d%s\r\n", QBYEL, GET_BANK_GOLD(ch), QNRM);
+  send_to_char(ch, " Gold total  : %s%d%s\r\n", QBYEL, (GET_GOLD(ch) + GET_BANK_GOLD(ch)), QNRM);
+  send_to_char(ch,"----------------------------\r\n");
 }
 
 #define SEPARATOR \
