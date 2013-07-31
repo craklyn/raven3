@@ -225,8 +225,12 @@ void convert(char *filename)
     if (player.sex != PFDEF_SEX)
       fprintf(outfile, "Sex : %d\n", (int)player.sex); 
     if (player.chclass != PFDEF_CLASS)
-//      fprintf(outfile, "Clas: %d\n", (int)player.chclass); 
-      fprintf(outfile, "Clas: %d\n", 1); 
+      fprintf(outfile, "Clas: %d\n", (int)player.chclass); 
+    if (player.race  != PFDEF_RACE)  		
+        fprintf(fl, "Race: %d\n", GET_RACE(ch));
+    if (player.player_specials_saved.sub_race != PFDEF_SUBRACE)  	
+        fprintf(fl, "SubR: %d\n", GET_SUBRACE(ch));
+    
     if (player.level != PFDEF_LEVEL)
       fprintf(outfile, "Levl: %d\n", (int)player.level); 
     fprintf(outfile, "Brth: %d\n", (int)player.birth);
