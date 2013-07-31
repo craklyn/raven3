@@ -262,13 +262,13 @@ void perform_obj_aff_list(struct char_data * ch, char *arg)
      send_to_char(ch, "Not a valid affect");
      return;
   }                                   /* Special cases below */
-  else if ((apply == APPLY_CLASS) ||  /* olist affect 7 is Weapon Damage      */
-           (apply == APPLY_LEVEL) ) { /* olist affect 8 is AC-Apply for Armor */
+  else if ((apply == APPLY_UNUSED1) ||  /* olist affect 7 is Weapon Damage      */
+           (apply == APPLY_UNUSED2) ) { /* olist affect 8 is AC-Apply for Armor */
     for (num=0;num<=top_of_objt;num++) {
-      if ((apply == APPLY_CLASS && obj_proto[num].obj_flags.type_flag == ITEM_WEAPON) ||
-          (apply == APPLY_LEVEL && obj_proto[num].obj_flags.type_flag == ITEM_ARMOR) ) {
+      if ((apply == APPLY_UNUSED1 && obj_proto[num].obj_flags.type_flag == ITEM_WEAPON) ||
+          (apply == APPLY_UNUSED2 && obj_proto[num].obj_flags.type_flag == ITEM_ARMOR) ) {
         ov = obj_index[num].vnum;
-        if (apply == APPLY_CLASS)
+        if (apply == APPLY_UNUSED1)
           v1 = ((obj_proto[num].obj_flags.value[2]+1)*(obj_proto[num].obj_flags.value[1])/2);
         else
           v1 = (obj_proto[num].obj_flags.value[0]);
@@ -278,9 +278,9 @@ void perform_obj_aff_list(struct char_data * ch, char *arg)
       }
     }
 
-    if (apply == APPLY_CLASS)
+    if (apply == APPLY_UNUSED1)
       len = snprintf(buf, sizeof(buf), "Highest average damage per hit for Weapons\r\n");
-    else if (apply == APPLY_LEVEL)
+    else if (apply == APPLY_UNUSED2)
       len = snprintf(buf, sizeof(buf), "Highest AC Apply for Armor\r\n");
 
     for(i=0;i<MAX_OBJ_LIST;i++){
@@ -457,9 +457,9 @@ ACMD(do_oasis_list)
             send_to_char(ch, "Which object affect do you want to list?\r\n");
             for (i=0; i<NUM_APPLIES; i++)
             {
-              if (i == APPLY_CLASS)       /* Special Case 1 - Weapon Dam */
+              if (i == APPLY_UNUSED1)       /* Special Case 1 - Weapon Dam */
                 send_to_char(ch, "%s%2d-%s%-14s%s", QNRM, i, QYEL, "Weapon Dam", QNRM);
-              else if (i == APPLY_LEVEL)  /* Special Case 2 - Armor AC Apply */
+              else if (i == APPLY_UNUSED2)  /* Special Case 2 - Armor AC Apply */
                 send_to_char(ch, "%s%2d-%s%-14s%s", QNRM, i, QYEL, "AC Apply", QNRM);
               else
                 send_to_char(ch, "%s%2d-%s%-14s%s", QNRM, i, QYEL, apply_types[i], QNRM);

@@ -236,6 +236,9 @@ int text_processed(char *field, char *subfield, struct trig_var_data *vd,
     else
       snprintf(str, slen, "%s", cmd_info[cmd].command);
     return TRUE;
+  } else if(!str_cmp(field, "isnumber")) {
+    snprintf(str, slen, "%d", (int)is_number(vd->value));
+    return TRUE;
   }
 
   return FALSE;
@@ -613,6 +616,18 @@ void find_replacement(void *go, struct script_data *sc, trig_data *trig,
           else if (!str_cmp(field, "armor"))
             snprintf(str, slen, "%d", compute_armor_class(c));
           break;
+        case 'b':
+          if(!str_cmp(field, "bank")) {
+            if (subfield && *subfield) {
+              int addition =  atoi(subfield);
+              increase_bank(c, addition);
+              script_log("Trigger: '%s', VNUM #%d. Increased %s's bank to %d",GET_TRIG_NAME(trig), GET_TRIG_VNUM(trig), GET_NAME(c), addition);
+              *str = '\0';
+            } else {
+              snprintf(str, slen, "%d", GET_BANK_GOLD(c));
+            }
+          }
+          break;
         case 'c':
           if (!str_cmp(field, "canbeseen")) {
             if ((type == MOB_TRIGGER) && !CAN_SEE(((char_data *)go), c))
@@ -724,8 +739,10 @@ void find_replacement(void *go, struct script_data *sc, trig_data *trig,
         case 'g':
           if (!str_cmp(field, "gold")) {
             if (subfield && *subfield) {
-              int addition = atoi(subfield);
+              int addition =  atoi(subfield);
               increase_gold(c, addition);
+              script_log("Trigger: '%s', VNUM #%d. Increased %s's gold to %d",GET_TRIG_NAME(trig), GET_TRIG_VNUM(trig), GET_NAME(c), addition);
+              *str = '\0';
             }
             snprintf(str, slen, "%d", GET_GOLD(c));
           }

@@ -79,6 +79,8 @@ void cleanup_olc(struct descriptor_data *d, byte cleanup_type);
 void get_char_colors(struct char_data *ch);
 void split_argument(char *argument, char *tag);
 void send_cannot_edit(struct char_data *ch, zone_vnum zone);
+bool is_illegal_flag(int fl, int num_illegal_flags, const int illegal_flags[]);
+int  get_flag_by_number(int num, int num_flags, int num_illegal_flags, const int illegal_flags[]);
 
 /* OLC structures. */
 /* NO and YES are defined in utils.h. Removed from here. */

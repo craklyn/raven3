@@ -129,12 +129,6 @@ void aff_apply_modify(struct char_data *ch, byte loc, sbyte mod, char *msg)
     GET_CHA(ch) += mod;
     break;
 
-  /* Do Not Use. */
-  case APPLY_CLASS:
-    break;
-  case APPLY_LEVEL:
-    break;
-
   case APPLY_AGE:
     ch->player.time.birth -= (mod * SECS_PER_MUD_YEAR);
     break;
@@ -157,12 +151,6 @@ void aff_apply_modify(struct char_data *ch, byte loc, sbyte mod, char *msg)
 
   case APPLY_MOVE:
     GET_MAX_MOVE(ch) += mod;
-    break;
-
-  case APPLY_GOLD:
-    break;
-
-  case APPLY_EXP:
     break;
 
   case APPLY_AC:

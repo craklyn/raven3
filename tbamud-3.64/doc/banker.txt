@@ -1,0 +1,109 @@
+31-Jul-2013 by Hudas
+
+Create and attached the following scripts to an object that will serve as a 
+bank teller (e.g. obj #18112 in Samsera)
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Name: 'bank teller balance trigger'
+Trigger Intended Assignment: Objects
+Trigger Type: Command , Numeric Arg: 4, Arg list: b
+Commands:
+* Displays the gold and gold in bank of actor a la RavenMUD
+* but more roleplay-ish.
+* NOTE: 
+*     enter option /t to convert colors
+*     enter option /f to format and check if the "if"'s and "end"'s line up
+if %cmd.mudcommand% == balance
+ eval goldtotal %actor.gold% + %actor.bank%
+ %echo% %self.shortdesc% comes to life and makes some strange noise.
+ %send% %actor% You feel informed.
+ %send% %actor% ----------------------------
+ %send% %actor%  Gold in hand: @Y%actor.gold%@n
+ %send% %actor%  Gold in bank: @Y%actor.bank%@n
+ %send% %actor%  Gold total  : @Y%goldtotal%@n
+ %send% %actor% ----------------------------
+ wait 2
+ %echo% %self.shortdesc% slowly becomes silent and idle again.
+ return 1
+end
+return 0
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Name: 'bank teller deposit trigger'
+Trigger Intended Assignment: Objects
+Trigger Type: Command , Numeric Arg: 4, Arg list: d
+Commands:
+*
+* Deposit trigger
+*
+if %cmd.mudcommand% == deposit
+ %echo% %self.shortdesc% comes to life and makes some strange noise.
+ if %arg.strlen% == 0
+  %send% %actor% %self.shortdesc% smiles at you and says, 'How much do you want to deposit?'
+  return 1
+ elseif %arg.isnumber% == 0 && %arg% != all
+  %send% %actor% %self.shortdesc% smiles at you and says, 'I'm sorry but we only accept gold coins.'
+  return 1
+ elseif %arg% == all
+  eval decrease -%actor.gold%
+  nop %actor.bank(%actor.gold%)%
+  nop %actor.gold(%decrease%)%  
+  %send% %actor% %self.shortdesc% smiles at you and says, 'You now have @Y%actor.bank%@n gold coins in the bank. Thanks you and see you again soon!'
+  return 1
+ elseif %arg% < 1
+  %send% %actor% %self.shortdesc% says, 'There are some other things that require my time, please don't wasted it'
+  return 1
+ elseif %arg% > %actor.gold%
+  %send% %actor% %self.shortdesc% smiles at you and says, 'You don't seem to have that much gold coins with you now.'
+  return 1
+ else 
+  eval decrease -1 * %arg%
+  nop %actor.gold(%decrease%)%
+  nop %actor.bank(%arg%)%
+  %send% %actor% %self.shortdesc% smiles at you and says, 'You now have @Y%actor.bank%@n gold coins in the bank. Thanks you and see you again soon!'
+  return 1
+ end
+ wait 2
+ %echo% %self.shortdesc% slowly becomes silent and idle again. 
+end
+return 0
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Name: 'bank teller withdraw trigger'
+Trigger Intended Assignment: Objects
+Trigger Type: Command , Numeric Arg: 4, Arg list: w
+Commands:
+*
+* Withdraw trigger
+*
+if %cmd.mudcommand% == withdraw
+ %echo% %self.shortdesc% comes to life and makes some strange noise.
+ if %arg.strlen% == 0
+  %send% %actor% %self.shortdesc% smiles at you and says, 'How much do you want to withdraw?'
+  return 1
+ elseif %arg.isnumber% == 0 && %arg% != all
+  %send% %actor% %self.shortdesc% smiles at you and says, 'I'm sorry but we only accept gold coins.'
+  return 1
+ elseif %arg% == all
+  eval decrease -%actor.bank%
+  nop %actor.gold(%actor.bank%)%  
+  nop %actor.bank(%decrease%)%  
+  %send% %actor% %self.shortdesc% smiles at you and says, 'You now have @Y%actor.bank%@n gold coins in the bank. Thanks you and see you again soon!'
+  return 1
+ elseif %arg% < 1
+  %send% %actor% %self.shortdesc% says, 'There are some other things that require my time, please don't wasted it'
+  return 1
+ elseif %arg% > %actor.bank%
+  %send% %actor% %self.shortdesc% smiles at you and says, 'You don't seem to have that much gold coins in the bank.'
+  return 1
+ else 
+  eval decrease -1 * %arg%
+  nop %actor.bank(%decrease%)%
+  nop %actor.gold(%arg%)%
+  %send% %actor% %self.shortdesc% smiles at you and says, 'You now have @Y%actor.bank%@n gold coins in the bank. Thanks you and see you again soon!'
+  return 1
+ end
+ wait 2
+ %echo% %self.shortdesc% slowly becomes silent and idle again. 
+end
+return 0

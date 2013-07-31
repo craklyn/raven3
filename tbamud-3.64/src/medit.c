@@ -36,14 +36,46 @@ static void medit_save_to_disk(zone_vnum zone_num);
 static void medit_disp_positions(struct descriptor_data *d);
 static void medit_disp_sex(struct descriptor_data *d);
 static void medit_disp_attack_types(struct descriptor_data *d);
-static bool medit_illegal_mob_flag(int fl);
-static int  medit_get_mob_flag_by_number(int num);
 static void medit_disp_mob_flags(struct descriptor_data *d);
 static void medit_disp_aff_flags(struct descriptor_data *d);
 static void medit_disp_menu(struct descriptor_data *d);
 static void medit_disp_race_selection(struct descriptor_data *d);
 static void medit_disp_subrace_selection(struct descriptor_data *d);
 static void medit_disp_class_selection(struct descriptor_data *d);
+
+#define NUM_ILLEGAL_MOB_FLAGS 9
+/* Illegal mob flags */
+static const int illegal_mob_flags[NUM_ILLEGAL_MOB_FLAGS] = {
+    MOB_ISNPC,
+    MOB_CONJURED,
+    MOB_CLONED,
+    MOB_UNUSED1,
+    MOB_UNUSED2,
+    MOB_UNUSED3,
+    MOB_NOTDEADYET,
+    MOB_UNUSED4,
+    MOB_UNUSED5,
+};
+
+
+#define NUM_ILLEGAL_AFF_FLAGS 13
+/* Illegal mob affects */
+static const int illegal_aff_flags[NUM_ILLEGAL_AFF_FLAGS] = {
+    AFF_DONTUSE,
+    AFF_GROUP,
+    AFF_POISON,
+    AFF_CHARM,
+    AFF_PLAGUE,
+    AFF_UNUSED1,
+    AFF_UNUSED2,
+    AFF_UNUSED3,
+    AFF_PARALYZE,
+    AFF_ASSISTANT,
+    AFF_FORTIFY,
+    AFF_UNUSED4,
+    AFF_UNUSED5,
+};
+
 
 /*  utility functions */
 ACMD(do_oasis_medit)
@@ -346,57 +378,23 @@ static void medit_disp_attack_types(struct descriptor_data *d)
   write_to_output(d, "Enter attack type : ");
 }
 
-/* Find mob flags that shouldn't be set by builders */
-static bool medit_illegal_mob_flag(int fl)
-{
-  int i;
-
-  /* add any other flags you dont want them setting */
-  const int illegal_flags[] = {
-    MOB_ISNPC,
-    MOB_NOTDEADYET,
-  };
-
-  const int num_illegal_flags = sizeof(illegal_flags)/sizeof(int);
-
-
-  for (i=0; i < num_illegal_flags;i++)
-    if (fl == illegal_flags[i])
-      return (TRUE);
-
-  return (FALSE);
-
-}
-
-/* Due to illegal mob flags not showing in the mob flags list,
-   we need this to convert the list number back to flag value */
-static int medit_get_mob_flag_by_number(int num)
-{
-  int i, count = 0;
-  for (i = 0; i < NUM_MOB_FLAGS; i++) {
-    if (medit_illegal_mob_flag(i)) continue;
-    if ((++count) == num) return i;
-  }
-  /* Return 'illegal flag' value */
-  return -1;
-}
-
 /* Display mob-flags menu. */
 static void medit_disp_mob_flags(struct descriptor_data *d)
 {
-  int i, count = 0, columns = 0;
+  int i, count = 0;
   char flags[MAX_STRING_LENGTH];
+  const char *allowed_act_flags[NUM_MOB_FLAGS];
 
   get_char_colors(d->character);
   clear_screen(d);
 
   /* Mob flags has special handling to remove illegal flags from the list */
   for (i = 0; i < NUM_MOB_FLAGS; i++) {
-    if (medit_illegal_mob_flag(i)) continue;
-    write_to_output(d, "%s%2d%s) %-20.20s  %s", grn, ++count, nrm, action_bits[i],
-                !(++columns % 2) ? "\r\n" : "");
+    if (is_illegal_flag(i, NUM_ILLEGAL_MOB_FLAGS, illegal_mob_flags)) continue;
+    allowed_act_flags[count++] = strdup(action_bits[i]);
   }
 
+  column_list(d->character, 4, allowed_act_flags, count, TRUE);
   sprintbitarray(MOB_FLAGS(OLC_MOB(d)), action_bits, AF_ARRAY_MAX, flags);
   write_to_output(d, "\r\nCurrent flags : %s%s%s\r\nEnter mob flags (0 to quit) : ", cyn, flags, nrm);
 }
@@ -404,12 +402,20 @@ static void medit_disp_mob_flags(struct descriptor_data *d)
 /* Display affection flags menu. */
 static void medit_disp_aff_flags(struct descriptor_data *d)
 {
+  int i, count = 0;
   char flags[MAX_STRING_LENGTH];
+  const char *allowed_mob_aff_flags[NUM_AFF_FLAGS];
 
   get_char_colors(d->character);
   clear_screen(d);
-  /* +1 since AFF_FLAGS don't start at 0. */
-  column_list(d->character, 0, affected_bits + 1, NUM_AFF_FLAGS, TRUE);
+
+  for (i = 0; i < NUM_AFF_FLAGS; i++) {
+    if (is_illegal_flag(i, NUM_ILLEGAL_AFF_FLAGS, illegal_aff_flags)) continue;
+    allowed_mob_aff_flags[count++] = strdup(affected_bits[i]);
+  }
+
+  //pretty print to ch
+  column_list(d->character, 4, allowed_mob_aff_flags, count, TRUE);
   sprintbitarray(AFF_FLAGS(OLC_MOB(d)), affected_bits, AF_ARRAY_MAX, flags);
   write_to_output(d, "\r\nCurrent flags   : %s%s%s\r\nEnter aff flags (0 to quit) : ",
                           cyn, flags, nrm);
@@ -553,71 +559,46 @@ static void medit_disp_stats_menu(struct descriptor_data *d)
  * Display all available races and prompt for an input.
  */
 static void medit_disp_race_selection(struct descriptor_data *d) {
-	char buf[MAX_STRING_LENGTH];
-	int iRace, cols = 0;
-
-	clear_screen(d);
-	for (iRace = RACE_HUMAN; iRace < NUM_RACES; iRace++) {
-		sprintf(buf, "%s%2d%s) %-15.15s %s", grn, iRace, nrm,
-				pc_race_types[iRace], !(++cols % 4) ? "\r\n" : "");
-		write_to_output(d, buf);
-	}
-	
-	if (cols != 0) write_to_output(d,"\r\n");
-	write_to_output(d,"Enter race number :");
-	OLC_MODE(d) = MEDIT_RACE;
-
+  clear_screen(d);
+  column_list(d->character, 3, pc_race_types, NUM_RACES, TRUE);
+  write_to_output(d,"Enter race number :");
+  OLC_MODE(d) = MEDIT_RACE;
 }
 
 /*
  * Display all available subrace for the mob's race and prompt for an input.
  */
 static void medit_disp_subrace_selection(struct descriptor_data *d) {
-	char buf[MAX_STRING_LENGTH];
-	int iSubRace, cols = 0;
-	
-	clear_screen(d);
-	//display only the subraces for the mob's race
-	//start with 1 because it doesn't make sense to choose a subrace and 
-	//just select "None"(0).
-	for(iSubRace = 1;;iSubRace++) {
-		
-		if((IS_ELEMENTAL(OLC_MOB(d)) && iSubRace >= NUM_ELE_SUBRACE)
-				|| (IS_DRACONIAN(OLC_MOB(d)) && iSubRace >= SUBRACE_CHROMATIC_DRAGON)
-				|| (IS_DRAGON(OLC_MOB(d)) && iSubRace >= NUM_DRC_SUBRACE))
-			break;
-		
-		sprintf(buf, "%s%2d%s) %-15.15s %s", grn, iSubRace, nrm,
-				(IS_ELEMENTAL(OLC_MOB(d)) ? ele_subrace_types[iSubRace] 
-				                          : drc_subrace_types[iSubRace]),
-				(!(++cols % 4) ? "\r\n" : "") );
-		// display to builder
-		write_to_output(d, buf);		
-	}
-	
-	if(cols != 0) write_to_output(d, "\r\n");
-	write_to_output(d,"Enter subrace number :");
-	OLC_MODE(d) = MEDIT_SUBRACE;
-	
+  int iSubRace, count = 0;
+  const char *subrace_list[NUM_DRC_SUBRACE];
+
+  clear_screen(d);
+  //display only the subraces for the mob's race
+  //start with 1 because it doesn't make sense to choose a subrace and
+  //just select "None"(0).
+  for(iSubRace = 1;;iSubRace++) {
+    if((IS_ELEMENTAL(OLC_MOB(d)) && iSubRace >= NUM_ELE_SUBRACE)
+        || (IS_DRACONIAN(OLC_MOB(d)) && iSubRace >= SUBRACE_CHROMATIC_DRAGON)
+        || (IS_DRAGON(OLC_MOB(d)) && iSubRace >= NUM_DRC_SUBRACE))
+      break;
+    subrace_list[count++] = strdup((IS_ELEMENTAL(OLC_MOB(d)) ?
+        ele_subrace_types[iSubRace] : drc_subrace_types[iSubRace]));
+  }
+
+  column_list(d->character, 3, subrace_list, count, TRUE);
+  write_to_output(d,"Enter subrace number :");
+  OLC_MODE(d) = MEDIT_SUBRACE;
+
 }
 
 /*
  * Display all available classes and prompt for input.
  */
 static void medit_disp_class_selection(struct descriptor_data *d) {
-	char buf[MAX_STRING_LENGTH];
-	int iClass, cols = 0;
-	
-	clear_screen(d);
-	for(iClass = 0; iClass < NUM_CLASSES; iClass++) {
-		sprintf(buf, "%s%2d%s) %-15.15s %s", grn, iClass, nrm, pc_class_types[iClass],
-				(!(++cols % 4) ? "\r\n" : ""));
-		write_to_output(d, buf);
-	}
-	
-	if(cols != 0) write_to_output(d, "\r\n");
-	write_to_output(d, "Enter class numner :");
-	OLC_MODE(d) = MEDIT_CLASS;
+  clear_screen(d);
+  column_list(d->character, 3, pc_class_types, NUM_CLASSES, TRUE);
+  write_to_output(d, "Enter class number :");
+  OLC_MODE(d) = MEDIT_CLASS;
 }
 
 void medit_parse(struct descriptor_data *d, char *arg)
@@ -1000,7 +981,7 @@ void medit_parse(struct descriptor_data *d, char *arg)
   case MEDIT_NPC_FLAGS:
     if ((i = atoi(arg)) <= 0)
       break;
-    else if ( (j = medit_get_mob_flag_by_number(i)) == -1) {
+    else if ( (j = get_flag_by_number(i, NUM_MOB_FLAGS, NUM_ILLEGAL_MOB_FLAGS, illegal_mob_flags)) == -1) {
        write_to_output(d, "Invalid choice!\r\n");
        write_to_output(d, "Enter mob flags (0 to quit) :");
        return;
@@ -1013,13 +994,14 @@ void medit_parse(struct descriptor_data *d, char *arg)
   case MEDIT_AFF_FLAGS:
     if ((i = atoi(arg)) <= 0)
       break;
-    else if (i <= NUM_AFF_FLAGS)
-      TOGGLE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), i);
+    else if((j = get_flag_by_number(i, NUM_AFF_FLAGS, NUM_ILLEGAL_AFF_FLAGS, illegal_aff_flags)) == -1) {
+      write_to_output(d, "Invalid choice!\r\n");
+      write_to_output(d, "Enter affected flags (0 to quit) :");
+      return;
+    }
+    else if (j <= NUM_AFF_FLAGS)
+      TOGGLE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), j);
 
-    /* Remove unwanted bits right away. */
-    REMOVE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), AFF_CHARM);
-    REMOVE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), AFF_POISON);
-    REMOVE_BIT_AR(AFF_FLAGS(OLC_MOB(d)), AFF_SLEEP);
     medit_disp_aff_flags(d);
     return;
 
@@ -1203,49 +1185,49 @@ void medit_parse(struct descriptor_data *d, char *arg)
       write_to_output(d, "Please answer 'Y' or 'N': ");
     break;
   case MEDIT_RACE:
-	  if((i = atoi(arg)) > RACE_UNDEFINED && i < NUM_RACES) {
-		  /*
-		   * Reset the subrace to avoid some errors that will crash the game.
-		   */
-		  GET_SUBRACE(OLC_MOB(d)) = 0;
-		  GET_RACE(OLC_MOB(d)) = i;
-		  OLC_VAL(d) = TRUE;
-		  medit_disp_stats_menu(d);
-		  return;
-	  } 
-	  write_to_output(d,"Please select a valid race below:\r\n");
-	  medit_disp_race_selection(d);
-	  return;
+    if((i = atoi(arg) - 1) > RACE_UNDEFINED && i < NUM_RACES) {
+      /*
+       * Reset the subrace to avoid some errors that will crash the game.
+       */
+      GET_SUBRACE(OLC_MOB(d)) = 0;
+      GET_RACE(OLC_MOB(d)) = i;
+      OLC_VAL(d) = TRUE;
+      medit_disp_stats_menu(d);
+      return;
+    }
+    write_to_output(d,"Please select a valid race below:\r\n");
+    medit_disp_race_selection(d);
+    return;
 
   case MEDIT_SUBRACE:
-	  if((i = atoi(arg)) > 0
-		&& ((IS_ELEMENTAL(OLC_MOB(d)) && i < NUM_ELE_SUBRACE)
-			|| (IS_DRACONIAN(OLC_MOB(d)) && i < SUBRACE_CHROMATIC_DRAGON)
-			|| (IS_DRAGON(OLC_MOB(d)) && i < NUM_DRC_SUBRACE))
-		) {
-		  GET_SUBRACE(OLC_MOB(d)) = i;
-		  OLC_VAL(d) = TRUE;
-		  medit_disp_stats_menu(d);
-		  return;
-	  }
-	  /*
-	   * The builder entered 0 or selected a wrong subrace for the current
-	   * mob's race. Alert the builder and display the selection again.
-	   */
-	  write_to_output(d, "Please select a valid subrace below:\r\n");
-	  medit_disp_subrace_selection(d);
-	  return;
+    if((i = atoi(arg)) > 0
+        && ((IS_ELEMENTAL(OLC_MOB(d)) && i < NUM_ELE_SUBRACE)
+            || (IS_DRACONIAN(OLC_MOB(d)) && i < SUBRACE_CHROMATIC_DRAGON)
+            || (IS_DRAGON(OLC_MOB(d)) && i < NUM_DRC_SUBRACE))
+    ) {
+      GET_SUBRACE(OLC_MOB(d)) = i;
+      OLC_VAL(d) = TRUE;
+      medit_disp_stats_menu(d);
+      return;
+    }
+    /*
+     * The builder entered 0 or selected a wrong subrace for the current
+     * mob's race. Alert the builder and display the selection again.
+     */
+    write_to_output(d, "Please select a valid subrace below:\r\n");
+    medit_disp_subrace_selection(d);
+    return;
 	  
   case MEDIT_CLASS:
-	  if((i = atoi(arg)) > CLASS_UNDEFINED && i < NUM_CLASSES) {
-		  GET_CLASS(OLC_MOB(d)) = i;
-		  OLC_VAL(d) = TRUE;
-		  medit_disp_stats_menu(d);
-		  return;
-	  }
-	  write_to_output(d, "Please select a valid class below:\r\n");
-	  medit_disp_class_selection(d);
-	  return;
+    if((i = atoi(arg) - 1) > CLASS_UNDEFINED && i < NUM_CLASSES) {
+      GET_CLASS(OLC_MOB(d)) = i;
+      OLC_VAL(d) = TRUE;
+      medit_disp_stats_menu(d);
+      return;
+    }
+    write_to_output(d, "Please select a valid class below:\r\n");
+    medit_disp_class_selection(d);
+    return;
 
   default:
     /* We should never get here. */

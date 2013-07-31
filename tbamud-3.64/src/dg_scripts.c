@@ -228,7 +228,7 @@ int find_eq_pos_script(char *arg)
     {"rfinger",  WEAR_FINGER_R},
     {"lfinger",  WEAR_FINGER_L},
     {"cloak",    WEAR_CLOAK},
-    {"neck2",    WEAR_NECK},
+    {"neck",    WEAR_NECK},
     {"body",     WEAR_BODY},
     {"head",     WEAR_HEAD},
     {"ears",     WEAR_EARS},
