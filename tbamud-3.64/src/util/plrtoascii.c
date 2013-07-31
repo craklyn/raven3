@@ -227,9 +227,9 @@ void convert(char *filename)
     if (player.chclass != PFDEF_CLASS)
       fprintf(outfile, "Clas: %d\n", (int)player.chclass); 
     if (player.race  != PFDEF_RACE)  		
-        fprintf(fl, "Race: %d\n", GET_RACE(ch));
+        fprintf(fl, "Race: %d\n", player.race);
     if (player.player_specials_saved.sub_race != PFDEF_SUBRACE)  	
-        fprintf(fl, "SubR: %d\n", GET_SUBRACE(ch));
+        fprintf(fl, "SubR: %d\n", player.player_specials_saved.sub_race);
     
     if (player.level != PFDEF_LEVEL)
       fprintf(outfile, "Levl: %d\n", (int)player.level); 
