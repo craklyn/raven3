@@ -296,6 +296,7 @@ static void list_one_char(struct char_data *i, struct char_data *ch)
     " is resting here.",
     " is sitting here.",
     "!FIGHTING!",
+    " is meditating here.",
     " is standing here."
   };
 
@@ -371,6 +372,8 @@ static void list_one_char(struct char_data *i, struct char_data *ch)
           send_to_char(ch, " is sitting on a cushion of air.");
         } else if (GET_POS(i) == POS_SLEEPING) {
           send_to_char(ch, " is sleeping here, in mid-air.");
+        } else if (GET_POS(i) == POS_MEDITATE) {
+          send_to_char(ch, " is meditating on a cushion of air.");
         } else {
           send_to_char(ch, " is floating here.");
         }
@@ -386,12 +389,12 @@ static void list_one_char(struct char_data *i, struct char_data *ch)
     if (FIGHTING(i)) {
       send_to_char(ch, " is here, fighting ");
       if (FIGHTING(i) == ch)
-	send_to_char(ch, "YOU!");
+        send_to_char(ch, "YOU!");
       else {
-	if (IN_ROOM(i) == IN_ROOM(FIGHTING(i)))
-	  send_to_char(ch, "%s!", PERS(FIGHTING(i), ch));
-	else
-	  send_to_char(ch,  "someone who has already left!");
+        if (IN_ROOM(i) == IN_ROOM(FIGHTING(i)))
+          send_to_char(ch, "%s!", PERS(FIGHTING(i), ch));
+        else
+          send_to_char(ch,  "someone who has already left!");
       }
     } else			/* NIL fighting pointer */
       send_to_char(ch, " is here struggling with thin air.");
@@ -799,12 +802,11 @@ ACMD(do_examine)
 
 ACMD(do_gold)
 {
-  if (GET_GOLD(ch) == 0)
-    send_to_char(ch, "You're broke!\r\n");
-  else if (GET_GOLD(ch) == 1)
-    send_to_char(ch, "You have one miserable little gold coin.\r\n");
-  else
-    send_to_char(ch, "You have %d gold coins.\r\n", GET_GOLD(ch));
+  send_to_char(ch,"----------------------------\r\n");
+  send_to_char(ch, " Gold in hand: %s%d%s\r\n", QBYEL, GET_GOLD(ch), QNRM);
+  send_to_char(ch, " Gold in bank: %s%d%s\r\n", QBYEL, GET_BANK_GOLD(ch), QNRM);
+  send_to_char(ch, " Gold total  : %s%d%s\r\n", QBYEL, (GET_GOLD(ch) + GET_BANK_GOLD(ch)), QNRM);
+  send_to_char(ch,"----------------------------\r\n");
 }
 
 #define SEPARATOR \
