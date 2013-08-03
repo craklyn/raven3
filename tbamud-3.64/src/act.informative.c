@@ -292,12 +292,12 @@ static void list_one_char(struct char_data *i, struct char_data *ch)
     " is lying here, mortally wounded.",
     " is lying here, incapacitated.",
     " is lying here, stunned.",
+    " is meditating here.",
     " is sleeping here.",
     " is resting here.",
     " is sitting here.",
+    " is standing here.",
     "!FIGHTING!",
-    " is meditating here.",
-    " is standing here."
   };
 
   if (!IS_NPC(ch) && PRF_FLAGGED(ch, PRF_SHOWVNUMS)) {
