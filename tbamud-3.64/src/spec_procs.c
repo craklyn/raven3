@@ -27,16 +27,195 @@
 #include "fight.h"
 #include "modify.h"
 
+#define MIN_LEVEL_SPREAD 15
+#define NUM_CURATIVE_SPELLS 3
+
 
 /* locally defined functions of local (file) scope */
 static int compare_spells(const void *x, const void *y);
 static const char *how_good(int percent);
 static void npc_steal(struct char_data *ch, struct char_data *victim);
+static int getBestOffensiveSpell(struct char_data *mob);
+static int getBestHealingSpell(struct char_data *mob);
+static bool removeBadSpells(struct char_data *mob, struct char_data *affected);
+static int getBestOffensiveSkill(struct char_data *mob);
 
 /* Special procedures for mobiles. */
 static int spell_sort_info[MAX_SKILLS + 1];
 
+struct spec_mob_action {
+  /* this is just for reference */
+  const char *name;
+  SPECIAL(*func);
+};
 
+struct spec_mob_skill {
+  int skill_number;
+  void  (*action)
+       (struct char_data *ch, char *argument, int cmd, int subcmd);
+};
+
+struct curative_spells {
+  bitvector_t affect; /* the affect that needs to cured/removed */
+  int         spell;  /* the spell that can cure/remove the affect */
+};
+
+/*
+ * List of class specific mob behavior.
+ */
+struct spec_mob_action mob_class_action[NUM_CLASSES] = {
+    { "Magic User",       spec_None   },
+    { "Cleric",           spec_Cleric },
+    { "Thief",            spec_Thief  },
+    { "Warrior",          spec_None   },
+    { "Ranger",           spec_None   },
+    { "Assassin",         spec_None   },
+    { "Shou-lin",         spec_None   },
+    { "Solamnic Knight",  spec_None   },
+    { "Death Knight",     spec_None   },
+    { "Shadow Dance",     spec_None   },
+    { "Necromancer",      spec_None   },
+    { "Druid",            spec_None   },
+};
+
+struct spec_mob_action mob_race_action[NUM_RACES] = {
+    {"Human", spec_None},
+    {"Plant", spec_None},
+    {"Animal", spec_None},
+    {"Dragon", spec_None},
+    {"Undead", spec_None},
+    {"Vampire", spec_None},
+    {"Halfling", spec_None},
+    {"Elf", spec_None},
+    {"Dwarf", spec_None},
+    {"Giant", spec_None},
+    {"Minotaur", spec_None},
+    {"Demon", spec_None},
+    {"Ogre", spec_None},
+    {"Troll", spec_None},
+    {"Werewolf", spec_None},
+    {"Elemental", spec_None},
+    {"Orc", spec_Orc},
+    {"Gnome", spec_None},
+    {"Draconian", spec_None},
+    {"Faerie", spec_None},
+    {"Amara", spec_None},
+    {"Izarti", spec_None},
+    {"Drow", spec_None},
+    {"S-Human", spec_None},
+    {"S-Halfling", spec_None},
+    {"S-Elf", spec_None},
+    {"S-Drow", spec_None},
+    {"S-Dwarf", spec_None},
+    {"S-Minotaur", spec_None},
+    {"S-Ogre", spec_None},
+    {"S-Troll", spec_None},
+    {"S-Draconian", spec_None},
+    {"S-Gnome", spec_None},
+    {"S-Orc", spec_Orc},
+    {"Terran", spec_None},
+    {"Zerg", spec_None},
+    {"Protoss", spec_None}
+};
+
+struct curative_spells curative_spell_list[NUM_CURATIVE_SPELLS] = {
+    { AFF_BLIND,  SPELL_CURE_BLIND    },
+    { AFF_POISON, SPELL_REMOVE_POISON },
+    { AFF_CURSE,  SPELL_REMOVE_CURSE  },
+};
+
+#define NUM_MOB_SKILLS 3
+
+struct spec_mob_skill spec_mob_skill_info[NUM_MOB_SKILLS] = {
+    {SKILL_KICK, do_kick},
+    {SKILL_BASH, do_bash},
+    {SKILL_WHIRLWIND, do_whirlwind}
+};
+
+/*
+ * Return the best possible offensive spell for the given mob.
+ * @param mob the mobile
+ */
+static int getBestOffensiveSpell(struct char_data *mob) {
+  int i, spellNum = -1, spellCount = 0, offensiveSpells[NUM_SPELLS];
+  int minLevel   = ( GET_LEVEL(mob) <= MIN_LEVEL_SPREAD ? 1 : GET_LEVEL(mob) - MIN_LEVEL_SPREAD );
+  int maxLevel   = ( GET_LEVEL(mob) >=  LVL_IMMORT ?  LVL_IMMORT - 1 : GET_LEVEL(mob));
+
+  /* get the offensive spells */
+  for(i = 0; i < NUM_SPELLS; i++) {
+    if(spell_info[i].violent
+        /* spells within a level range based on mob's level */
+        && spell_info[i].min_level[(int)GET_CLASS(mob)] >= minLevel
+        && spell_info[i].min_level[(int)GET_CLASS(mob)] <= maxLevel) {
+      offensiveSpells[spellCount++] = i;
+    }
+  }
+
+  if(spellCount > 0) {
+    spellNum = offensiveSpells[rand_number(0, spellCount-1)];
+  }
+
+  return spellNum;
+}
+
+static int getBestOffensiveSkill(struct char_data *mob) {
+  int i, skillNum = -1, skillCount = 0, offensiveSkills[NUM_SPELLS];
+
+  /* get the offensive spells */
+  for(i = 0; i < NUM_MOB_SKILLS; i++) {
+    /* spells within a level range based on mob's level */
+    if(spell_info[spec_mob_skill_info[i].skill_number].min_level[(int)GET_CLASS(mob)] <= GET_LEVEL(mob)) {
+      offensiveSkills[skillCount++] = i;
+    }
+  }
+
+  if(skillCount > 0) {
+    skillNum = offensiveSkills[rand_number(0, skillCount-1)];
+  }
+
+  return skillNum;
+}
+
+/*
+ * Return the best possible healing spell for the given mob.
+ * @param mob the mobile
+ */
+static int getBestHealingSpell(struct char_data *mob) {
+  int i, healingSpell = -1;
+  const int numHealSpells = 3;
+  /*
+   * Put the healing spells here in ascending order so we don't need to compare
+   * the levels below.
+   */
+  int healingSpells[] = {
+      SPELL_CURE_LIGHT,
+      SPELL_CURE_CRITIC,
+      SPELL_HEAL
+  };
+
+  for(i = 0; i < numHealSpells; i++)
+    /* continue as long as the skill is within the mob's level */
+    if(spell_info[healingSpells[i]].min_level[(int)GET_CLASS(mob)] <= GET_LEVEL(mob))
+        healingSpell = healingSpells[i];
+
+  return healingSpell;
+}
+
+/*
+ * Attempt to remove bad spells (e.g. blind, poison etc.) from 'affected'. Returns TRUE if a
+ * spell was cast (even if it failed), other wise FALSE.
+ * @param mob the mobile
+ */
+static bool removeBadSpells(struct char_data *mob, struct char_data *affected) {
+  bool doneCasting = FALSE;
+  int i;
+
+  for(i = 0; i < NUM_CURATIVE_SPELLS; i++)
+    if(!doneCasting && IS_AFFECTED(affected, curative_spell_list[i].affect) && mob_cast(mob, affected, curative_spell_list[i].spell))
+      doneCasting = TRUE;
+
+  return doneCasting;
+}
 
 static int compare_spells(const void *x, const void *y)
 {
@@ -120,7 +299,7 @@ void list_skills(struct char_data *ch)
     i = spell_sort_info[sortpos];
     if (GET_LEVEL(ch) >= spell_info[i].min_level[(int) GET_CLASS(ch)]) {
       cnt += 1;
-      nlen = snprintf(buf2 + len, sizeof(buf2) - len, (cnt%2) ? "%-20s %s | " : "%-20s %s\r\n", spell_info[i].name, how_good(GET_SKILL(ch, i)));
+      nlen = snprintf(buf2 + len, sizeof(buf2) - len, (cnt%2) ? "%-20s %s | " : "%-20s %s\r\n", spell_info[i].name, how_good(GET_LEARNED_SKILL(ch, i)));
       if (len + nlen >= sizeof(buf2) || nlen < 0)
         break;
       len += nlen;
@@ -158,19 +337,19 @@ SPECIAL(guild)
     send_to_char(ch, "You do not know of that %s.\r\n", SPLSKL(ch));
     return (TRUE);
   }
-  if (GET_SKILL(ch, skill_num) >= LEARNED(ch)) {
+  if (GET_LEARNED_SKILL(ch, skill_num) >= LEARNED(ch)) {
     send_to_char(ch, "You are already learned in that area.\r\n");
     return (TRUE);
   }
   send_to_char(ch, "You practice for a while...\r\n");
   GET_PRACTICES(ch)--;
 
-  percent = GET_SKILL(ch, skill_num);
+  percent = GET_LEARNED_SKILL(ch, skill_num);
   percent += MIN(MAXGAIN(ch), MAX(MINGAIN(ch), int_app[GET_INT(ch)].learn));
 
   SET_SKILL(ch, skill_num, MIN(LEARNED(ch), percent));
 
-  if (GET_SKILL(ch, skill_num) >= LEARNED(ch))
+  if (GET_LEARNED_SKILL(ch, skill_num) >= LEARNED(ch))
     send_to_char(ch, "You are now learned in that area.\r\n");
 
   return (TRUE);
@@ -340,92 +519,6 @@ SPECIAL(snake)
   act("$n bites $N!", 1, ch, 0, FIGHTING(ch), TO_NOTVICT);
   act("$n bites you!", 1, ch, 0, FIGHTING(ch), TO_VICT);
   call_magic(ch, FIGHTING(ch), 0, SPELL_POISON, GET_LEVEL(ch), CAST_SPELL);
-  return (TRUE);
-}
-
-SPECIAL(thief)
-{
-  struct char_data *cons;
-
-  if (cmd || GET_POS(ch) != POS_STANDING)
-    return (FALSE);
-
-  for (cons = world[IN_ROOM(ch)].people; cons; cons = cons->next_in_room)
-    if (!IS_NPC(cons) && GET_LEVEL(cons) < LVL_IMMORT && !rand_number(0, 4)) {
-      npc_steal(ch, cons);
-      return (TRUE);
-    }
-
-  return (FALSE);
-}
-
-SPECIAL(magic_user)
-{
-  struct char_data *vict;
-
-  if (cmd || GET_POS(ch) != POS_FIGHTING)
-    return (FALSE);
-
-  /* pseudo-randomly choose someone in the room who is fighting me */
-  for (vict = world[IN_ROOM(ch)].people; vict; vict = vict->next_in_room)
-    if (FIGHTING(vict) == ch && !rand_number(0, 4))
-      break;
-
-  /* if I didn't pick any of those, then just slam the guy I'm fighting */
-  if (vict == NULL && IN_ROOM(FIGHTING(ch)) == IN_ROOM(ch))
-    vict = FIGHTING(ch);
-
-  /* Hm...didn't pick anyone...I'll wait a round. */
-  if (vict == NULL)
-    return (TRUE);
-
-  if (GET_LEVEL(ch) > 13 && rand_number(0, 10) == 0)
-    cast_spell(ch, vict, NULL, SPELL_POISON);
-
-  if (GET_LEVEL(ch) > 7 && rand_number(0, 8) == 0)
-    cast_spell(ch, vict, NULL, SPELL_BLINDNESS);
-
-  if (GET_LEVEL(ch) > 12 && rand_number(0, 12) == 0) {
-    if (IS_EVIL(ch))
-      cast_spell(ch, vict, NULL, SPELL_ENERGY_DRAIN);
-    else if (IS_GOOD(ch))
-      cast_spell(ch, vict, NULL, SPELL_DISPEL_EVIL);
-  }
-
-  if (rand_number(0, 4))
-    return (TRUE);
-
-  switch (GET_LEVEL(ch)) {
-    case 4:
-    case 5:
-      cast_spell(ch, vict, NULL, SPELL_MAGIC_MISSILE);
-      break;
-    case 6:
-    case 7:
-      cast_spell(ch, vict, NULL, SPELL_CHILL_TOUCH);
-      break;
-    case 8:
-    case 9:
-      cast_spell(ch, vict, NULL, SPELL_BURNING_HANDS);
-      break;
-    case 10:
-    case 11:
-      cast_spell(ch, vict, NULL, SPELL_SHOCKING_GRASP);
-      break;
-    case 12:
-    case 13:
-      cast_spell(ch, vict, NULL, SPELL_LIGHTNING_BOLT);
-      break;
-    case 14:
-    case 15:
-    case 16:
-    case 17:
-      cast_spell(ch, vict, NULL, SPELL_COLOR_SPRAY);
-      break;
-    default:
-      cast_spell(ch, vict, NULL, SPELL_FIREBALL);
-      break;
-  }
   return (TRUE);
 }
 
@@ -708,3 +801,151 @@ SPECIAL(bank)
     return (FALSE);
 }
 
+/******************************************************************************
+ * Class and Racial behaviors
+ ******************************************************************************/
+/*
+ * Place holder for unimplemented special behaviour
+ */
+SPECIAL(spec_None) {
+  return FALSE;
+}
+
+SPECIAL(spec_Thief)
+{
+  struct char_data *cons;
+
+  if (cmd || GET_POS(ch) != POS_STANDING)
+    return (FALSE);
+
+  for (cons = world[IN_ROOM(ch)].people; cons; cons = cons->next_in_room)
+    if (!IS_NPC(cons) && GET_LEVEL(cons) < LVL_IMMORT && !rand_number(0, 4)) {
+      npc_steal(ch, cons);
+      return (TRUE);
+    }
+
+  return (FALSE);
+}
+
+SPECIAL(spec_Cleric) {
+  int healSpell = -1;
+  bool doneCasting = FALSE;
+  struct char_data *tch;
+
+  /* Fighting or not a Cleric will always first check if they need some healing */
+  if((GET_HIT(ch) < (GET_MAX_HIT(ch)/4))
+      || (GET_HIT(ch) < (GET_MAX_HIT(ch)/2) && !rand_number(0, 7))
+      || (GET_HIT(ch) < (GET_MAX_HIT(ch)/3) && !rand_number(0, 4)))
+    if((healSpell = getBestHealingSpell(ch)) != -1)
+      doneCasting = mob_cast(ch, ch, healSpell);
+
+  /* spec_OffensiveSpellCaster has covered the fighting behavior */
+  if(GET_POS(ch) == POS_STANDING) {
+    /* Try to remove bad spells */
+    doneCasting = removeBadSpells(ch, ch);
+
+    /* Find for mobs that might need some help */
+    if(!doneCasting && MOB_FLAGGED(ch, MOB_HELPER))
+    for (tch = world[IN_ROOM(ch)].people; tch; tch = tch->next_in_room) {
+        if (CAN_SEE(ch, tch) && GET_HIT(tch) < GET_MAX_HIT(tch) && (healSpell = getBestHealingSpell(ch)) != -1)
+          doneCasting = mob_cast(ch, tch, healSpell);
+        if (!doneCasting && CAN_SEE(ch, tch) && GET_HIT(tch) < GET_MAX_HIT(tch))
+          doneCasting = removeBadSpells(ch, tch);
+    }
+  }
+
+  return doneCasting;
+}
+
+SPECIAL(spec_OffensiveAction)
+{
+  struct char_data *vict;
+  int offensiveSpell;
+
+  if (GET_POS(ch) != POS_FIGHTING)
+    return (FALSE);
+
+  /* pseudo-randomly choose someone in the room who is fighting me */
+  for (vict = world[IN_ROOM(ch)].people; vict; vict = vict->next_in_room)
+    if (FIGHTING(vict) == ch && !rand_number(0, 4))
+      break;
+
+  /* if I didn't pick any of those, then just slam the guy I'm fighting */
+  if (vict == NULL && IN_ROOM(FIGHTING(ch)) == IN_ROOM(ch))
+    vict = FIGHTING(ch);
+
+  /* Hm...didn't pick anyone...I'll wait a round. */
+  if (vict == NULL)
+    return (TRUE);
+
+  if((offensiveSpell = getBestOffensiveSpell(ch)) > 0) {
+    return mob_cast(ch, vict, offensiveSpell);
+  } else if((offensiveSpell = getBestOffensiveSkill(ch)) >= 0 && GET_WAIT_STATE(ch) < 1
+      && rand_number(0, 30) <= GET_INT(ch)){
+    ((*spec_mob_skill_info[offensiveSpell].action)(ch, "", 0, 0));
+  }
+
+  return (TRUE);
+}
+
+/*
+ * This is to demonstrate mobile behavior based on race. Nothing really special.
+ * Them Orcs hate the Elves!
+ */
+SPECIAL(spec_Orc) {
+  struct char_data *elf;
+  bool ok = FALSE;
+  char *action = NULL, buf[MAX_STRING_LENGTH];
+
+  if(!FIGHTING(ch) && (GET_RACE(ch) == RACE_ORC || GET_RACE(ch) == RACE_SORC)) {
+    for (elf = world[IN_ROOM(ch)].people; elf; elf = elf->next_in_room) {
+      if(CAN_SEE(ch, elf) && (GET_RACE(elf) == RACE_ELF || GET_RACE(elf) == RACE_SELF) && !rand_number(0, 4)
+          ) {
+        switch(rand_number(0, 4)) {
+        case 0:
+          action = strdup("sneer");
+          break;
+        case 1:
+          action = strdup("hate");
+          break;
+        case 2:
+          action = strdup("rebuke");
+          break;
+        case 3:
+          action = strdup("challenge");
+          break;
+        }
+
+        if(action != NULL) {
+          do_action(ch, GET_NAME(elf), find_command(action), 0);
+        } else {
+          sprintf(buf,"To be with %s in the same room is not something I desire.", GET_NAME(elf));
+          do_say(ch, buf, 0, 0);
+        }
+        continue;
+      }
+    }
+  }
+
+  return ok;
+}
+
+/*
+ * Class and/or race specific mobile combat behavior.
+ */
+void mobCombatAction(struct char_data *mob) {
+  /* First do class specific spells
+   */
+  if(!(*mob_class_action[(int)GET_CLASS(mob)].func)(mob, NULL, 0, NULL)
+      && !(*mob_race_action[(int)GET_RACE(mob)].func)(mob, NULL, 0, NULL)) {
+    spec_OffensiveAction(mob, NULL, 0, NULL);
+  }
+}
+
+/*
+ *
+ */
+void mobNormalAction(struct char_data *mob) {
+  if(!(*mob_class_action[(int)GET_CLASS(mob)].func)(mob, NULL, 0, NULL))
+    (*mob_race_action[(int)GET_RACE(mob)].func)(mob, NULL, 0, NULL);
+}

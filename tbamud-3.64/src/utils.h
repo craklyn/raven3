@@ -622,6 +622,8 @@ do                                                              \
 /** Copy the current skill level i of ch to pct. */
 #define SET_SKILL(ch, i, pct)	do { CHECK_PLAYER_SPECIAL((ch), (ch)->player_specials->saved.skills[i]) = pct; } while(0)
 
+#define GET_LEARNED_SKILL(ch, i) (IS_NPC(ch) ? 80 : GET_SKILL(ch, i))
+
 /** The player's default sector type when buildwalking */
 #define GET_BUILDWALK_SECTOR(ch) CHECK_PLAYER_SPECIAL((ch), ((ch)->player_specials->buildwalk_sector))
 
@@ -678,6 +680,8 @@ do                                                              \
 #define GET_MOB_WAIT(ch)      GET_WAIT_STATE(ch)
 /** Use this macro to check the wait state of ch. */
 #define GET_WAIT_STATE(ch)    ((ch)->wait)
+/** GET_WAIT_STATE that will affect NPC's and mortal PC's only */
+#define STUN(ch, cycle)  if((!IS_NPC(ch) && GET_LEVEL(ch) < LVL_IMMORT) || IS_NPC(ch)) GET_WAIT_STATE(ch) = cycle
 
 /* Descriptor-based utils. */
 /** Connected state of d. */

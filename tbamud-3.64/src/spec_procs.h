@@ -37,8 +37,6 @@ SPECIAL(guild);
 SPECIAL(dump);
 SPECIAL(mayor);
 SPECIAL(snake);
-SPECIAL(thief);
-SPECIAL(magic_user);
 SPECIAL(guild_guard);
 SPECIAL(puff);
 SPECIAL(fido);
@@ -46,5 +44,19 @@ SPECIAL(janitor);
 SPECIAL(cityguard);
 SPECIAL(pet_shops);
 SPECIAL(bank);
+
+/****************************************************************************
+ * Class/Race based behaviour of mobiles
+ ****************************************************************************/
+SPECIAL(spec_Thief);
+SPECIAL(spec_Warrior);
+SPECIAL(spec_Cleric);
+SPECIAL(spec_None);
+SPECIAL(spec_OffensiveAction);
+
+SPECIAL(spec_Orc);
+
+void mobCombatAction(struct char_data *mob);
+void mobNormalAction(struct char_data *mob);
 
 #endif /* _SPEC_PROCS_H_ */

@@ -106,7 +106,7 @@ ACMD(do_sneak)
   struct affected_type af;
   byte percent;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_SNEAK)) {
+  if (IS_NPC(ch) || !GET_LEARNED_SKILL(ch, SKILL_SNEAK)) {
     send_to_char(ch, "You have no idea how to do that.\r\n");
     return;
   }
@@ -116,7 +116,7 @@ ACMD(do_sneak)
 
   percent = rand_number(1, 101);	/* 101% is a complete failure */
 
-  if (percent > GET_SKILL(ch, SKILL_SNEAK) + dex_app_skill[GET_DEX(ch)].sneak)
+  if (percent > GET_LEARNED_SKILL(ch, SKILL_SNEAK) + dex_app_skill[GET_DEX(ch)].sneak)
     return;
 
   new_affect(&af);
@@ -130,7 +130,7 @@ ACMD(do_hide)
 {
   byte percent;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_HIDE)) {
+  if (IS_NPC(ch) || !GET_LEARNED_SKILL(ch, SKILL_HIDE)) {
     send_to_char(ch, "You have no idea how to do that.\r\n");
     return;
   }
@@ -142,7 +142,7 @@ ACMD(do_hide)
 
   percent = rand_number(1, 101);	/* 101% is a complete failure */
 
-  if (percent > GET_SKILL(ch, SKILL_HIDE) + dex_app_skill[GET_DEX(ch)].hide)
+  if (percent > GET_LEARNED_SKILL(ch, SKILL_HIDE) + dex_app_skill[GET_DEX(ch)].hide)
     return;
 
   SET_BIT_AR(AFF_FLAGS(ch), AFF_HIDE);
@@ -155,7 +155,7 @@ ACMD(do_steal)
   char vict_name[MAX_INPUT_LENGTH], obj_name[MAX_INPUT_LENGTH];
   int percent, gold, eq_pos, pcsteal = 0, ohoh = 0;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_STEAL)) {
+  if (IS_NPC(ch) || !GET_LEARNED_SKILL(ch, SKILL_STEAL)) {
     send_to_char(ch, "You have no idea how to do that.\r\n");
     return;
   }
@@ -223,7 +223,7 @@ ACMD(do_steal)
 
       percent += GET_OBJ_WEIGHT(obj);	/* Make heavy harder */
 
-      if (percent > GET_SKILL(ch, SKILL_STEAL)) {
+      if (percent > GET_LEARNED_SKILL(ch, SKILL_STEAL)) {
 	ohoh = TRUE;
 	send_to_char(ch, "Oops..\r\n");
 	act("$n tried to steal something from you!", FALSE, ch, 0, vict, TO_VICT);
@@ -245,7 +245,7 @@ ACMD(do_steal)
       }
     }
   } else {			/* Steal some coins */
-    if (AWAKE(vict) && (percent > GET_SKILL(ch, SKILL_STEAL))) {
+    if (AWAKE(vict) && (percent > GET_LEARNED_SKILL(ch, SKILL_STEAL))) {
       ohoh = TRUE;
       send_to_char(ch, "Oops..\r\n");
       act("You discover that $n has $s hands in your wallet.", FALSE, ch, 0, vict, TO_VICT);
