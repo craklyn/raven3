@@ -455,7 +455,10 @@ int cast_spell(struct char_data *ch, struct char_data *tch,
     case POS_SITTING:
       send_to_char(ch, "You can't do this sitting!\r\n");
       break;
-    case POS_FIGHTING:
+    case POS_MEDITATE:
+	  send_to_char(ch, "You can't do that while meditating!\r\n");
+	  break;
+	case POS_FIGHTING:
       send_to_char(ch, "Impossible!  You can't concentrate enough!\r\n");
       break;
     default:
