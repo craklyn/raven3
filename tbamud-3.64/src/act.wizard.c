@@ -3326,7 +3326,7 @@ static int perform_set(struct char_data *ch, struct char_data *vict, int mode, c
 
 void show_set_help(struct char_data *ch)
 {
-  const char *set_levels[] = {"Imm", "God", "GrGod", "IMP"};
+  const char *set_levels[] = {"HERO", "SAINT", "ANGEL", "DEITY", "CREAT", "DEMI", "LGOD", "GOD", "GRGOD", "IMP"};
   const char *set_targets[] = {"PC", "NPC", "BOTH"};
   const char *set_types[] = {"MISC", "BINARY", "NUMBER"};
   char buf[MAX_STRING_LENGTH];

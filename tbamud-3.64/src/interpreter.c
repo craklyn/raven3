@@ -360,7 +360,7 @@ cpp_extern const struct command_info cmd_info[] = {
   { "zedit"    , "zedit"   , POS_DEAD    , do_oasis_zedit, LVL_BUILDER, 0 },
   { "zlist"    , "zlist"   , POS_DEAD    , do_oasis_list, LVL_BUILDER, SCMD_OASIS_ZLIST },
   { "zlock"    , "zlock"   , POS_DEAD    , do_zlock    , LVL_GOD, 0 },
-  { "zunlock"  , "zunlock" , POS_DEAD    , do_zunlock  , LVL_GOD, 0 },
+  { "zunlock"  , "zunlock" , POS_DEAD    , do_zunlock  , LVL_IMPL, 0 },
   { "zcheck"   , "zcheck"  , POS_DEAD    , do_zcheck   , LVL_BUILDER, 0 },
   { "zpurge"   , "zpurge"  , POS_DEAD    , do_zpurge   , LVL_BUILDER, 0 },
 
