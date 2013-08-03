@@ -908,8 +908,11 @@ void perform_violence(void)
       continue;
     }
 
-    if (GET_MOB_WAIT(ch) > 0) {
-      GET_MOB_WAIT(ch) -= PULSE_VIOLENCE;
+    if (GET_WAIT_STATE(ch) > 0) {
+      GET_WAIT_STATE(ch) -= PULSE_VIOLENCE;
+      if(GET_WAIT_STATE(ch) < 0) {
+        GET_WAIT_STATE(ch) =  MAX(0, MIN(GET_WAIT_STATE(ch), GET_WAIT_STATE(ch) - PULSE_VIOLENCE));
+      }
     }
 
     if (GROUP(ch)) {
@@ -943,14 +946,7 @@ void perform_violence(void)
  * Mobile behavior
  */
 void performMobCombatAction(void) {
-  struct char_data *ch, *nextChar;
-
-  for(ch = character_list; ch; ch = nextChar) {
-    nextChar = ch->next;
-    if(IS_NPC(ch) && GET_WAIT_STATE(ch) > 0) {
-      GET_WAIT_STATE(ch) -= 1;
-    }
-  }
+  struct char_data *ch;
 
   for (ch = combat_list; ch; ch = next_combat_list) {
     next_combat_list = ch->next_fighting;
