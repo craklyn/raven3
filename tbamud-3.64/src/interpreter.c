@@ -196,7 +196,7 @@ cpp_extern const struct command_info cmd_info[] = {
   { "kill"     , "k"       , POS_FIGHTING, do_kill     , 0, 0 },
   { "kick"     , "ki"      , POS_FIGHTING, do_kick     , 1, 0 },
 
-  { "look"     , "l"       , POS_RESTING , do_look     , 0, SCMD_LOOK },
+  { "look"     , "l"       , POS_MEDITATE , do_look     , 0, SCMD_LOOK },
   { "last"     , "last"    , POS_DEAD    , do_last     , LVL_GOD, 0 },
   { "leave"    , "lea"     , POS_STANDING, do_leave    , 0, 0 },
   { "levels"   , "lev"     , POS_DEAD    , do_levels   , 0, 0 },
@@ -207,6 +207,7 @@ cpp_extern const struct command_info cmd_info[] = {
 
   { "motd"     , "motd"    , POS_DEAD    , do_gen_ps   , 0, SCMD_MOTD },
   { "mail"     , "mail"    , POS_STANDING, do_not_here , 1, 0 },
+  { "meditate" , "meditate", POS_STANDING, do_meditate , 0, 0 }, 
   { "map"      , "map"     , POS_STANDING, do_map      , 1, 0 },
   { "medit"    , "med"     , POS_DEAD    , do_oasis_medit, LVL_BUILDER, 0 },
   { "mlist"    , "mlist"   , POS_DEAD    , do_oasis_list, LVL_BUILDER, SCMD_OASIS_MLIST },
@@ -301,11 +302,10 @@ cpp_extern const struct command_info cmd_info[] = {
   { "snoop"    , "snoop"   , POS_DEAD    , do_snoop    , LVL_GOD, 0 },
   { "socials"  , "socials" , POS_DEAD    , do_commands , 0, SCMD_SOCIALS },
   { "split"    , "split"   , POS_SITTING , do_split    , 1, 0 },
-  { "stand"    , "st"      , POS_RESTING , do_stand    , 0, 0 },
+  { "stand"    , "st"      , POS_MEDITATE, do_stand   , 0, 0 },
   { "stat"     , "stat"    , POS_DEAD    , do_stat     , LVL_IMMORT, 0 },
   { "steal"    , "ste"     , POS_STANDING, do_steal    , 1, 0 },
   { "switch"   , "switch"  , POS_DEAD    , do_switch   , LVL_GOD, 0 },
-
   { "tell"     , "t"       , POS_DEAD    , do_tell     , 0, 0 },
   { "take"     , "ta"      , POS_RESTING , do_get      , 0, 0 },
   { "taste"    , "tas"     , POS_RESTING , do_eat      , 0, SCMD_TASTE },
@@ -575,6 +575,8 @@ void command_interpreter(struct char_data *ch, char *argument)
       break;
     case POS_SITTING:
       send_to_char(ch, "Maybe you should get on your feet first?\r\n");
+	case POS_MEDITATE:
+      send_to_char(ch, "Perhaps you should stop meditating first.\r\n");
       break;
     case POS_FIGHTING:
       send_to_char(ch, "No way!  You're fighting for your life!\r\n");
