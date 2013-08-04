@@ -744,7 +744,6 @@ ACMD(do_stand)
     act("$n stops resting, and clambers on $s feet.", TRUE, ch, 0, 0, TO_ROOM);
     GET_POS(ch) = POS_STANDING;
     /* Were they sitting in something. */
-    break;    
     char_from_furniture(ch);
     break;
   case POS_SLEEPING:
