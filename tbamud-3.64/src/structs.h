@@ -309,7 +309,7 @@
 #define POS_INCAP      2	/**< Position = incapacitated */
 #define POS_STUNNED    3	/**< Position = stunned	*/
 #define POS_SLEEPING   4	/**< Position = sleeping */
-#define POS_MEDITATE   5    /**< Position = meditating */
+#define POS_MEDITATE   5	/**< Position = meditating */
 #define POS_RESTING    6	/**< Position = resting	*/
 #define POS_SITTING    7	/**< Position = sitting	*/
 #define POS_FIGHTING   8	/**< Position = fighting */
