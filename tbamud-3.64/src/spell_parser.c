@@ -446,7 +446,7 @@ int cast_spell(struct char_data *ch, struct char_data *tch,
 
   if (GET_POS(ch) < SINFO.min_position) {
     switch (GET_POS(ch)) {
-      case POS_SLEEPING:
+    case POS_SLEEPING:
       send_to_char(ch, "You dream about great magical powers.\r\n");
       break;
     case POS_RESTING:
@@ -456,9 +456,9 @@ int cast_spell(struct char_data *ch, struct char_data *tch,
       send_to_char(ch, "You can't do this sitting!\r\n");
       break;
     case POS_MEDITATE:
-	  send_to_char(ch, "You can't do that while meditating!\r\n");
-	  break;
-	case POS_FIGHTING:
+      send_to_char(ch, "You can't do that while meditating!\r\n");
+      break;
+    case POS_FIGHTING:
       send_to_char(ch, "Impossible!  You can't concentrate enough!\r\n");
       break;
     default:
