@@ -739,6 +739,11 @@ ACMD(do_stand)
     /* Will be sitting after a successful bash and may still be fighting. */
     GET_POS(ch) = FIGHTING(ch) ? POS_FIGHTING : POS_STANDING;
     break;
+  case POS_MEDITATE:
+    send_to_char(ch, "You rise to your feet from the lotus position.\r\n");
+    act("$n rises to $s from the lotus position.", TRUE, ch, 0, 0, TO_ROOM);
+    GET_POS(ch) = POS_STANDING;
+    break;
   case POS_RESTING:
     send_to_char(ch, "You stop resting, and stand up.\r\n");
     act("$n stops resting, and clambers on $s feet.", TRUE, ch, 0, 0, TO_ROOM);
@@ -885,6 +890,26 @@ ACMD(do_sleep)
     act("$n stops floating around, and lie down to sleep.",
 	TRUE, ch, 0, 0, TO_ROOM);
     GET_POS(ch) = POS_SLEEPING;
+    break;
+  }
+}
+
+ACMD(do_meditate)
+{
+  switch (GET_POS(ch)) {
+  case POS_STANDING:
+    send_to_char(ch, "You sit in the lotus position and begin chanting your mantra.\r\n");
+    act("$n sits in the lotus position and begins chanting.", TRUE, ch, 0, 0, TO_ROOM);
+    GET_POS(ch) = POS_MEDITATE;
+    break;
+  case POS_FIGHTING:
+    send_to_char(ch, "Meditate while fighting?  Are you MAD?\r\n");
+    break;
+  default:
+    send_to_char(ch, "You sit in the lotus position and begin chanting your mantra.\r\n");
+    act("$n sits in the lotus position and begins chanting.",
+	TRUE, ch, 0, 0, TO_ROOM);
+    GET_POS(ch) = POS_MEDITATE;
     break;
   }
 }
