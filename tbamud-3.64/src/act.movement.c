@@ -739,6 +739,11 @@ ACMD(do_stand)
     /* Will be sitting after a successful bash and may still be fighting. */
     GET_POS(ch) = FIGHTING(ch) ? POS_FIGHTING : POS_STANDING;
     break;
+    case POS_MEDITATE:
+    send_to_char(ch, "You rise to your feet from the lotus position.\r\n");
+    act("$n rises to $s from the lotus position.", TRUE, ch, 0, 0, TO_ROOM);
+    GET_POS(ch) = POS_STANDING;
+	break;
   case POS_RESTING:
     send_to_char(ch, "You stop resting, and stand up.\r\n");
     act("$n stops resting, and clambers on $s feet.", TRUE, ch, 0, 0, TO_ROOM);
