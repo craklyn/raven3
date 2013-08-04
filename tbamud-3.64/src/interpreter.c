@@ -121,7 +121,7 @@ cpp_extern const struct command_info cmd_info[] = {
   { "close"    , "cl"      , POS_SITTING , do_gen_door , 0, SCMD_CLOSE },
   { "clear"    , "cle"     , POS_DEAD    , do_gen_ps   , 0, SCMD_CLEAR },
   { "cls"      , "cls"     , POS_DEAD    , do_gen_ps   , 0, SCMD_CLEAR },
-  { "consider" , "con"     , POS_RESTING , do_consider , 0, 0 },
+  { "consider" , "con"     , POS_MEDITATE, do_consider , 0, 0 },
   { "commands" , "com"     , POS_DEAD    , do_commands , 0, SCMD_COMMANDS },
   { "compact"  , "comp"    , POS_DEAD    , do_gen_tog  , 0, SCMD_COMPACT },
   { "copyover" , "copyover", POS_DEAD    , do_copyover , LVL_GRGOD, 0 },
@@ -131,7 +131,7 @@ cpp_extern const struct command_info cmd_info[] = {
   { "dc"       , "dc"      , POS_DEAD    , do_dc       , LVL_GOD, 0 },
   { "deposit"  , "depo"    , POS_STANDING, do_not_here , 1, 0 },
   { "detach"   , "detach"  , POS_DEAD    , do_detach   , LVL_BUILDER, 0 },
-  { "diagnose" , "diag"    , POS_RESTING , do_diagnose , 0, 0 },
+  { "diagnose" , "diag"    , POS_MEDITATE, do_diagnose , 0, 0 },
   { "dig"      , "dig"     , POS_DEAD    , do_dig      , LVL_BUILDER, 0 },
   { "display"  , "disp"    , POS_DEAD    , do_display  , 0, 0 },
   { "donate"   , "don"     , POS_RESTING , do_drop     , 0, SCMD_DONATE },
@@ -196,7 +196,7 @@ cpp_extern const struct command_info cmd_info[] = {
   { "kill"     , "k"       , POS_FIGHTING, do_kill     , 0, 0 },
   { "kick"     , "ki"      , POS_FIGHTING, do_kick     , 1, 0 },
 
-  { "look"     , "l"       , POS_RESTING , do_look     , 0, SCMD_LOOK },
+  { "look"     , "l"       , POS_MEDITATE, do_look     , 0, SCMD_LOOK },
   { "last"     , "last"    , POS_DEAD    , do_last     , LVL_GOD, 0 },
   { "leave"    , "lea"     , POS_STANDING, do_leave    , 0, 0 },
   { "levels"   , "lev"     , POS_DEAD    , do_levels   , 0, 0 },
@@ -207,6 +207,7 @@ cpp_extern const struct command_info cmd_info[] = {
 
   { "motd"     , "motd"    , POS_DEAD    , do_gen_ps   , 0, SCMD_MOTD },
   { "mail"     , "mail"    , POS_STANDING, do_not_here , 1, 0 },
+  { "meditate" , "meditate", POS_STANDING, do_meditate , 0, 0 }, 
   { "map"      , "map"     , POS_STANDING, do_map      , 1, 0 },
   { "medit"    , "med"     , POS_DEAD    , do_oasis_medit, LVL_BUILDER, 0 },
   { "mlist"    , "mlist"   , POS_DEAD    , do_oasis_list, LVL_BUILDER, SCMD_OASIS_MLIST },
@@ -255,7 +256,7 @@ cpp_extern const struct command_info cmd_info[] = {
   { "quest"    , "que"     , POS_DEAD    , do_quest    , 0, 0 },
   { "qui"      , "qui"     , POS_DEAD    , do_quit     , 0, 0 },
   { "quit"     , "quit"    , POS_DEAD    , do_quit     , 0, SCMD_QUIT },
-  { "qsay"     , "qsay"    , POS_RESTING , do_qcomm    , 0, SCMD_QSAY },
+  { "qsay"     , "qsay"    , POS_MEDITATE, do_qcomm    , 0, SCMD_QSAY },
 
   { "reply"    , "r"       , POS_SLEEPING, do_reply    , 0, 0 },
   { "rest"     , "res"     , POS_RESTING , do_rest     , 0, 0 },
@@ -277,12 +278,12 @@ cpp_extern const struct command_info cmd_info[] = {
   { "roomflags", "roomflags", POS_DEAD   , do_gen_tog  , LVL_IMMORT, SCMD_SHOWVNUMS },
 
   { "sacrifice", "sac"     , POS_RESTING , do_sac      , 0, 0 },
-  { "say"      , "s"       , POS_RESTING , do_say      , 0, 0 },
+  { "say"      , "s"       , POS_MEDITATE, do_say      , 0, 0 },
   { "score"    , "sc"      , POS_DEAD    , do_score    , 0, 0 },
   { "scan"     , "sca"     , POS_RESTING , do_scan     , 0, 0 },
   { "scopy"    , "scopy"   , POS_DEAD    , do_oasis_copy, LVL_GOD, CON_SEDIT },
   { "sit"      , "si"      , POS_RESTING , do_sit      , 0, 0 },
-  { "'"        , "'"       , POS_RESTING , do_say      , 0, 0 },
+  { "'"        , "'"       , POS_MEDITATE, do_say      , 0, 0 },
   { "save"     , "sav"     , POS_SLEEPING, do_save     , 0, 0 },
   { "saveall"  , "saveall" , POS_DEAD    , do_saveall  , LVL_BUILDER, 0},
   { "sell"     , "sell"    , POS_STANDING, do_not_here , 0, 0 },
@@ -301,11 +302,10 @@ cpp_extern const struct command_info cmd_info[] = {
   { "snoop"    , "snoop"   , POS_DEAD    , do_snoop    , LVL_GOD, 0 },
   { "socials"  , "socials" , POS_DEAD    , do_commands , 0, SCMD_SOCIALS },
   { "split"    , "split"   , POS_SITTING , do_split    , 1, 0 },
-  { "stand"    , "st"      , POS_RESTING , do_stand    , 0, 0 },
+  { "stand"    , "st"      , POS_MEDITATE, do_stand    , 0, 0 },
   { "stat"     , "stat"    , POS_DEAD    , do_stat     , LVL_IMMORT, 0 },
   { "steal"    , "ste"     , POS_STANDING, do_steal    , 1, 0 },
   { "switch"   , "switch"  , POS_DEAD    , do_switch   , LVL_GOD, 0 },
-
   { "tell"     , "t"       , POS_DEAD    , do_tell     , 0, 0 },
   { "take"     , "ta"      , POS_RESTING , do_get      , 0, 0 },
   { "taste"    , "tas"     , POS_RESTING , do_eat      , 0, SCMD_TASTE },
@@ -575,6 +575,8 @@ void command_interpreter(struct char_data *ch, char *argument)
       break;
     case POS_SITTING:
       send_to_char(ch, "Maybe you should get on your feet first?\r\n");
+    case POS_MEDITATE:
+      send_to_char(ch, "Perhaps you should stop meditating first.\r\n");
       break;
     case POS_FIGHTING:
       send_to_char(ch, "No way!  You're fighting for your life!\r\n");
