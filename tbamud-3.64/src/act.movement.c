@@ -743,12 +743,8 @@ ACMD(do_stand)
     send_to_char(ch, "You stop resting, and stand up.\r\n");
     act("$n stops resting, and clambers on $s feet.", TRUE, ch, 0, 0, TO_ROOM);
     GET_POS(ch) = POS_STANDING;
-	break;
-	case POS_MEDITATE:
-    send_to_char(ch, "You stop floating around, and put your feet on the ground.\r\n");
-    act("$n stops floating around, and puts his feet on the ground.", TRUE, ch, 0, 0, TO_ROOM);
-    GET_POS(ch) = POS_STANDING;  
-	/* Were they sitting in something. */
+    /* Were they sitting in something. */
+    break;    
     char_from_furniture(ch);
     break;
   case POS_SLEEPING:
