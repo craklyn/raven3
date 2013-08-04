@@ -207,9 +207,9 @@ cpp_extern const struct command_info cmd_info[] = {
 
   { "motd"     , "motd"    , POS_DEAD    , do_gen_ps   , 0, SCMD_MOTD },
   { "mail"     , "mail"    , POS_STANDING, do_not_here , 1, 0 },
+  { "medit"    , "med"     , POS_DEAD    , do_oasis_medit, LVL_BUILDER, 0 },
   { "meditate" , "meditate", POS_STANDING, do_meditate , 0, 0 }, 
   { "map"      , "map"     , POS_STANDING, do_map      , 1, 0 },
-  { "medit"    , "med"     , POS_DEAD    , do_oasis_medit, LVL_BUILDER, 0 },
   { "mlist"    , "mlist"   , POS_DEAD    , do_oasis_list, LVL_BUILDER, SCMD_OASIS_MLIST },
   { "mcopy"    , "mcopy"   , POS_DEAD    , do_oasis_copy, LVL_GOD, CON_MEDIT },
   { "msgedit"  , "msgedit" , POS_DEAD    , do_msgedit,   LVL_GOD, 0 },
