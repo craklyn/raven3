@@ -618,11 +618,11 @@ do                                                              \
 #define GET_QUEST_TYPE(ch)      (real_quest(GET_QUEST((ch))) != NOTHING ? aquest_table[real_quest(GET_QUEST((ch)))].type : AQ_UNDEFINED )
 
 /** The current skill level of ch for skill i. */
-#define GET_SKILL(ch, i)	CHECK_PLAYER_SPECIAL((ch), ((ch)->player_specials->saved.skills[i]))
+#define GET_PLAYER_SKILL(ch, i)	CHECK_PLAYER_SPECIAL((ch), ((ch)->player_specials->saved.skills[i]))
 /** Copy the current skill level i of ch to pct. */
-#define SET_SKILL(ch, i, pct)	do { CHECK_PLAYER_SPECIAL((ch), (ch)->player_specials->saved.skills[i]) = pct; } while(0)
+#define SET_PLAYER_SKILL(ch, i, pct)	do { CHECK_PLAYER_SPECIAL((ch), (ch)->player_specials->saved.skills[i]) = pct; } while(0)
 
-#define GET_LEARNED_SKILL(ch, i) (IS_NPC(ch) ? 80 : GET_SKILL(ch, i))
+#define GET_SKILL(ch, i) (IS_NPC(ch) ? 80 : GET_PLAYER_SKILL(ch, i))
 
 /** The player's default sector type when buildwalking */
 #define GET_BUILDWALK_SECTOR(ch) CHECK_PLAYER_SPECIAL((ch), ((ch)->player_specials->buildwalk_sector))
@@ -678,10 +678,12 @@ do                                                              \
 /** Old mob wait check.
  * @deprecated Use GET_WAIT_STATE */
 #define GET_MOB_WAIT(ch)      GET_WAIT_STATE(ch)
-/** Use this macro to check the wait state of ch. */
+/** Use this macro to check the wait state of ch.
+ *  @deprecated Use STUN
+ */
 #define GET_WAIT_STATE(ch)    ((ch)->wait)
-/** GET_WAIT_STATE that will affect NPC's and mortal PC's only */
-#define STUN(ch, cycle)  if((!IS_NPC(ch) && GET_LEVEL(ch) < LVL_IMMORT) || IS_NPC(ch)) GET_WAIT_STATE(ch) = cycle
+/** To replace GET_WAIT_STATE */
+#define STUN(ch)              ((ch)->wait)
 
 /* Descriptor-based utils. */
 /** Connected state of d. */

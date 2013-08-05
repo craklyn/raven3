@@ -259,7 +259,7 @@ int load_char(const char *name, struct char_data *ch)
     /* Character initializations. Necessary to keep some things straight. */
     ch->affected = NULL;
     for (i = 1; i <= MAX_SKILLS; i++)
-      GET_SKILL(ch, i) = 0;
+      GET_PLAYER_SKILL(ch, i) = 0;
     GET_SEX(ch) = PFDEF_SEX;
     GET_CLASS(ch) = PFDEF_CLASS;
     GET_RACE(ch) = PFDEF_RACE;
@@ -493,7 +493,7 @@ int load_char(const char *name, struct char_data *ch)
   /* initialization for imms */
   if (GET_LEVEL(ch) >= LVL_IMMORT) {
     for (i = 1; i <= MAX_SKILLS; i++)
-      GET_SKILL(ch, i) = 100;
+      GET_PLAYER_SKILL(ch, i) = 100;
     GET_COND(ch, HUNGER) = -1;
     GET_COND(ch, THIRST) = -1;
     GET_COND(ch, DRUNK) = -1;
@@ -687,8 +687,8 @@ void save_char(struct char_data * ch)
   if (GET_LEVEL(ch) < LVL_IMMORT) {
     fprintf(fl, "Skil:\n");
     for (i = 1; i <= MAX_SKILLS; i++) {
-     if (GET_SKILL(ch, i))
-	fprintf(fl, "%d %d\n", i, GET_SKILL(ch, i));
+     if (GET_PLAYER_SKILL(ch, i))
+	fprintf(fl, "%d %d\n", i, GET_PLAYER_SKILL(ch, i));
     }
     fprintf(fl, "0 0\n");
   }
@@ -883,7 +883,7 @@ static void load_skills(FILE *fl, struct char_data *ch)
     get_line(fl, line);
     sscanf(line, "%d %d", &num, &num2);
       if (num != 0)
-	GET_SKILL(ch, num) = num2;
+	GET_PLAYER_SKILL(ch, num) = num2;
   } while (num != 0);
 }
 

@@ -73,7 +73,7 @@ char *skill_percent(struct char_data *ch, char *skill)
   skillnum = find_skill_num(skill);
   if (skillnum<=0) return("unknown skill");
 
-  snprintf(retval, sizeof(retval), "%d", GET_SKILL(ch, skillnum));
+  snprintf(retval, sizeof(retval), "%d", GET_PLAYER_SKILL(ch, skillnum));
   return retval;
 }
 
@@ -1040,7 +1040,7 @@ void find_replacement(void *go, struct script_data *sc, trig_data *trig,
                 int skillnum = find_skill_num(skillname);
                 if (skillnum > 0) {
                   int new_value = MAX(0, MIN(100, atoi(amount)));
-                  SET_SKILL(c, skillnum, new_value);
+                  SET_PLAYER_SKILL(c, skillnum, new_value);
                 }
               }
             }
