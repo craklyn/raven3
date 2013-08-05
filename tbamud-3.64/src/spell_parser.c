@@ -992,3 +992,45 @@ void mag_assign_spells(void)
   skillo(SKILL_WHIRLWIND, "whirlwind");
 }
 
+/* new skill feature */
+/*
+ * Returns TRUE if ch is affected by the given spellName, otherwise FALSE. This will replace
+ * the AFF_FLAGG(ch, AFF_xxx) function. Instead of just checking if a bit is set,
+ * this will take the longer route of checking ch's affects for the given spell.
+ * @param ch the mob/player
+ * !parac spellName the name of the spell
+ */
+bool isAffectedBySpell(struct char_data *ch, const char *spellName) {
+  struct affected_type *affect;
+  int spellNum = getSpellByName(spellName);
+  bool isAffected = FALSE;
+
+  if(spellNum > -1){
+    for(affect = ch->affected; affect; affect = affect->next) {
+      if(affect->spell == spellNum) {
+        isAffected = TRUE;
+        break;
+      }
+    }
+  }
+
+  return isAffected;
+}
+
+int getSpellByName(const char *spellName) {
+  int spellNum = -1, i;
+
+  /* just to be sure */
+  if(*spellName) {
+    for(i = 0; i < NUM_SPELLS; i++)
+      if(!strcasecmp(spell_info[i].name, spellName)){
+        spellNum = i;
+        break;
+      }
+
+  } else {
+    log("SYSERR: NULL spellName passed in getSpellByName() in %s:%d", __FILE__, __LINE__);
+  }
+
+  return spellNum;
+}
