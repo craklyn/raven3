@@ -731,7 +731,9 @@ ACMD(do_gen_tog)
     {"Autokey disabled.\r\n",
     "Autokey enabled.\r\n"},
     {"Autodoor disabled.\r\n",
-    "Autodoor enabled.\r\n"}
+    "Autodoor enabled.\r\n"},
+    {"You can now hear ooc.\r\n",
+    "You are now deaf to ooc.\r\n"}
   };
 
   if (IS_NPC(ch))
@@ -841,6 +843,9 @@ ACMD(do_gen_tog)
     break;
   case SCMD_AUTODOOR:
     result = PRF_TOG_CHK(ch, PRF_AUTODOOR);
+    break;
+  case SCMD_NOOOC:
+    result = PRF_TOG_CHK(ch, PRF_NOOOC);
     break;
   default:
     log("SYSERR: Unknown subcmd %d in do_gen_toggle.", subcmd);
