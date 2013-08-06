@@ -191,8 +191,9 @@
 #define HIST_GRATS     6 /**< Index to history of all 'grats' */
 #define HIST_HOLLER    7 /**< Index to history of all 'holler' */
 #define HIST_AUCTION   8 /**< Index to history of all 'auction' */
+#define HIST_OOC       9 /**< Index to history of all 'ooc' */
 
-#define NUM_HIST       9 /**< Total number of history indexes */
+#define NUM_HIST       10 /**< Total number of history indexes */
 
 #define HISTORY_SIZE   5 /**< Number of last commands kept in each history */
 
@@ -424,8 +425,9 @@
 #define PRF_AUTOMAP      31   /**< Show map at the side of room descs */
 #define PRF_AUTOKEY      32   /**< Automatically unlock locked doors when opening */
 #define PRF_AUTODOOR     33   /**< Use the next available door */
+#define PRF_NOOOC        34   /**< Can't hear ooc channel */
 /** Total number of available PRF flags */
-#define NUM_PRF_FLAGS    34
+#define NUM_PRF_FLAGS    35
 
 /* Affect bits: used in char_data.char_specials.saved.affected_by */
 /* WARNING: In the world files, NEVER set the bits marked "R" ("Reserved") */
