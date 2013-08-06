@@ -1364,6 +1364,8 @@ ACMD(do_who)
           send_to_char(ch, " (noshout)");
         if (PRF_FLAGGED(tch, PRF_NOTELL))
           send_to_char(ch, " (notell)");
+        if (PRF_FLAGGED(tch, PRF_NOOOC))
+          send_to_char(ch, " (noooc)");		  
         if (PRF_FLAGGED(tch, PRF_QUEST))
           send_to_char(ch, " (quest)");
         if (PLR_FLAGGED(tch, PLR_THIEF))
@@ -1961,6 +1963,9 @@ ACMD(do_toggle)
     {"wimpy", 0, 0, "\n", "\n"},
     {"pagelength", 0, 0, "\n", "\n"},
     {"screenwidth", 0, 0, "\n", "\n"},
+    {"noooc", PRF_NOOOC, 0,
+    "You can now hear ooc.\r\n",
+    "You are now deaf to ooc.\r\n"},
     {"\n", 0, -1, "\n", "\n"} /* must be last */
   };
 
@@ -2040,7 +2045,9 @@ ACMD(do_toggle)
 
     "        Autokey: %-3s    "
     "       Autodoor: %-3s    "
-    "          Color: %s     \r\n ",
+    "          Noooc: %-3s\r\n"
+		
+	"          Color: %s \r\n ",
 
     ONOFF(PRF_FLAGGED(ch, PRF_DISPHP)),
     ONOFF(PRF_FLAGGED(ch, PRF_BRIEF)),
@@ -2076,6 +2083,8 @@ ACMD(do_toggle)
 
     ONOFF(PRF_FLAGGED(ch, PRF_AUTOKEY)),
     ONOFF(PRF_FLAGGED(ch, PRF_AUTODOOR)),
+    ONOFF(PRF_FLAGGED(ch, PRF_NOOOC)),
+       
     types[COLOR_LEV(ch)]);
     return;
   }
