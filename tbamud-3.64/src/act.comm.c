@@ -410,6 +410,7 @@ ACMD(do_gen_comm)
     PRF_NOAUCT,
     PRF_NOGRATZ,
     PRF_NOGOSS,
+    PRF_NOOOC,	
     0
   };
 
@@ -419,6 +420,7 @@ ACMD(do_gen_comm)
     HIST_GOSSIP,
     HIST_AUCTION,
     HIST_GRATS,
+    HIST_OOC, 	
   };
 
   /* com_msgs: [0] Message if you can't perform the action because of noshout
@@ -450,7 +452,12 @@ ACMD(do_gen_comm)
       "congrat",
       "You aren't even on the channel!\r\n",
       KGRN},
-
+    
+    {"You cannot ooc!!\r\n",
+      "ooc",
+      "You aren't even on the channel!\r\n",
+      KYEL},
+	  
     {"You cannot gossip your emotions!\r\n",
       "gossip",
       "You aren't even on the channel!\r\n",
