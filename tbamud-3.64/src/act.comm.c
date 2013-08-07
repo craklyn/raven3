@@ -409,7 +409,6 @@ ACMD(do_gen_comm)
     PRF_NOGOSS,
     PRF_NOAUCT,
     PRF_NOGRATZ,
-    PRF_NOGOSS,
     PRF_NOOOC,	
     0
   };
