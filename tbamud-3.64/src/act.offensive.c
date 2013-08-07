@@ -128,7 +128,7 @@ ACMD(do_backstab)
   struct char_data *vict;
   int percent, prob;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_BACKSTAB)) {
+  if (!GET_SKILL(ch, SKILL_BACKSTAB)) {
     send_to_char(ch, "You have no idea how to do that.\r\n");
     return;
   }
@@ -273,7 +273,7 @@ ACMD(do_bash)
 
   one_argument(argument, arg);
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_BASH)) {
+  if (!GET_SKILL(ch, SKILL_BASH)) {
     send_to_char(ch, "You have no idea how.\r\n");
     return;
   }
@@ -319,12 +319,12 @@ ACMD(do_bash)
      * we only set them sitting if they didn't flee. -gg 9/21/98
      */
     if (damage(ch, vict, 1, SKILL_BASH) > 0) {	/* -1 = dead, 0 = miss */
-      WAIT_STATE(vict, PULSE_VIOLENCE);
+      STUN(vict) = PULSE_VIOLENCE * 4;
       if (IN_ROOM(ch) == IN_ROOM(vict))
         GET_POS(vict) = POS_SITTING;
     }
   }
-  WAIT_STATE(ch, PULSE_VIOLENCE * 2);
+  STUN(ch) = PULSE_VIOLENCE * 3;
 }
 
 ACMD(do_rescue)
@@ -333,7 +333,7 @@ ACMD(do_rescue)
   struct char_data *vict, *tmp_ch;
   int percent, prob;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_RESCUE)) {
+  if (!GET_SKILL(ch, SKILL_RESCUE)) {
     send_to_char(ch, "You have no idea how to do that.\r\n");
     return;
   }
@@ -407,6 +407,10 @@ EVENTFUNC(event_whirlwind)
   pMudEvent = (struct mud_event_data *) event_obj;
   ch = (struct char_data *) pMudEvent->pStruct;    
   
+  /* You're not fighting */
+  if(GET_POS(ch) != POS_FIGHTING)
+    return 0;
+
   /* When using a list, we have to make sure to allocate the list as it
    * uses dynamic memory */
   room_list = create_list();
@@ -414,7 +418,7 @@ EVENTFUNC(event_whirlwind)
   /* We search through the "next_in_room", and grab all NPCs and add them
    * to our list */
   for (tch = world[IN_ROOM(ch)].people; tch; tch = tch->next_in_room)  
-    if (IS_NPC(tch))
+    if (IS_NPC(tch) && ch != tch)
       add_to_list(tch, room_list);
       
   /* If our list is empty or has "0" entries, we free it from memory and
@@ -428,6 +432,7 @@ EVENTFUNC(event_whirlwind)
   /* We spit out some ugly colour, making use of the new colour options,
    * to let the player know they are performing their whirlwind strike */
   send_to_char(ch, "\t[f313]You deliver a vicious \t[f014]\t[b451]WHIRLWIND!!!\tn\r\n");
+  act("\tY$n creates a gust of wind as $e spins in a blinding speed!\tn",FALSE, ch, NULL, NULL, TO_ROOM);
   
   /* Lets grab some a random NPC from the list, and hit() them up */
   for (count = dice(1, 4); count > 0; count--) {
@@ -443,6 +448,7 @@ EVENTFUNC(event_whirlwind)
    * any other numerical response will be the delay until the next call */
   if (GET_SKILL(ch, SKILL_WHIRLWIND) < rand_number(1, 101)) {
     send_to_char(ch, "You stop spinning.\r\n");
+    act("$n suddenly stops spinning.",FALSE, ch, NULL, NULL, TO_ROOM);
     return 0;
   } else
     return 1.5 * PASSES_PER_SEC;
@@ -453,7 +459,7 @@ EVENTFUNC(event_whirlwind)
 ACMD(do_whirlwind)
 {
   
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_WHIRLWIND)) {
+  if (!GET_SKILL(ch, SKILL_WHIRLWIND)) {
     send_to_char(ch, "You have no idea how.\r\n");
     return;
   }
@@ -474,7 +480,7 @@ ACMD(do_whirlwind)
   }
 
   send_to_char(ch, "You begin to spin rapidly in circles.\r\n");
-  act("$N begins to rapidly spin in a circle!", FALSE, ch, 0, 0, TO_ROOM);
+  act("$n begins to rapidly spin in a circle!", FALSE, ch, 0, 0, TO_ROOM);
   
   /* NEW_EVENT() will add a new mud event to the event list of the character.
    * This function below adds a new event of "eWHIRLWIND", to "ch", and passes "NULL" as
@@ -489,7 +495,7 @@ ACMD(do_kick)
   struct char_data *vict;
   int percent, prob;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_KICK)) {
+  if (!GET_SKILL(ch, SKILL_KICK)) {
     send_to_char(ch, "You have no idea how.\r\n");
     return;
   }
@@ -514,8 +520,10 @@ ACMD(do_kick)
 
   if (percent > prob) {
     damage(ch, vict, 0, SKILL_KICK);
-  } else
+  } else {
     damage(ch, vict, GET_LEVEL(ch) / 2, SKILL_KICK);
+    STUN(vict) = PULSE_VIOLENCE * 3;
+  }
 
-  WAIT_STATE(ch, PULSE_VIOLENCE * 3);
+  STUN(ch) = PULSE_VIOLENCE * 2;
 }

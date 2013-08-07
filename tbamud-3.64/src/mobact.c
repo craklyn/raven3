@@ -21,6 +21,7 @@
 #include "act.h"
 #include "graph.h"
 #include "fight.h"
+#include "spec_procs.h"
 
 
 /* local file scope only function prototypes */
@@ -168,6 +169,8 @@ void mobile_activity(void)
     }
 
     /* Add new mobile actions here */
+    /* class/race specific actions */
+    mobNormalAction(ch);
 
   }				/* end for() */
 }

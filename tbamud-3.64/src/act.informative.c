@@ -293,11 +293,11 @@ static void list_one_char(struct char_data *i, struct char_data *ch)
     " is lying here, incapacitated.",
     " is lying here, stunned.",
     " is sleeping here.",
+    " is meditating here.",
     " is resting here.",
     " is sitting here.",
+    " is standing here.",
     "!FIGHTING!",
-    " is meditating here.",
-    " is standing here."
   };
 
   if (!IS_NPC(ch) && PRF_FLAGGED(ch, PRF_SHOWVNUMS)) {
@@ -832,8 +832,9 @@ ACMD(do_score)
 {
 	static char *positAry[] = { ""
 			"A Corpse", "Critical", "Moribund",
-			"Stunned",  "Sleeping",  "Resting",
-			"Sitting",  "Fighting", "Standing"
+			"Stunned",  "Sleeping", "Meditating",
+			"Resting",	"Sitting",  "Fighting",
+			"Standing"
 	};
 	static int positMax = sizeof(positAry)/sizeof(char *);
 

@@ -281,6 +281,7 @@ void affect_update(void);
 ACMD(do_cast);
 void unused_spell(int spl);
 void mag_assign_spells(void);
+bool mob_cast(struct char_data *mob, struct char_data *vict, int spell_num);
 
 /* Global variables exported */
 #ifndef __SPELL_PARSER_C__

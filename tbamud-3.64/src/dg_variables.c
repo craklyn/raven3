@@ -1040,7 +1040,7 @@ void find_replacement(void *go, struct script_data *sc, trig_data *trig,
                 int skillnum = find_skill_num(skillname);
                 if (skillnum > 0) {
                   int new_value = MAX(0, MIN(100, atoi(amount)));
-                  SET_SKILL(c, skillnum, new_value);
+                  SET_PLAYER_SKILL(c, skillnum, new_value);
                 }
               }
             }
