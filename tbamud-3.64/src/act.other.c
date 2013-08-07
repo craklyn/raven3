@@ -846,7 +846,7 @@ ACMD(do_gen_tog)
     break;
   case SCMD_NOOOC:
     result = PRF_TOG_CHK(ch, PRF_NOOOC);
-    break;
+	break;	
   default:
     log("SYSERR: Unknown subcmd %d in do_gen_toggle.", subcmd);
     return;
