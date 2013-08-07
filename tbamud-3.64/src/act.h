@@ -223,12 +223,13 @@ ACMD(do_gen_tog);
 #define SCMD_AUTOMAP     25
 #define SCMD_AUTOKEY     26
 #define SCMD_AUTODOOR    27
-#define SCMD_COLOR       28
-#define SCMD_SYSLOG      29
-#define SCMD_WIMPY       30
-#define SCMD_PAGELENGTH  31
-#define SCMD_SCREENWIDTH 32
-#define SCMD_NOOOC       33
+#define SCMD_NOOOC       28
+#define SCMD_COLOR       29
+#define SCMD_SYSLOG      30
+#define SCMD_WIMPY       31
+#define SCMD_PAGELENGTH  32
+#define SCMD_SCREENWIDTH 33
+
 
 /* do_quit */
 ACMD(do_quit);
