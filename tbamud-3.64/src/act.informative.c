@@ -2046,8 +2046,8 @@ ACMD(do_toggle)
     "        Autokey: %-3s    "
     "       Autodoor: %-3s    "
     "          Noooc: %-3s\r\n"
-		
-	"          Color: %s \r\n ",
+	
+	"          Color: %-3s\r\n",
 
     ONOFF(PRF_FLAGGED(ch, PRF_DISPHP)),
     ONOFF(PRF_FLAGGED(ch, PRF_BRIEF)),
