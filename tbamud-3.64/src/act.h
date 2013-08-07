@@ -31,7 +31,8 @@ ACMD(do_gen_comm);
 #define SCMD_GOSSIP   2
 #define SCMD_AUCTION  3
 #define SCMD_GRATZ    4
-#define SCMD_GEMOTE   5
+#define SCMD_OOC      5
+#define SCMD_GEMOTE   6
 /* do_qcomm */
 ACMD(do_qcomm);
 #define SCMD_QSAY     0
@@ -227,6 +228,7 @@ ACMD(do_gen_tog);
 #define SCMD_WIMPY       30
 #define SCMD_PAGELENGTH  31
 #define SCMD_SCREENWIDTH 32
+#define SCMD_NOOOC       33
 
 /* do_quit */
 ACMD(do_quit);
