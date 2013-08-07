@@ -632,6 +632,35 @@ ACMD(do_cast)
   }
 }
 
+/*
+ * Rough duplicate of PC's cast.
+ * @param mob the mobile
+ * @vict the target of the spell
+ * @spell_num the spell
+ * @return TRUE if the mob was able to cast a spell even though it failed
+ */
+bool mob_cast(struct char_data *mob, struct char_data *vict, int spell_num) {
+  int manaCost = mag_manacost(mob, spell_num);
+  if(spell_num > 0
+      && manaCost <= GET_MANA(mob)
+      && spell_info[spell_num].min_level[(int)GET_CLASS(mob)] <= GET_LEVEL(mob)
+      && !AFF_FLAGGED(mob, AFF_SILENCE)
+      && GET_WAIT_STATE(mob) < 1) {
+    /* This is a very simple check for 'spell success'. In the future a more
+     * sophisticated approach should be implemented.
+     */
+    if(rand_number(0, 30) <= GET_INT(mob)) {
+      cast_spell(mob, vict, NULL, spell_num);
+    }
+    /* even if the mob fails, they will still be "stunned" for a round */
+    WAIT_STATE(mob, PULSE_VIOLENCE);
+    GET_MANA(mob) = MAX(0, MIN(GET_MAX_MANA(mob), GET_MANA(mob) - manaCost));
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
 void spell_level(int spell, int chclass, int level)
 {
   int bad = 0;

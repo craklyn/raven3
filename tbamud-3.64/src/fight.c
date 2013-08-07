@@ -27,6 +27,7 @@
 #include "fight.h"
 #include "shop.h"
 #include "quest.h"
+#include "spec_procs.h"
 
 
 /* locally defined global variables, used externally */
@@ -907,21 +908,11 @@ void perform_violence(void)
       continue;
     }
 
-    if (IS_NPC(ch)) {
-      if (GET_MOB_WAIT(ch) > 0) {
-        GET_MOB_WAIT(ch) -= PULSE_VIOLENCE;
-        continue;
+    if (STUN(ch) > 0) {
+      STUN(ch) -= PULSE_VIOLENCE;
+      if(STUN(ch) < 0) {
+        STUN(ch) =  MAX(0, MIN(STUN(ch), STUN(ch) - PULSE_VIOLENCE));
       }
-      GET_MOB_WAIT(ch) = 0;
-      if (GET_POS(ch) < POS_FIGHTING) {
-        GET_POS(ch) = POS_FIGHTING;
-        act("$n scrambles to $s feet!", TRUE, ch, 0, 0, TO_ROOM);
-      }
-    }
-
-    if (GET_POS(ch) < POS_FIGHTING) {
-      send_to_char(ch, "You can't fight while sitting!!\r\n");
-      continue;
     }
 
     if (GROUP(ch)) {
@@ -947,6 +938,27 @@ void perform_violence(void)
     if (MOB_FLAGGED(ch, MOB_SPEC) && GET_MOB_SPEC(ch) && !MOB_FLAGGED(ch, MOB_NOTDEADYET)) {
       char actbuf[MAX_INPUT_LENGTH] = "";
       (GET_MOB_SPEC(ch)) (ch, ch, 0, actbuf);
+    }
+  }
+}
+
+/*
+ * Mobile behavior
+ */
+void performMobCombatAction(void) {
+  struct char_data *ch;
+
+  for (ch = combat_list; ch; ch = next_combat_list) {
+    next_combat_list = ch->next_fighting;
+
+    if (IS_NPC(ch)) {
+
+      if (STUN(ch) < 1 && GET_POS(ch) < POS_FIGHTING) {
+        do_stand(ch, NULL, 0, 0);
+        GET_POS(ch) = POS_FIGHTING;
+      }
+
+      mobCombatAction(ch);
     }
   }
 }
