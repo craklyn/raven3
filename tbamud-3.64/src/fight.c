@@ -908,10 +908,10 @@ void perform_violence(void)
       continue;
     }
 
-    if (GET_WAIT_STATE(ch) > 0) {
-      GET_WAIT_STATE(ch) -= PULSE_VIOLENCE;
-      if(GET_WAIT_STATE(ch) < 0) {
-        GET_WAIT_STATE(ch) =  MAX(0, MIN(GET_WAIT_STATE(ch), GET_WAIT_STATE(ch) - PULSE_VIOLENCE));
+    if (STUN(ch) > 0) {
+      STUN(ch) -= PULSE_VIOLENCE;
+      if(STUN(ch) < 0) {
+        STUN(ch) =  MAX(0, MIN(STUN(ch), STUN(ch) - PULSE_VIOLENCE));
       }
     }
 
@@ -953,7 +953,7 @@ void performMobCombatAction(void) {
 
     if (IS_NPC(ch)) {
 
-      if (GET_WAIT_STATE(ch) < 1 && GET_POS(ch) < POS_FIGHTING) {
+      if (STUN(ch) < 1 && GET_POS(ch) < POS_FIGHTING) {
         do_stand(ch, NULL, 0, 0);
         GET_POS(ch) = POS_FIGHTING;
       }

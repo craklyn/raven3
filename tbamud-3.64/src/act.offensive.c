@@ -423,7 +423,7 @@ EVENTFUNC(event_whirlwind)
       
   /* If our list is empty or has "0" entries, we free it from memory and
    * close off our event */    
-  if (room_list->iSize == 0 ) {
+  if (room_list->iSize == 0) {
     free_list(room_list);
     send_to_char(ch, "There is no one in the room to whirlwind!\r\n");
     return 0;
@@ -520,7 +520,6 @@ ACMD(do_kick)
 
   if (percent > prob) {
     damage(ch, vict, 0, SKILL_KICK);
-    STUN(vict) = PULSE_VIOLENCE * 3;
   } else {
     damage(ch, vict, GET_LEVEL(ch) / 2, SKILL_KICK);
     STUN(vict) = PULSE_VIOLENCE * 3;

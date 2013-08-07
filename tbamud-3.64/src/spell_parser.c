@@ -530,7 +530,7 @@ ACMD(do_cast)
     send_to_char(ch, "You do not know that spell!\r\n");
     return;
   }
-  if (GET_PLAYER_SKILL(ch, spellnum) == 0) {
+  if (GET_SKILL(ch, spellnum) == 0) {
     send_to_char(ch, "You are unfamiliar with that spell.\r\n");
     return;
   }
@@ -615,7 +615,7 @@ ACMD(do_cast)
   }
 
   /* You throws the dice and you takes your chances.. 101% is total failure */
-  if (rand_number(0, 101) > GET_PLAYER_SKILL(ch, spellnum)) {
+  if (rand_number(0, 101) > GET_SKILL(ch, spellnum)) {
     WAIT_STATE(ch, PULSE_VIOLENCE);
     if (!tch || !skill_message(0, ch, tch, spellnum))
       send_to_char(ch, "You lost your concentration!\r\n");
