@@ -1364,14 +1364,14 @@ ACMD(do_who)
           send_to_char(ch, " (noshout)");
         if (PRF_FLAGGED(tch, PRF_NOTELL))
           send_to_char(ch, " (notell)");
-        if (PRF_FLAGGED(tch, PRF_NOOOC))
-          send_to_char(ch, " (noooc)");		  
         if (PRF_FLAGGED(tch, PRF_QUEST))
           send_to_char(ch, " (quest)");
         if (PLR_FLAGGED(tch, PLR_THIEF))
           send_to_char(ch, " (THIEF)");
         if (PLR_FLAGGED(tch, PLR_KILLER))
           send_to_char(ch, " (KILLER)");
+        if (PRF_FLAGGED(tch, PRF_NOOOC))
+          send_to_char(ch, " (noooc)");
         send_to_char(ch, "\r\n");
       }
     }
@@ -1958,15 +1958,15 @@ ACMD(do_toggle)
     {"autodoor", PRF_AUTODOOR, 0,
     "You will now need to specify a door direction when opening, closing and unlocking.\r\n",
     "You will now find the next available door when opening, closing or unlocking.\r\n"},
+    {"noooc", PRF_NOOOC, 0,
+    "You can now hear ooc.\r\n",
+    "You are now deaf to ooc.\r\n"},
     {"color", 0, 0, "\n", "\n"},
     {"syslog", 0, LVL_IMMORT, "\n", "\n"},
     {"wimpy", 0, 0, "\n", "\n"},
     {"pagelength", 0, 0, "\n", "\n"},
-    {"screenwidth", 0, 0, "\n", "\n"},
-    {"noooc", PRF_NOOOC, 0,
-    "You can now hear ooc.\r\n",
-    "You are now deaf to ooc.\r\n"},
-    {"\n", 0, -1, "\n", "\n"} /* must be last */
+	{"screenwidth", 0, 0, "\n", "\n"},
+    {"\n", 0, -1, "\n", "\n"} 	/* must be last */
   };
 
   if (IS_NPC(ch))
