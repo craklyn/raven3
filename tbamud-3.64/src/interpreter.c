@@ -220,7 +220,7 @@ cpp_extern const struct command_info cmd_info[] = {
   { "nogossip" , "nogossip", POS_DEAD    , do_gen_tog  , 0, SCMD_NOGOSSIP },
   { "nograts"  , "nograts" , POS_DEAD    , do_gen_tog  , 0, SCMD_NOGRATZ },
   { "nohassle" , "nohassle", POS_DEAD    , do_gen_tog  , LVL_IMMORT, SCMD_NOHASSLE },
-  { "noooc"    , "noooc"   , POS_SLEEPING, do_gen_tog  , 0, SCMD_NOOOC },
+  { "noooc"    , "noooc"   , POS_DEAD    , do_gen_tog  , 0, SCMD_NOOOC },
   { "norepeat" , "norepeat", POS_DEAD    , do_gen_tog  , 0, SCMD_NOREPEAT },
   { "noshout"  , "noshout" , POS_SLEEPING, do_gen_tog  , 1, SCMD_NOSHOUT },
   { "nosummon" , "nosummon", POS_DEAD    , do_gen_tog  , 1, SCMD_NOSUMMON },
