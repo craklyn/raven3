@@ -28,6 +28,7 @@
 #include "shop.h"
 #include "quest.h"
 #include "spec_procs.h"
+#include "skills.h"
 
 
 /* locally defined global variables, used externally */
@@ -36,7 +37,7 @@ struct char_data *combat_list = NULL;
 /* Weapon attack texts */
 struct attack_hit_type attack_hit_text[] =
 {
-  {"hit", "hits"},    /* 0 */
+  {"punch", "punches"},    /* 0 */
   {"sting", "stings"},
   {"whip", "whips"},
   {"slash", "slashes"},
@@ -50,7 +51,17 @@ struct attack_hit_type attack_hit_text[] =
   {"pierce", "pierces"},
   {"blast", "blasts"},
   {"punch", "punches"},
-  {"stab", "stabs"}
+  {"stab", "stabs"},
+  {"strangle", "strangles"}, /* 15 */
+  {"tear", "tears"},
+  {"squeeze", "squeezes"},
+  {"stomp", "stomps"},
+  {"drain", "drains"},
+  {"bite", "bites"}, /* 20 */
+  {"burn", "burns"},
+  {"impale", "impales"},
+  {"kick", "kicks"}, /* 23*/
+
 };
 
 /* local (file scope only) variables */
@@ -415,72 +426,99 @@ static void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 
     /* use #w for singular (i.e. "slash") and #W for plural (i.e. "slashes") */
 
-    {
-      "$n tries to #w $N, but misses.",	/* 0: 0     */
-      "You try to #w $N, but miss.",
-      "$n tries to #w you, but misses."
-    },
+      { "$n misses $N with $s #w.",       /* 0: 0.  */
+          "You miss $N with your #w.",
+          "$n misses you with $s #w." },
 
-    {
-      "$n tickles $N as $e #W $M.",	/* 1: 1..2  */
-      "You tickle $N as you #w $M.",
-      "$n tickles you as $e #W you."
-    },
+        { "$n scratches $N with $s #w.",      /* 1: 1..2  */
+          "You scratch $N as you #w $M.",
+          "$n scratches you as $e #W you." },
 
-    {
-      "$n barely #W $N.",		/* 2: 3..4  */
-      "You barely #w $N.",
-      "$n barely #W you."
-    },
+        { "$n barely #W $N.",         /* 2: 3..4  */
+          "You barely #w $N.",
+          "$n barely #W you." },
 
-    {
-      "$n #W $N.",			/* 3: 5..6  */
-      "You #w $N.",
-      "$n #W you."
-    },
+        { "$n #W $N.",          /* 3: 5..6  */
+          "You #w $N.",
+          "$n #W you." },
 
-    {
-      "$n #W $N hard.",			/* 4: 7..10  */
-      "You #w $N hard.",
-      "$n #W you hard."
-    },
+        { "$n #W $N hard.",         /* 4: 7..10  */
+          "You #w $N hard.",
+          "$n #W you hard." },
 
-    {
-      "$n #W $N very hard.",		/* 5: 11..14  */
-      "You #w $N very hard.",
-      "$n #W you very hard."
-    },
+        { "$n #W $N very hard.",        /* 5: 11..14   */
+          "you #w $N very hard.",
+          "$n #W you very hard." },
 
-    {
-      "$n #W $N extremely hard.",	/* 6: 15..19  */
-      "You #w $N extremely hard.",
-      "$n #W you extremely hard."
-    },
+        { "$n #W $N extremely hard.",       /* 6: 15..19   */
+          "You #w $N extremely hard.",
+          "$n #W you extremely hard." },
 
-    {
-      "$n massacres $N to small fragments with $s #w.",	/* 7: 19..23 */
-      "You massacre $N to small fragments with your #w.",
-      "$n massacres you to small fragments with $s #w."
-    },
+        { "$n massacres $N to small fragments with $s #w.", /* 7: 20..26   */
+          "You massacre $N to small fragments with your #w.",
+          "$n massacres you to small fragments with $s #w." },
 
-    {
-      "$n OBLITERATES $N with $s deadly #w!!",	/* 8: > 23   */
-      "You OBLITERATE $N with your deadly #w!!",
-      "$n OBLITERATES you with $s deadly #w!!"
-    }
+        { "$n staggers $N with $s #w.",     /* 8: 27..35   */
+          "You stagger $N with your fearsome #w.",
+          "$n staggers you with $s fearsome #w." },
+
+        { "$n #W $N resulting in a bone crushing sound.",   /* 9: 36..47   */
+          "You #w $N, resulting in a bone crushing sound.",
+          "$n #W you, resulting in a bone crushing sound." },
+
+        { "$n obliterates $N with $s deadly #w.",     /* 10: 48..59  */
+          "You obliterate $N with your deadly #w.",
+          "$n obliterates you with $s deadly #w." },
+
+        { "$n #W $N, enshrouding $M in a mist of $S own blood.",/* 11: 60..99  */
+          "You enshroud $N in a mist of $S own blood with your #w.",
+          "$n enshrounds you in a mist of your own blood with $s #w." },
+
+        { "$n charges $N, ripping completely through $M.",  /* 12: > 100   */
+          "You charge $N, ripping completely through $M.",
+          "$n charges you, ripping completely through your body." },
+
+        { "$n mutilates $N with inhuman power.",                  /* 13 */
+          "You mutilate $N with inhuman power.",
+          "$n mutilates you with an inhuman power." },
+
+        { "$n \tW* destroys *\tn $N with $s deadly #w.",    /* 14 */
+          "You \tW* destroy *\ty $N with your deadly #w.",
+          "$n \tW* destroys *\tr you with $s deadly #w." },
+
+        { "$n \tW** annihilates **\tn $N with $s deadly #w.", /* 15 */
+          "You \tW** annihilate **\ty $N with your deadly #w.",
+          "$n \tW** annihilates **\tr you with $s deadly #w." },
+
+        { "$n \tB*** vapourizes ***\tn $N with $s deadly #w.",  /* 16 */
+          "You \tB*** vapourize ***\ty $N with your deadly #w.",
+          "$n \tB*** vapourizes ***\r you with $s deadly #w." },
+
+        { "$n \tr<\tR^\tY> \tGRUINS \tY<\tR^\tn\tr>\tn $N with $s mighty #w.",  /* 17 */
+          "You \tr<\tR^\tY> \tGRUIN \tY<\tR^\tn\tr>\ty $N with your mighty #w.",  /* 17 */
+          "$n \tr<\tR^\ty> \tGRUINS \tY<\tR^\tn\tr>\tr you with $s mighty #w."} /* 17 */
   };
 
   w_type -= TYPE_HIT;		/* Change to base of table with text */
 
-  if (dam == 0)		msgnum = 0;
-  else if (dam <= 2)    msgnum = 1;
-  else if (dam <= 4)    msgnum = 2;
-  else if (dam <= 6)    msgnum = 3;
-  else if (dam <= 10)   msgnum = 4;
-  else if (dam <= 14)   msgnum = 5;
-  else if (dam <= 19)   msgnum = 6;
-  else if (dam <= 23)   msgnum = 7;
-  else			msgnum = 8;
+  if( dam ==   0) msgnum = 0;
+  else if( dam <=   2) msgnum = 1;
+  else if( dam <=   4) msgnum = 2;
+  else if( dam <=   6) msgnum = 3;
+  else if( dam <=  10) msgnum = 4;
+  else if( dam <=  14) msgnum = 5;
+  else if( dam <=  19) msgnum = 6;
+  else if( dam <=  26) msgnum = 7;
+  else if( dam <=  35) msgnum = 8;
+  else if( dam <=  47) msgnum = 9;
+  else if( dam <=  59) msgnum = 10;
+  else if( dam <=  99) msgnum = 11;
+  else if( dam <= 150) msgnum = 12;
+  else if( dam <= 200) msgnum = 13;
+  else if( dam <= 300) msgnum = 14;
+  else if( dam <= 400) msgnum = 15;
+  else if( dam <= 500) msgnum = 16;
+  else                 msgnum = 17;
 
   /* damage message to onlookers */
   buf = replace_string(dam_weapons[msgnum].to_room,
@@ -490,6 +528,7 @@ static void dam_message(int dam, struct char_data *ch, struct char_data *victim,
   /* damage message to damager */
   if (GET_LEVEL(ch) >= LVL_IMMORT)
 	send_to_char(ch, "(%d) ", dam);
+  send_to_char(ch,"\ty");
   buf = replace_string(dam_weapons[msgnum].to_char,
 	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_CHAR);
@@ -497,7 +536,8 @@ static void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 
   /* damage message to damagee */
   if (GET_LEVEL(victim) >= LVL_IMMORT)
-    send_to_char(victim, "\tR(%d)", dam);
+    send_to_char(victim, "(%d) ", dam);
+  send_to_char(victim,"\tr");
   buf = replace_string(dam_weapons[msgnum].to_victim,
 	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_VICT | TO_SLEEP);
@@ -516,6 +556,12 @@ int skill_message(int dam, struct char_data *ch, struct char_data *vict,
 
   /* @todo restructure the messages library to a pointer based system as
    * opposed to the current cyclic location system. */
+  if(GET_LEVEL(ch) >= LVL_IMMORT) {
+    send_to_char(ch,"(%d)", dam);
+  }
+  if(GET_LEVEL(vict) >= LVL_IMMORT) {
+      send_to_char(vict,"(%d)", dam);
+  }
   for (i = 0; i < MAX_MESSAGES; i++) {
     if (fight_messages[i].a_type == attacktype) {
       nr = dice(1, fight_messages[i].number_of_attacks);
@@ -647,7 +693,9 @@ int damage(struct char_data *ch, struct char_data *victim, int dam, int attackty
   }
 
   /* Set the maximum damage per round and subtract the hit points */
-  dam = MAX(MIN(dam, 100), 0);
+  if(attacktype != SKILL_BACKSTAB && !IS_NPC(ch)) {
+    dam = MAX(MIN(dam, 250), 0);
+  }
   GET_HIT(victim) -= dam;
 
   /* Gain exp for the hit */
@@ -670,7 +718,7 @@ int damage(struct char_data *ch, struct char_data *victim, int dam, int attackty
   else {
     if (GET_POS(victim) == POS_DEAD || dam == 0) {
       if (!skill_message(dam, ch, victim, attacktype))
-	dam_message(dam, ch, victim, attacktype);
+        dam_message(dam, ch, victim, attacktype);
     } else {
       dam_message(dam, ch, victim, attacktype);
     }
@@ -787,6 +835,9 @@ static int compute_thaco(struct char_data *ch, struct char_data *victim)
     calc_thaco = thaco(GET_CLASS(ch), GET_LEVEL(ch));
   else		/* THAC0 for monsters is set in the HitRoll */
     calc_thaco = 20;
+  if(CONFIG_DEBUG_MODE >= NRM)
+    send_to_char(ch,"\tcTHACO: \tC%d\tn\r\n",calc_thaco);
+
   calc_thaco -= str_app[STRENGTH_APPLY_INDEX(ch)].tohit;
   calc_thaco -= GET_HITROLL(ch);
   calc_thaco -= (int) ((GET_INT(ch) - 13) / 1.5);	/* Intelligence helps! */
@@ -798,7 +849,7 @@ static int compute_thaco(struct char_data *ch, struct char_data *victim)
 void hit(struct char_data *ch, struct char_data *victim, int type)
 {
   struct obj_data *wielded = GET_EQ(ch, WEAR_WIELD);
-  int w_type, victim_ac, calc_thaco, dam, diceroll;
+  int w_type, victim_ac, calc_thaco, dam, diceroll, numAttacks;
 
   /* Check that the attacker and victim exist */
   if (!ch || !victim) return;
@@ -887,8 +938,14 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
     if (type == SKILL_BACKSTAB)
       damage(ch, victim, dam * backstab_mult(GET_LEVEL(ch)), SKILL_BACKSTAB);
-    else
-      damage(ch, victim, dam, w_type);
+    else {
+
+      numAttacks = computeNumberAttacks(ch);
+      //just the basic for now
+      while(numAttacks-- > 0) {
+        damage(ch, victim, dam, w_type);
+      }
+    }
   }
 
   /* check if the victim has a hitprcnt trigger */
@@ -961,4 +1018,31 @@ void performMobCombatAction(void) {
       mobCombatAction(ch);
     }
   }
+}
+static int maxClassAttacks[NUM_CLASSES] = {
+    3,  3,  3,  4,  3,  3,  4,  3,  3,  3,  3, 3
+};
+int computeNumberAttacks(struct char_data *ch) {
+  int numAttacks = 1;
+
+  if(skillSuccessByNum(ch, SKILL_SECOND_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
+    numAttacks += 1;
+    if(skillSuccessByNum(ch, SKILL_THIRD_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
+      numAttacks += 1;
+    }
+  }
+
+  // spell to be implemented
+  if(isAffectedBySpellName(ch,"haste")) {
+    numAttacks += 1;
+  } else if(isAffectedBySpellName(ch, "slow")) {
+    numAttacks -= 1;
+  } else if(AFF_FLAGGED(ch, AFF_HASTE)) {
+    numAttacks += 1;
+  }
+
+  numAttacks = numAttacks > maxClassAttacks[(int) GET_CLASS(ch)] ? maxClassAttacks[(int) GET_CLASS(ch)]
+    : numAttacks;
+
+  return numAttacks;
 }
