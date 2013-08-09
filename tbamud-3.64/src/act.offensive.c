@@ -395,7 +395,7 @@ EVENTFUNC(event_whirlwind)
   ch = (struct char_data *) pMudEvent->pStruct;    
   
   /* You're not fighting */
-  if(GET_POS(ch) != POS_FIGHTING)
+  if(!FIGHTING(ch))
     return 0;
 
   /* When using a list, we have to make sure to allocate the list as it
