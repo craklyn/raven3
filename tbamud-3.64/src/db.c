@@ -70,6 +70,7 @@ long top_idnum = 0;       /* highest idnum in use    */
 /* end previously located in players.c */
 
 struct message_list fight_messages[MAX_MESSAGES];	/* fighting messages	 */
+struct list_data *damageMessageList;
 
 struct index_data **trig_index; /* index table for triggers      */
 struct trig_data *trigger_list = NULL;  /* all attached triggers */
@@ -374,6 +375,7 @@ ACMD(do_reboot)
       free_help_table();
     index_boot(DB_BOOT_HLP);
     }
+    loadDamageMessages();
   } else if (!str_cmp(arg, "wizlist")) {
     if (file_to_string_alloc(WIZLIST_FILE, &wizlist) < 0)
       send_to_char(ch, "Cannot read wizlist\r\n");
@@ -420,6 +422,8 @@ ACMD(do_reboot)
       free_help_table();
     index_boot(DB_BOOT_HLP);
     }
+  } else if (!str_cmp(arg, "combat")) {
+    loadDamageMessages();
   } else {
     send_to_char(ch, "Unknown reload option.\r\n");
     return;
@@ -703,6 +707,9 @@ void boot_db(void)
 
   log("Loading fight messages.");
   load_messages();
+
+  log("Loading damage messages.");
+  loadDamageMessages();
 
   log("Loading social messages.");
   boot_social_messages();

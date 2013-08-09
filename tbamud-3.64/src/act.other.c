@@ -733,7 +733,9 @@ ACMD(do_gen_tog)
     {"Autodoor disabled.\r\n",
     "Autodoor enabled.\r\n"},
     {"You can now hear ooc.\r\n",
-    "You are now deaf to ooc.\r\n"}
+    "You are now deaf to ooc.\r\n"},
+    {"You will now see damage messages based on damage dealt.\r\n",
+     "You will now see damage messages based on pain inflicted.\r\n"}
   };
 
   if (IS_NPC(ch))
@@ -846,6 +848,9 @@ ACMD(do_gen_tog)
     break;
   case SCMD_NOOOC:
     result = PRF_TOG_CHK(ch, PRF_NOOOC);
+    break;
+  case SCMD_NEWCOMBAT:
+    result = PRF_TOG_CHK(ch, PRF_NEWCOMBAT);
     break;
   default:
     log("SYSERR: Unknown subcmd %d in do_gen_toggle.", subcmd);

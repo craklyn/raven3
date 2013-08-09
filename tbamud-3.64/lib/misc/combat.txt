@@ -1,0 +1,102 @@
+* RavenMUD 3.0 combat messages
+*
+* Format:
+* - lines starting with * (asterisk) is a comment and will not be read
+* - Use #w for singular (e.g. "slash") and #W for plural (e.g. "slashes")
+* - Messages must be in the format that can be parsed by act()
+* - Each message set should be ordered as in
+*    - the max damage dealt, the pain dealt (damage * 100 / vict's current hp)
+*    - message to room except hitter and victim
+*    - message to hitter
+*    - message to victim
+M
+0 0
+$n misses $N with $s #w.
+You miss $N with your #w.
+$n misses you with $s #w.
+M
+2 1
+$n scratches $N with $s #w.
+You scratch $N as you #w $M.
+$n scratches you as $e #W you.
+M
+4 2 
+$n barely #W $N.
+You barely #w $N.
+$n barely #W you.
+M
+6 5
+$n #W $N.
+You #w $N.
+$n #W you. 
+M
+10 7
+$n #W $N hard.
+You #w $N hard.
+$n #W you hard.
+M
+14 10
+$n #W $N very hard.
+you #w $N very hard.
+$n #W you very hard.
+M
+19 13
+$n #W $N extremely hard.
+You #w $N extremely hard.
+$n #W you extremely hard.
+M
+26 15
+$n massacres $N to small fragments with $s #w.
+You massacre $N to small fragments with your #w.
+$n massacres you to small fragments with $s #w.
+M
+35 20
+$n staggers $N with $s #w.
+You stagger $N with your fearsome #w.
+$n staggers you with $s fearsome #w.
+M
+47 25
+$n #W $N resulting in a bone crushing sound.
+You #w $N, resulting in a bone crushing sound.
+$n #W you, resulting in a bone crushing sound.
+M
+59 30
+$n obliterates $N with $s deadly #w.
+You obliterate $N with your deadly #w.
+$n obliterates you with $s deadly #w.
+M
+99 35
+$n #W $N, enshrouding $M in a mist of $S own blood.
+You enshroud $N in a mist of $S own blood with your #w.
+$n enshrounds you in a mist of your own blood with $s #w.
+M
+150 40
+$n charges $N, ripping completely through $M.
+You charge $N, ripping completely through $M.
+$n charges you, ripping completely through your body.
+M
+200 45
+$n mutilates $N with inhuman power.
+You mutilate $N with inhuman power.
+$n mutilates you with an inhuman power.
+M
+300 50
+$n @W* destroys *@n $N with $s deadly #w.
+You @W* destroy *@y $N with your deadly #w.
+$n @W* destroys *@r you with $s deadly #w.
+M
+400 55
+$n @W** annihilates **@n $N with $s deadly #w.
+You @W** annihilate **@y $N with your deadly #w.
+$n @W** annihilates **@r you with $s deadly #w.
+M
+500 60
+$n @B*** vapourizes ***@n $N with $s deadly #w.
+You @B*** vapourize ***@y $N with your deadly #w.
+$n @B*** vapourizes ***@r you with $s deadly #w.
+M
+999999 999999
+$n @r<@R^@Y> @GRUINS @Y<@R^@n@r>@n $N with $s mighty #w.
+You @r<@R^@Y> @GRUIN @Y<@R^@n@r>@y $N with your mighty #w.
+$n @r<@R^@y> @GRUINS @Y<@R^@n@r>@r you with $s mighty #w.
+$
