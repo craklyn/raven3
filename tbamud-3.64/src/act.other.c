@@ -690,8 +690,6 @@ ACMD(do_gen_tog)
     "You are now deaf to auctions.\r\n"},
     {"You can now hear shouts.\r\n",
     "You are now deaf to shouts.\r\n"},
-    {"You can now hear gossip.\r\n",
-    "You are now deaf to gossip.\r\n"},
     {"You can now hear the congratulation messages.\r\n",
     "You are now deaf to the congratulation messages.\r\n"},
     {"You can now hear the Wiz-channel.\r\n",
@@ -760,9 +758,6 @@ ACMD(do_gen_tog)
     break;
   case SCMD_NOSHOUT:
     result = PRF_TOG_CHK(ch, PRF_NOSHOUT);
-    break;
-  case SCMD_NOGOSSIP:
-    result = PRF_TOG_CHK(ch, PRF_NOGOSS);
     break;
   case SCMD_NOGRATZ:
     result = PRF_TOG_CHK(ch, PRF_NOGRATZ);
