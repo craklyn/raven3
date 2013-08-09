@@ -624,6 +624,7 @@ do                                                              \
 
 #define GET_SKILL(ch, i) (IS_NPC(ch) ? 80 : GET_PLAYER_SKILL(ch, i))
 
+#define PERCENT_SUCCESS(percentage) (percentage >= rand_number(1, 100))
 /** The player's default sector type when buildwalking */
 #define GET_BUILDWALK_SECTOR(ch) CHECK_PLAYER_SPECIAL((ch), ((ch)->player_specials->buildwalk_sector))
 
@@ -668,6 +669,31 @@ do                                                              \
 #define IS_EVIL(ch)    (GET_ALIGNMENT(ch) <= -350)
 /** Defines if ch is neither good nor evil. */
 #define IS_NEUTRAL(ch) (!IS_GOOD(ch) && !IS_EVIL(ch))
+
+#define IS_HUMAN(ch) (GET_RACE(ch) == RACE_HUMAN || GET_RACE(ch) == RACE_SHUMAN)
+#define IS_HALFLING(ch) (GET_RACE(ch) == RACE_HALFLING || GET_RACE(ch) == RACE_SHALFLING)
+#define IS_ELF(ch)  (GET_RACE(ch) == RACE_ELF || GET_RACE(ch) == RACE_SELF)
+#define IS_DROW(ch) (GET_RACE(ch) == RACE_DROW || GET_RACE(ch) == RACE_SDROW)
+#define NOT_DROW(ch) (!IS_DROW(ch))
+#define IS_DWARF(ch) (GET_RACE(ch) == RACE_DWARF || GET_RACE(ch) == RACE_SDWARF)
+#define IS_MINOTAUR(ch) (GET_RACE(ch) == RACE_MINOTAUR || GET_RACE(ch) == RACE_SMINOTAUR)
+#define IS_OGRE(ch) (GET_RACE(ch) == RACE_OGRE || GET_RACE(ch) == RACE_SOGRE)
+#define IS_TROLL(ch) (GET_RACE(ch) == RACE_TROLL || GET_RACE(ch) == RACE_STROLL)
+#define IS_DRACONIAN(ch) (GET_RACE(ch) == RACE_DRACONIAN || GET_RACE(ch) == RACE_SDRACONIAN)
+#define IS_GNOME(ch) (GET_RACE(ch) == RACE_GNOME || GET_RACE(ch) == RACE_SGNOME)
+#define IS_ORC(ch) (GET_RACE(ch) == RACE_ORC || GET_RACE(ch) == RACE_SORC)
+
+#define IS_VAMPIRE(ch) (GET_RACE(ch) == RACE_VAMPIRE)
+#define IS_ELEMENTAL(ch) (GET_RACE(ch) == RACE_ELEMENTAL)
+#define IS_AMARA(ch) (GET_RACE(ch) == RACE_AMARA)
+#define IS_IZARTI(ch) (GET_RACE(ch) == RACE_IZARTI)
+#define IS_ELEMENTAL(ch) (GET_RACE(ch) == RACE_ELEMENTAL)
+#define IS_FAERIE(ch) (GET_RACE(ch) == RACE_FAERIE)
+#define IS_UNDEAD(ch) (GET_RACE(ch) == RACE_UNDEAD)
+#define IS_DEMON(ch) (GET_RACE(ch) == RACE_DEMON)
+#define IS_DRAGON(ch) (GET_RACE(ch) == RACE_DRAGON)
+#define IS_GIANT(ch) (GET_RACE(ch) == RACE_GIANT)
+#define IS_WEREWOLF(ch) (GET_RACE(ch) == RACE_WEREWOLF)
 
 /** Old wait state function.
  * @deprecated Use GET_WAIT_STATE */
@@ -886,17 +912,20 @@ do                                                              \
 
 
 /** 1 if ch is magic user class, 0 if not. */
-#define IS_MAGIC_USER(ch)	(!IS_NPC(ch) && \
-        (GET_CLASS(ch) == CLASS_MAGIC_USER))
+#define IS_MAGIC_USER(ch)      ((GET_CLASS(ch) == CLASS_MAGIC_USER))
 /** 1 if ch is cleric class, 0 if not. */
-#define IS_CLERIC(ch)		(!IS_NPC(ch) && \
-        (GET_CLASS(ch) == CLASS_CLERIC))
+#define IS_CLERIC(ch)		       ((GET_CLASS(ch) == CLASS_CLERIC))
 /** 1 if ch is thief class, 0 if not. */
-#define IS_THIEF(ch)		(!IS_NPC(ch) && \
-        (GET_CLASS(ch) == CLASS_THIEF))
+#define IS_THIEF(ch)		((GET_CLASS(ch) == CLASS_THIEF))
 /** 1 if ch is warrior class, 0 if not. */
-#define IS_WARRIOR(ch)		(!IS_NPC(ch) && \
-        (GET_CLASS(ch) == CLASS_WARRIOR))
+#define IS_WARRIOR(ch)		     ((GET_CLASS(ch) == CLASS_WARRIOR))
+#define IS_RANGER(ch)          (GET_CLASS(ch) == CLASS_RANGER)
+#define IS_ASSASSIN(ch)        (GET_CLASS(ch) == CLASS_ASSASSIN)
+#define IS_SHOU_LIN(ch)        (GET_CLASS(ch) == CLASS_SHOU_LIN)
+#define IS_SOLAMNIC_KNIGHT(ch) (GET_CLASS(ch) == CLASS_SOLAMNIC_KNIGHT)
+#define IS_DEATH_KNIGHT(ch)    (GET_CLASS(ch) == CLASS_DEATH_KNIGHT)
+#define IS_SHADOW_DANCER(ch)   (GET_CLASS(ch) == CLASS_SHADOW_DANCER)
+#define IS_NECROMANCER(ch)     (GET_CLASS(ch) == CLASS_NECROMANCER)
 
 /** Defines if ch is outdoors or not. */
 #define OUTSIDE(ch) (!ROOM_FLAGGED(IN_ROOM(ch), ROOM_INDOORS))
