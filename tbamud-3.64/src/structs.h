@@ -1401,6 +1401,11 @@ struct message_list
   struct message_type *msg; /**< List of messages.			*/
 };
 
+struct damage_message_type {
+  int maxDamage;
+  struct msg_type *msg;
+};
+
 /** Social message data structure. */
 struct social_messg
 {
