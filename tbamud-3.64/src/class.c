@@ -1226,173 +1226,116 @@ byte saving_throws(int class_num, int type, int level)
 /* THAC0 for classes and levels.  (To Hit Armor Class 0) */
 int thaco(int class_num, int level)
 {
-  switch (class_num) {
-  case CLASS_MAGIC_USER:
-    switch (level) {
-    case  0: return 100;
-    case  1: return  20;
-    case  2: return  20;
-    case  3: return  20;
-    case  4: return  19;
-    case  5: return  19;
-    case  6: return  19;
-    case  7: return  18;
-    case  8: return  18;
-    case  9: return  18;
-    case 10: return  17;
-    case 11: return  17;
-    case 12: return  17;
-    case 13: return  16;
-    case 14: return  16;
-    case 15: return  16;
-    case 16: return  15;
-    case 17: return  15;
-    case 18: return  15;
-    case 19: return  14;
-    case 20: return  14;
-    case 21: return  14;
-    case 22: return  13;
-    case 23: return  13;
-    case 24: return  13;
-    case 25: return  12;
-    case 26: return  12;
-    case 27: return  12;
-    case 28: return  11;
-    case 29: return  11;
-    case 30: return  11;
-    case 31: return  10;
-    case 32: return  10;
-    case 33: return  10;
-    case 34: return   9;
-    default:
-      log("SYSERR: Missing level for mage thac0.");
-    }
-  case CLASS_CLERIC:
-    switch (level) {
-    case  0: return 100;
-    case  1: return  20;
-    case  2: return  20;
-    case  3: return  20;
-    case  4: return  18;
-    case  5: return  18;
-    case  6: return  18;
-    case  7: return  16;
-    case  8: return  16;
-    case  9: return  16;
-    case 10: return  14;
-    case 11: return  14;
-    case 12: return  14;
-    case 13: return  12;
-    case 14: return  12;
-    case 15: return  12;
-    case 16: return  10;
-    case 17: return  10;
-    case 18: return  10;
-    case 19: return   8;
-    case 20: return   8;
-    case 21: return   8;
-    case 22: return   6;
-    case 23: return   6;
-    case 24: return   6;
-    case 25: return   4;
-    case 26: return   4;
-    case 27: return   4;
-    case 28: return   2;
-    case 29: return   2;
-    case 30: return   2;
-    case 31: return   1;
-    case 32: return   1;
-    case 33: return   1;
-    case 34: return   1;
-    default:
-      log("SYSERR: Missing level for cleric thac0.");
-    }
-  case CLASS_THIEF:
-    switch (level) {
-    case  0: return 100;
-    case  1: return  20;
-    case  2: return  20;
-    case  3: return  19;
-    case  4: return  19;
-    case  5: return  18;
-    case  6: return  18;
-    case  7: return  17;
-    case  8: return  17;
-    case  9: return  16;
-    case 10: return  16;
-    case 11: return  15;
-    case 12: return  15;
-    case 13: return  14;
-    case 14: return  14;
-    case 15: return  13;
-    case 16: return  13;
-    case 17: return  12;
-    case 18: return  12;
-    case 19: return  11;
-    case 20: return  11;
-    case 21: return  10;
-    case 22: return  10;
-    case 23: return   9;
-    case 24: return   9;
-    case 25: return   8;
-    case 26: return   8;
-    case 27: return   7;
-    case 28: return   7;
-    case 29: return   6;
-    case 30: return   6;
-    case 31: return   5;
-    case 32: return   5;
-    case 33: return   4;
-    case 34: return   4;
-    default:
-      log("SYSERR: Missing level for thief thac0.");
-    }
-  case CLASS_WARRIOR:
-    switch (level) {
-    case  0: return 100;
-    case  1: return  20;
-    case  2: return  19;
-    case  3: return  18;
-    case  4: return  17;
-    case  5: return  16;
-    case  6: return  15;
-    case  7: return  14;
-    case  8: return  14;
-    case  9: return  13;
-    case 10: return  12;
-    case 11: return  11;
-    case 12: return  10;
-    case 13: return   9;
-    case 14: return   8;
-    case 15: return   7;
-    case 16: return   6;
-    case 17: return   5;
-    case 18: return   4;
-    case 19: return   3;
-    case 20: return   2;
-    case 21: return   1;
-    case 22: return   1;
-    case 23: return   1;
-    case 24: return   1;
-    case 25: return   1;
-    case 26: return   1;
-    case 27: return   1;
-    case 28: return   1;
-    case 29: return   1;
-    case 30: return   1;
-    case 31: return   1;
-    case 32: return   1;
-    case 33: return   1;
-    case 34: return   1;
-    default:
-      log("SYSERR: Missing level for warrior thac0.");
-    }
-  default:
-    log("SYSERR: Unknown class in thac0 chart.");
-  }
+  const int thaco[ NUM_CLASSES ][ LVL_IMPL + 2 ] = {
+     { 99,                                     /* THACO table for MAGE(Mu) (delta=0.25) */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 10 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 20 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 30 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 40 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 50 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for CLERIC(Cl) (delta=0.35) */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 10 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 20 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 30 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 40 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 50 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for THIEF(Th) (delta=0.40) */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 10 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 20 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 30 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 40 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 50 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for WARRIOR(Wa) (delta=0.50) */
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1, /*   to lvl 10 */
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1, /*   to lvl 20 */
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1, /*   to lvl 30 */
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1, /*   to lvl 40 */
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1, /*   to lvl 50 */
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for RANGER(Ra) (delta=0.45) */
+       20, 20, 20, 19, 19, 19, 18, 18, 18, 17, /*   to lvl 10 */
+       17, 17, 16, 16, 16, 15, 15, 14, 14, 14, /*   to lvl 20 */
+       13, 13, 13, 12, 12, 12, 11, 11, 11, 10, /*   to lvl 30 */
+       10, 10,  9,  9,  9,  8,  8,  7,  7,  7, /*   to lvl 40 */
+        6,  6,  6,  5,  5,  5,  4,  4,  4,  3, /*   to lvl 50 */
+        6,  6,  6,  5,  5,  5,  4,  4,  4,  3, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for ASSASSIN(As) (delta=0.40) */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 10 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 20 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 30 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 40 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 50 */
+        5,  5,  5,  5,  5,  5,  5,  5,  5,  5, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for SHOU_LIN(Sl) (delta=0.35) */
+        8,  8,  8,  8,  8,  8,  8,  8,  8,  8, /*   to lvl 10 */
+        8,  8,  8,  8,  8,  8,  8,  8,  8,  8, /*   to lvl 20 */
+        8,  8,  8,  8,  8,  8,  8,  8,  8,  8, /*   to lvl 30 */
+        8,  8,  8,  8,  8,  8,  8,  8,  8,  8, /*   to lvl 40 */
+        8,  8,  8,  8,  8,  8,  8,  8,  8,  8, /*   to lvl 50 */
+        8,  8,  8,  8,  8,  8,  8,  8,  8,  8, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for SOLAMNIC_KNIGHT(Kn) (delta=0.45) */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 10 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 20 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 30 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 40 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 50 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for DEATH_KNIGHT(De) (delta=0.45) */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 10 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 20 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 30 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 40 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 50 */
+        2,  2,  2,  2,  2,  2,  2,  2,  2,  2, /*   to lvl 60 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 70 */
+       99 },
+     { 99,                                     /* THACO table for SHADOW_DANCER(Sd) (delta=0.35) */
+        7,  7,  7,  7,  7,  7,  7,  7,  7,  7, /*   to lvl 10 */
+        7,  7,  7,  7,  7,  7,  7,  7,  7,  7, /*   to lvl 20 */
+        7,  7,  7,  7,  7,  7,  7,  7,  7,  7, /*   to lvl 30 */
+        7,  7,  7,  7,  7,  7,  7,  7,  7,  7, /*   to lvl 40 */
+        7,  7,  7,  7,  7,  7,  7,  7,  7,  7, /*   to lvl 50 */
+        7,  7,  7,  7,  7,  7,  7,  7,  7,  7, /*   to lvl 50 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 50 */
+       99 },
+     { 99,                                     /* THACO table for NECROMANCER(Mu) (delta=0.25) */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 10 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 20 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 30 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 40 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 50 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 60 */
+       99 },
+     { 99,                                     /* THACO table for DRUIDS(DR) (delta=0.25) */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 10 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 20 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 30 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 40 */
+       10, 10, 10, 10, 10, 10, 10, 10, 10, 10, /*   to lvl 50 */
+       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, /*   to lvl 60 */
+       99 }
+  }; /* End of the THACO table */
 
-  /* Will not get there unless something is wrong. */
-  return 100;
+  return thaco[class_num][level];
 }
 
 
@@ -1689,6 +1632,8 @@ void init_spell_levels(void)
   spell_level(SKILL_TRACK, CLASS_WARRIOR, 9);
   spell_level(SKILL_BASH, CLASS_WARRIOR, 12);
   spell_level(SKILL_WHIRLWIND, CLASS_WARRIOR, 16);
+  spell_level(SKILL_SECOND_ATTACK, CLASS_WARRIOR, 15);
+  spell_level(SKILL_THIRD_ATTACK, CLASS_WARRIOR, 45);
 }
 
 /* This is the exp given to implementors -- it must always be greater than the

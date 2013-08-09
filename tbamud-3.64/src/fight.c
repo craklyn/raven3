@@ -77,7 +77,13 @@ static void solo_gain(struct char_data *ch, struct char_data *victim);
 /** @todo refactor this function name */
 static char *replace_string(const char *str, const char *weapon_singular, const char *weapon_plural);
 static int compute_thaco(struct char_data *ch, struct char_data *vict);
+static char *getDamageMessage(struct char_data *ch, struct char_data *vict, int damage, int msgTo);
 
+#define MSG_TO_ROOM       0
+#define MSG_TO_ATTACKER   1
+#define MSG_TO_VICT       2
+#define MSG_DAMAGE_DEALT  0
+#define MSG_PAIN_DEALT    1
 
 #define IS_WEAPON(type) (((type) >= TYPE_HIT) && ((type) < TYPE_SUFFERING))
 /* The Fight related routines */
@@ -416,129 +422,37 @@ static void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 		      int w_type)
 {
   char *buf;
-  int msgnum;
-
-  static struct dam_weapon_type {
-    const char *to_room;
-    const char *to_char;
-    const char *to_victim;
-  } dam_weapons[] = {
-
-    /* use #w for singular (i.e. "slash") and #W for plural (i.e. "slashes") */
-
-      { "$n misses $N with $s #w.",       /* 0: 0.  */
-          "You miss $N with your #w.",
-          "$n misses you with $s #w." },
-
-        { "$n scratches $N with $s #w.",      /* 1: 1..2  */
-          "You scratch $N as you #w $M.",
-          "$n scratches you as $e #W you." },
-
-        { "$n barely #W $N.",         /* 2: 3..4  */
-          "You barely #w $N.",
-          "$n barely #W you." },
-
-        { "$n #W $N.",          /* 3: 5..6  */
-          "You #w $N.",
-          "$n #W you." },
-
-        { "$n #W $N hard.",         /* 4: 7..10  */
-          "You #w $N hard.",
-          "$n #W you hard." },
-
-        { "$n #W $N very hard.",        /* 5: 11..14   */
-          "you #w $N very hard.",
-          "$n #W you very hard." },
-
-        { "$n #W $N extremely hard.",       /* 6: 15..19   */
-          "You #w $N extremely hard.",
-          "$n #W you extremely hard." },
-
-        { "$n massacres $N to small fragments with $s #w.", /* 7: 20..26   */
-          "You massacre $N to small fragments with your #w.",
-          "$n massacres you to small fragments with $s #w." },
-
-        { "$n staggers $N with $s #w.",     /* 8: 27..35   */
-          "You stagger $N with your fearsome #w.",
-          "$n staggers you with $s fearsome #w." },
-
-        { "$n #W $N resulting in a bone crushing sound.",   /* 9: 36..47   */
-          "You #w $N, resulting in a bone crushing sound.",
-          "$n #W you, resulting in a bone crushing sound." },
-
-        { "$n obliterates $N with $s deadly #w.",     /* 10: 48..59  */
-          "You obliterate $N with your deadly #w.",
-          "$n obliterates you with $s deadly #w." },
-
-        { "$n #W $N, enshrouding $M in a mist of $S own blood.",/* 11: 60..99  */
-          "You enshroud $N in a mist of $S own blood with your #w.",
-          "$n enshrounds you in a mist of your own blood with $s #w." },
-
-        { "$n charges $N, ripping completely through $M.",  /* 12: > 100   */
-          "You charge $N, ripping completely through $M.",
-          "$n charges you, ripping completely through your body." },
-
-        { "$n mutilates $N with inhuman power.",                  /* 13 */
-          "You mutilate $N with inhuman power.",
-          "$n mutilates you with an inhuman power." },
-
-        { "$n \tW* destroys *\tn $N with $s deadly #w.",    /* 14 */
-          "You \tW* destroy *\ty $N with your deadly #w.",
-          "$n \tW* destroys *\tr you with $s deadly #w." },
-
-        { "$n \tW** annihilates **\tn $N with $s deadly #w.", /* 15 */
-          "You \tW** annihilate **\ty $N with your deadly #w.",
-          "$n \tW** annihilates **\tr you with $s deadly #w." },
-
-        { "$n \tB*** vapourizes ***\tn $N with $s deadly #w.",  /* 16 */
-          "You \tB*** vapourize ***\ty $N with your deadly #w.",
-          "$n \tB*** vapourizes ***\r you with $s deadly #w." },
-
-        { "$n \tr<\tR^\tY> \tGRUINS \tY<\tR^\tn\tr>\tn $N with $s mighty #w.",  /* 17 */
-          "You \tr<\tR^\tY> \tGRUIN \tY<\tR^\tn\tr>\ty $N with your mighty #w.",  /* 17 */
-          "$n \tr<\tR^\ty> \tGRUINS \tY<\tR^\tn\tr>\tr you with $s mighty #w."} /* 17 */
-  };
+  struct char_data *chInRoom;
 
   w_type -= TYPE_HIT;		/* Change to base of table with text */
 
-  if( dam ==   0) msgnum = 0;
-  else if( dam <=   2) msgnum = 1;
-  else if( dam <=   4) msgnum = 2;
-  else if( dam <=   6) msgnum = 3;
-  else if( dam <=  10) msgnum = 4;
-  else if( dam <=  14) msgnum = 5;
-  else if( dam <=  19) msgnum = 6;
-  else if( dam <=  26) msgnum = 7;
-  else if( dam <=  35) msgnum = 8;
-  else if( dam <=  47) msgnum = 9;
-  else if( dam <=  59) msgnum = 10;
-  else if( dam <=  99) msgnum = 11;
-  else if( dam <= 150) msgnum = 12;
-  else if( dam <= 200) msgnum = 13;
-  else if( dam <= 300) msgnum = 14;
-  else if( dam <= 400) msgnum = 15;
-  else if( dam <= 500) msgnum = 16;
-  else                 msgnum = 17;
-
-  /* damage message to onlookers */
-  buf = replace_string(dam_weapons[msgnum].to_room,
-	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural), dam;
-  act(buf, FALSE, ch, NULL, victim, TO_NOTVICT);
+  /*
+   * Display damage message by onlookers preferences.
+   */
+  for(chInRoom = world[IN_ROOM(ch)].people; chInRoom; chInRoom = chInRoom->next_in_room) {
+    if(ch != chInRoom && victim != chInRoom) {
+      if(GET_LEVEL(chInRoom) >= LVL_IMMORT)
+          send_to_char(chInRoom,"(%d)", dam);
+        buf = replace_string(getDamageMessage(chInRoom, victim, dam, MSG_TO_ROOM),
+          attack_hit_text[w_type].singular, attack_hit_text[w_type].plural), dam;
+        perform_act(buf, ch, NULL, victim, chInRoom);
+    }
+  }
 
   /* damage message to damager */
   if (GET_LEVEL(ch) >= LVL_IMMORT)
-	send_to_char(ch, "(%d) ", dam);
+	send_to_char(ch, "(%d)", dam);
   send_to_char(ch,"\ty");
-  buf = replace_string(dam_weapons[msgnum].to_char,
+  buf = replace_string(getDamageMessage(ch, victim, dam, MSG_TO_ATTACKER),
 	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_CHAR);
   send_to_char(ch, CCNRM(ch, C_CMP));
 
   /* damage message to damagee */
   if (GET_LEVEL(victim) >= LVL_IMMORT)
-    send_to_char(victim, "(%d) ", dam);
+    send_to_char(victim, "(%d)", dam);
   send_to_char(victim,"\tr");
-  buf = replace_string(dam_weapons[msgnum].to_victim,
+  buf = replace_string(getDamageMessage(ch, ch, dam, MSG_TO_VICT),
 	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_VICT | TO_SLEEP);
   send_to_char(victim, CCNRM(victim, C_CMP));
@@ -846,6 +760,40 @@ static int compute_thaco(struct char_data *ch, struct char_data *victim)
   return calc_thaco;
 }
 
+static char *getDamageMessage(struct char_data *ch, struct char_data *vict, int damage, int msgTo) {
+  struct damage_message_type *message;
+  char *msg = "ERROR!";
+  bool ok = FALSE;
+  // make sure its not zero cause we cant use "You missed".
+  int painPercentage = ((damage * 100) / GET_HIT(vict)) + 1;
+
+  while((message = (struct damage_message_type *) simple_list(damageMessageList))) {
+
+    if(!ok) {
+      if((!PRF_FLAGGED(ch, PRF_NEWCOMBAT) && damage <= message->maxDamage)
+          || (PRF_FLAGGED(ch, PRF_NEWCOMBAT) && painPercentage <= message->painPercentage)) {
+        switch(msgTo) {
+        case MSG_TO_ROOM:
+          msg = message->msg->room_msg;
+          break;
+        case MSG_TO_ATTACKER:
+          msg = message->msg->attacker_msg;
+          break;
+        case MSG_TO_VICT:
+          msg = message->msg->victim_msg;
+          break;
+        default:
+          log("SYSERR: Invalid msgTo(%d) passed to getDamageMessage!", msgTo);
+          msg = "\tYSomething went wrong, report this to staff.\tn";
+        }
+        ok = TRUE;
+      }
+    }
+  }
+
+  return msg;
+}
+
 void hit(struct char_data *ch, struct char_data *victim, int type)
 {
   struct obj_data *wielded = GET_EQ(ch, WEAR_WIELD);
@@ -947,7 +895,9 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
       }
     }
   }
-
+  if(FIGHTING(ch) && dam > 0 && !IS_NPC(ch) && GET_POS(victim) > POS_DEAD) {
+    diag_char_to_char(victim, ch);
+  }
   /* check if the victim has a hitprcnt trigger */
   hitprcnt_mtrigger(victim);
 }
@@ -1031,6 +981,9 @@ int computeNumberAttacks(struct char_data *ch) {
       numAttacks += 1;
     }
   }
+
+  //as implemented in raven, mob Monks can get up to third attack
+  numAttacks = IS_SHOU_LIN(ch) && IS_NPC(ch) ? GET_LEVEL(ch) / 13 : numAttacks;
 
   // spell to be implemented
   if(isAffectedBySpellName(ch,"haste")) {

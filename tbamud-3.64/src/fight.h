@@ -35,6 +35,7 @@ int skill_message(int dam, struct char_data *ch, struct char_data *vict,
           int attacktype);
 void  stop_fighting(struct char_data *ch);
 void performMobCombatAction(void);
+int computeNumberAttacks(struct char_data *ch);
 
 
 /* Global variables */

@@ -2460,9 +2460,10 @@ ACMD(do_show)
   struct obj_data *obj;
   struct descriptor_data *d;
   char field[MAX_INPUT_LENGTH], value[MAX_INPUT_LENGTH],
-	arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
+	arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
   int r, g, b;
   char colour[16];
+  struct damage_message_type *damageMessage;
 
   struct show_struct {
     const char *cmd;
@@ -2482,6 +2483,7 @@ ACMD(do_show)
     { "thaco",      LVL_IMMORT },
     { "exp",        LVL_IMMORT },
     { "colour",     LVL_IMMORT },
+    { "damage", LVL_IMMORT },
     { "\n", 0 }
   };
 
@@ -2714,20 +2716,29 @@ ACMD(do_show)
 
   /* show thaco */
   case 11:
-    len = strlcpy(buf, "LvL - Mu Cl Th Wa\r\n----------------\r\n", sizeof(buf));
+    len = 0;
+    nlen = 0;
+    len = strlcpy(buf,"\tcLvl\tn - ",sizeof(buf));
+    for(i = 0; i < NUM_CLASSES; i++)
+      len += snprintf(buf + len, sizeof(buf) - len,"\tC%3s\tn ",class_abbrevs[i]);
 
-    for (j = 1; j < LVL_IMMORT; j++) {
-      nlen = snprintf(buf + len, sizeof(buf) - len,  "%-3d - %-2d %-2d %-2d %-2d\r\n", j, 
-				thaco(CLASS_MAGIC_USER, j),
-				thaco(CLASS_CLERIC, j),
-				thaco(CLASS_THIEF, j),
-				thaco(CLASS_WARRIOR, j));
-      if (len + nlen >= sizeof(buf))
-        break;
-      len += nlen;
+    len += strlcpy(buf + len,"\r\n\tW=====================================================\tn\r\n",sizeof(buf) - len);
+    for(i = 1; i < LVL_IMMORT; i++) {
+      len += snprintf(buf + len, sizeof(buf) - len, "\r\n\tc%-3d\tn   ",i);
+      for(j = 0; j < NUM_CLASSES; j++) {
+        len += snprintf(buf + len, sizeof(buf) - len, "\tC%3d\tn ",thaco(j, i));
+      }
+      nlen = snprintf(buf + len, sizeof(buf) - len, "\r\n");
+      if (nlen + len >= sizeof(buf) - len) {
+        page_string(ch->desc, buf, TRUE);
+        nlen = 0;
+      }
+      nlen += len;
     }
 
-    page_string(ch->desc, buf, TRUE);
+    if(nlen > 0) {
+      page_string(ch->desc, buf, TRUE);
+    }
     break;
 
   /* show experience tables */
@@ -2761,6 +2772,33 @@ ACMD(do_show)
           len += nlen;
         }
     page_string(ch->desc, buf, TRUE);
+    break;
+  case 14:
+    //just to be sure
+    if(damageMessageList->iSize > 0) {
+      nlen = 0;
+      len = strlcpy(buf,"\tCDamage Messages:\tn\r\n", sizeof(buf));
+      while((damageMessage = (struct damage_message_type *) simple_list(damageMessageList)) != NULL) {
+        len += snprintf(buf + len, sizeof(buf) - len, "\tcMax Damage     : \tC%d\tn\r\n", damageMessage->maxDamage);
+        len += snprintf(buf + len, sizeof(buf) - len, "\tcPain Pct       : \tC%d\tn\r\n", damageMessage->painPercentage);
+        len += snprintf(buf + len, sizeof(buf) - len, "\tcMsg To Attacker: \tn%s\tn\r\n", damageMessage->msg->attacker_msg);
+        len += snprintf(buf + len, sizeof(buf) - len, "\tcMsg To Victim  : \tn%s\tn\r\n", damageMessage->msg->victim_msg);
+        len += snprintf(buf + len, sizeof(buf) - len, "\tcMsg To Room    : \tn%s\tn\r\n", damageMessage->msg->room_msg);
+        nlen += snprintf(buf2 + nlen, sizeof(buf2) - nlen,"%s\r\n", buf);
+        if(nlen + len >= sizeof(buf2)) {
+          page_string(ch->desc, buf2, TRUE);
+          nlen = 0;
+        }
+        len = 0;
+        buf[0] = '\0';
+      }
+      if(nlen > 0) {
+        page_string(ch->desc, buf2, TRUE);
+      }
+    } else {
+      log("SYSERROR: damageMessageList is empty!");
+    }
+
     break;
 
   /* show what? */
