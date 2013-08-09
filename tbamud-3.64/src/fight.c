@@ -441,10 +441,10 @@ static void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 
   /* damage message to damager */
   if (GET_LEVEL(ch) >= LVL_IMMORT)
-	send_to_char(ch, "(%d)", dam);
+    send_to_char(ch, "(%d)", dam);
   send_to_char(ch,"\ty");
   buf = replace_string(getDamageMessage(ch, victim, dam, MSG_TO_ATTACKER),
-	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
+      attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_CHAR);
   send_to_char(ch, CCNRM(ch, C_CMP));
 
@@ -453,7 +453,7 @@ static void dam_message(int dam, struct char_data *ch, struct char_data *victim,
     send_to_char(victim, "(%d)", dam);
   send_to_char(victim,"\tr");
   buf = replace_string(getDamageMessage(ch, ch, dam, MSG_TO_VICT),
-	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
+      attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_VICT | TO_SLEEP);
   send_to_char(victim, CCNRM(victim, C_CMP));
 }

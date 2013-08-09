@@ -2483,7 +2483,7 @@ ACMD(do_show)
     { "thaco",      LVL_IMMORT },
     { "exp",        LVL_IMMORT },
     { "colour",     LVL_IMMORT },
-    { "damage", LVL_IMMORT },
+    { "damage",     LVL_IMMORT },
     { "\n", 0 }
   };
 
