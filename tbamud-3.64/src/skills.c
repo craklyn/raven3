@@ -91,6 +91,11 @@ bool isAffectedBySpellName(struct char_data *ch, const char *spellName) {
   return isAffectedBySpellNum(ch, getSpellByName(spellName));
 }
 
+/*
+ * Return TRUE if roll is successful for ch's skillNum.
+ * @param ch the actor of the skill
+ * @param skill the skill number
+ */
 bool skillSuccessByNum(struct char_data *ch, sh_int skillNum) {
   bool success = FALSE;
   int chance;
@@ -133,11 +138,19 @@ bool skillSuccessByNum(struct char_data *ch, sh_int skillNum) {
   return success;
 }
 
-
+/*
+ * Returns TRUE if roll is successful for ch's skillName.
+ * @param ch the actor of the skill
+ * @param skillName the name of the skill
+ */
 bool skillSuccessByName(struct char_data *ch, const char *skillName) {
   return skillSuccessByNum(ch, getSpellByName(skillName));
 }
 
+/*
+ * Return TRUE if ch's worn items has skill success and a roll is successful
+ * @param ch the player
+ */
 static bool equipmentSkillSuccess(struct char_data *ch) {
   bool success = FALSE;
   int j, i;
@@ -154,6 +167,10 @@ static bool equipmentSkillSuccess(struct char_data *ch) {
   return success;
 }
 
+/*
+ * Returns TRUE if ch has affections with skill success and if a roll is successful.
+ * @param ch the player
+ */
 static bool affectSkillSuccess (struct char_data *ch) {
   struct affected_type *af;
   bool success = FALSE;
