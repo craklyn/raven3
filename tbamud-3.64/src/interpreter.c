@@ -157,11 +157,9 @@ cpp_extern const struct command_info cmd_info[] = {
 
   { "get"      , "g"       , POS_RESTING , do_get      , 0, 0 },
   { "gecho"    , "gecho"   , POS_DEAD    , do_gecho    , LVL_GOD, 0 },
-  { "gemote"   , "gem"     , POS_SLEEPING, do_gen_comm , 0, SCMD_GEMOTE },
   { "give"     , "giv"     , POS_RESTING , do_give     , 0, 0 },
   { "goto"     , "go"      , POS_SLEEPING, do_goto     , LVL_IMMORT, 0 },
   { "gold"     , "gol"     , POS_RESTING , do_gold     , 0, 0 },
-  { "gossip"   , "gos"     , POS_SLEEPING, do_gen_comm , 0, SCMD_GOSSIP },
   { "group"    , "gr"      , POS_RESTING , do_group    , 1, 0 },
   { "grab"     , "grab"    , POS_RESTING , do_grab     , 0, 0 },
   { "grats"    , "grat"    , POS_SLEEPING, do_gen_comm , 0, SCMD_GRATZ },
@@ -217,7 +215,6 @@ cpp_extern const struct command_info cmd_info[] = {
 
   { "news"     , "news"    , POS_SLEEPING, do_gen_ps   , 0, SCMD_NEWS },
   { "noauction", "noauction",POS_DEAD    , do_gen_tog  , 0, SCMD_NOAUCTION },
-  { "nogossip" , "nogossip", POS_DEAD    , do_gen_tog  , 0, SCMD_NOGOSSIP },
   { "nograts"  , "nograts" , POS_DEAD    , do_gen_tog  , 0, SCMD_NOGRATZ },
   { "nohassle" , "nohassle", POS_DEAD    , do_gen_tog  , LVL_IMMORT, SCMD_NOHASSLE },
   { "noooc"    , "noooc"   , POS_DEAD    , do_gen_tog  , 0, SCMD_NOOOC },
