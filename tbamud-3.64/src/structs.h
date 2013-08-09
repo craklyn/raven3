@@ -426,8 +426,9 @@
 #define PRF_AUTOKEY      32   /**< Automatically unlock locked doors when opening */
 #define PRF_AUTODOOR     33   /**< Use the next available door */
 #define PRF_NOOOC        34   /**< Can't hear ooc channel */
+#define PRF_NEWCOMBAT    35   /**< Switch between new and old combat flavor */
 /** Total number of available PRF flags */
-#define NUM_PRF_FLAGS    35
+#define NUM_PRF_FLAGS    36
 
 /* Affect bits: used in char_data.char_specials.saved.affected_by */
 /* WARNING: In the world files, NEVER set the bits marked "R" ("Reserved") */
@@ -1401,6 +1402,12 @@ struct message_list
   int a_type;               /**< The id of this attack type. */
   int number_of_attacks;    /**< How many attack messages to chose from. */
   struct message_type *msg; /**< List of messages.			*/
+};
+
+struct damage_message_type {
+  int maxDamage;
+  int painPercentage;
+  struct msg_type *msg;
 };
 
 /** Social message data structure. */

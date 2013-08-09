@@ -115,6 +115,8 @@ int find_eq_pos(struct char_data *ch, struct obj_data *obj, char *arg);
 void name_from_drinkcon(struct obj_data *obj);
 void name_to_drinkcon(struct obj_data *obj, int type);
 void weight_change_object(struct obj_data *obj, int weight);
+/* do_diagnose utility functions */
+void diag_char_to_char(struct char_data *i, struct char_data *ch);
 /* functions with subcommands */
 /* do_drop */
 ACMD(do_drop);
@@ -223,12 +225,13 @@ ACMD(do_gen_tog);
 #define SCMD_AUTOMAP     25
 #define SCMD_AUTOKEY     26
 #define SCMD_AUTODOOR    27
-#define SCMD_COLOR       28
-#define SCMD_SYSLOG      29
-#define SCMD_WIMPY       30
-#define SCMD_PAGELENGTH  31
-#define SCMD_SCREENWIDTH 32
-#define SCMD_NOOOC       33
+#define SCMD_NOOOC       28
+#define SCMD_NEWCOMBAT   29
+#define SCMD_COLOR       30
+#define SCMD_SYSLOG      31
+#define SCMD_WIMPY       32
+#define SCMD_PAGELENGTH  33
+#define SCMD_SCREENWIDTH 34
 
 /* do_quit */
 ACMD(do_quit);

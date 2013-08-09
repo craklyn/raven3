@@ -129,6 +129,51 @@ void load_messages(void)
   log("Loaded %d Combat Messages...", i);
 }
 
+void loadDamageMessages(void) {
+  FILE *fl;
+  char chk[128];
+  int maxDam, painPercentage;
+  struct damage_message_type *message;
+
+  if(!(fl = fopen(COMBAT_FILE,"r"))) {
+    log("SYSERR: Error reading combat message file %s: %s", COMBAT_FILE, strerror(errno));
+    exit(1);
+  }
+
+  // necessary for reloading
+  if(damageMessageList != NULL) {
+    free_list(damageMessageList);
+  }
+  damageMessageList = create_list();
+
+  while(!feof(fl)) {
+    fgets(chk, 128, fl);
+    while(!feof(fl) && (*chk == '\n' || *chk == '*'))
+      fgets(chk, 128, fl);
+
+    while(*chk == 'M') {
+      fgets(chk, 128, fl);
+      sscanf(chk, "%d %d\n", &maxDam, &painPercentage);
+
+      CREATE(message, struct damage_message_type, 1);
+      CREATE(message->msg, struct msg_type, 1);
+      message->maxDamage = maxDam;
+      message->painPercentage = painPercentage;
+      message->msg->room_msg= strdup(fread_line(fl));
+      message->msg->attacker_msg = strdup(fread_line(fl));
+      message->msg->victim_msg = strdup(fread_line(fl));
+      parse_at(message->msg->attacker_msg);
+      parse_at(message->msg->room_msg);
+      parse_at(message->msg->victim_msg);
+
+      add_to_list(message, damageMessageList);
+    }
+  }
+
+  fclose(fl);
+  log("Loaded %d damage messages", damageMessageList->iSize);
+}
+
 static void show_messages(struct char_data *ch)
 {
   int i, half = MAX_MESSAGES / 2, count = 0;

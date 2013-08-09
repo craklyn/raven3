@@ -107,6 +107,7 @@
 #define SOCMESS_FILE	LIB_MISC"socials"  /* messages for social acts	*/
 #define SOCMESS_FILE_NEW LIB_MISC"socials.new"  /* messages for social acts with aedit patch*/
 #define XNAME_FILE	LIB_MISC"xnames"   /* invalid name substrings	*/
+#define COMBAT_FILE LIB_MISC"combat.txt" /* combat messages file */
 
 /* BEGIN: Assumed default locations for logfiles, mainly used in do_file. */
 /**/
@@ -397,6 +398,7 @@ extern long max_obj_id;
 extern int dg_owner_purged;
 
 extern struct message_list fight_messages[MAX_MESSAGES];
+extern struct list_data *damageMessageList;
 
 /* autoquest globals */
 extern struct aq_data *aquest_table;
