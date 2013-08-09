@@ -674,7 +674,6 @@ do                                                              \
 #define IS_HALFLING(ch) (GET_RACE(ch) == RACE_HALFLING || GET_RACE(ch) == RACE_SHALFLING)
 #define IS_ELF(ch)  (GET_RACE(ch) == RACE_ELF || GET_RACE(ch) == RACE_SELF)
 #define IS_DROW(ch) (GET_RACE(ch) == RACE_DROW || GET_RACE(ch) == RACE_SDROW)
-#define NOT_DROW(ch) (!IS_DROW(ch))
 #define IS_DWARF(ch) (GET_RACE(ch) == RACE_DWARF || GET_RACE(ch) == RACE_SDWARF)
 #define IS_MINOTAUR(ch) (GET_RACE(ch) == RACE_MINOTAUR || GET_RACE(ch) == RACE_SMINOTAUR)
 #define IS_OGRE(ch) (GET_RACE(ch) == RACE_OGRE || GET_RACE(ch) == RACE_SOGRE)
