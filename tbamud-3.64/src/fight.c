@@ -975,9 +975,9 @@ static int maxClassAttacks[NUM_CLASSES] = {
 int computeNumberAttacks(struct char_data *ch) {
   int numAttacks = 1;
 
-  if(skillSuccessByNum(ch, SKILL_SECOND_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
+  if(skillSuccess(ch, SKILL_SECOND_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
     numAttacks += 1;
-    if(skillSuccessByNum(ch, SKILL_THIRD_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
+    if(skillSuccess(ch, SKILL_THIRD_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
       numAttacks += 1;
     }
   }

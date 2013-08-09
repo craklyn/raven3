@@ -96,7 +96,7 @@ bool isAffectedBySpellName(struct char_data *ch, const char *spellName) {
  * @param ch the actor of the skill
  * @param skill the skill number
  */
-bool skillSuccessByNum(struct char_data *ch, sh_int skillNum) {
+bool skillSuccess(struct char_data *ch, sh_int skillNum) {
   bool success = FALSE;
   int chance;
 
@@ -144,7 +144,7 @@ bool skillSuccessByNum(struct char_data *ch, sh_int skillNum) {
  * @param skillName the name of the skill
  */
 bool skillSuccessByName(struct char_data *ch, const char *skillName) {
-  return skillSuccessByNum(ch, getSpellByName(skillName));
+  return skillSuccess(ch, getSpellByName(skillName));
 }
 
 /*

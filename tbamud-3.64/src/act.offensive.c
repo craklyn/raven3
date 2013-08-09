@@ -164,7 +164,7 @@ ACMD(do_backstab)
     return;
   }
 
-  if (!skillSuccessByNum(ch, SKILL_BACKSTAB))
+  if (!skillSuccess(ch, SKILL_BACKSTAB))
     damage(ch, vict, 0, SKILL_BACKSTAB);
   else
     hit(ch, vict, SKILL_BACKSTAB);
@@ -298,7 +298,7 @@ ACMD(do_bash)
     return;
   }
 
-  if (MOB_FLAGGED(vict, MOB_NOBASH) || !skillSuccessByNum(ch, SKILL_BASH)) {
+  if (MOB_FLAGGED(vict, MOB_NOBASH) || !skillSuccess(ch, SKILL_BASH)) {
     damage(ch, vict, 0, SKILL_BASH);
     GET_POS(ch) = POS_SITTING;
   } else {
@@ -357,7 +357,7 @@ ACMD(do_rescue)
     return;
   }
 
-  if (!skillSuccessByNum(ch, SKILL_RESCUE)) {
+  if (!skillSuccess(ch, SKILL_RESCUE)) {
     send_to_char(ch, "You fail the rescue!\r\n");
     return;
   }
@@ -501,7 +501,7 @@ ACMD(do_kick)
     return;
   }
 
-  if (!skillSuccessByNum(ch, SKILL_KICK)) {
+  if (!skillSuccess(ch, SKILL_KICK)) {
     damage(ch, vict, 0, SKILL_KICK);
   } else {
     damage(ch, vict, GET_LEVEL(ch) / 2, SKILL_KICK);

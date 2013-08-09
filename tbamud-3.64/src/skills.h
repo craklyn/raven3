@@ -17,7 +17,7 @@
 bool  isAffectedBySpellName (struct char_data *ch, const char *spellName);
 bool  isAffectedBySpellNum  (struct char_data *ch, sh_int spellNum);
 bool  skillSuccessByName    (struct char_data *ch, const char *skillName);
-bool  skillSuccessByNum     (struct char_data *ch, sh_int skillNum);
+bool  skillSuccess     (struct char_data *ch, sh_int skillNum);
 int   getSpellByName        (const char *spellName);
 
 #endif /* SKILLS_H_ */
