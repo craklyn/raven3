@@ -337,7 +337,7 @@ int save_config( IDXTYPE nowhere )
               "pk_allowed = %d\n\n", CONFIG_PK_ALLOWED);
   fprintf(fl, "* Is player thieving allowed on the mud?\n"
   	      "pt_allowed = %d\n\n", CONFIG_PT_ALLOWED);
-  fprintf(fl, "* What is the minimum level a player can shout/gossip/etc?\n"
+  fprintf(fl, "* What is the minimum level a player can shout/etc?\n"
               "level_can_shout = %d\n\n", CONFIG_LEVEL_CAN_SHOUT);
   fprintf(fl, "* How many movement points does shouting cost the player?\n"
   	      "holler_move_cost = %d\n\n", CONFIG_HOLLER_MOVE_COST);
@@ -880,7 +880,7 @@ void cedit_parse(struct descriptor_data *d, char *arg)
 
         case 'c':
         case 'C':
-          write_to_output(d, "Enter the minimum level a player must be to shout, gossip, etc : ");
+          write_to_output(d, "Enter the minimum level a player must be to shout, etc : ");
           OLC_MODE(d) = CEDIT_LEVEL_CAN_SHOUT;
           return;
 
@@ -1296,7 +1296,7 @@ void cedit_parse(struct descriptor_data *d, char *arg)
       if (!*arg) {
         write_to_output(d,
           "That is an invalid choice!\r\n"
-          "Enter the minimum level a player must be to shout, gossip, etc : ");
+          "Enter the minimum level a player must be to shout, etc : ");
       } else {
         OLC_CONFIG(d)->play.level_can_shout = atoi(arg);
         cedit_disp_game_play_options(d);
