@@ -1355,8 +1355,6 @@ ACMD(do_who)
           send_to_char(ch, " (Buildwalking)");
         if (PRF_FLAGGED(tch, PRF_AFK))
           send_to_char(ch, " (AFK)");
-        if (PRF_FLAGGED(tch, PRF_NOGOSS))
-          send_to_char(ch, " (nogos)");
         if (PRF_FLAGGED(tch, PRF_NOWIZ))
           send_to_char(ch, " (nowiz)");
         if (PRF_FLAGGED(tch, PRF_NOSHOUT))
@@ -1894,9 +1892,6 @@ ACMD(do_toggle)
     {"noshout", PRF_NOSHOUT, 0,
     "You can now hear shouts.\r\n",
     "You are now deaf to shouts.\r\n"},
-    {"nogossip", PRF_NOGOSS, 0,
-    "You can now hear gossip.\r\n",
-    "You are now deaf to gossip.\r\n"},
     {"nograts", PRF_NOGRATZ, 0,
     "You can now hear gratz.\r\n",
     "You are now deaf to gratz.\r\n"},
@@ -2029,7 +2024,7 @@ ACMD(do_toggle)
     "        NoShout: %-3s    "
     "          Wimpy: %-3s\r\n"
 
-    "       NoGossip: %-3s    "
+
     "      NoAuction: %-3s    "
     "        NoGrats: %-3s\r\n"
 
@@ -2068,7 +2063,6 @@ ACMD(do_toggle)
     ONOFF(PRF_FLAGGED(ch, PRF_NOSHOUT)),
     buf2,
 
-    ONOFF(PRF_FLAGGED(ch, PRF_NOGOSS)),
     ONOFF(PRF_FLAGGED(ch, PRF_NOAUCT)),
     ONOFF(PRF_FLAGGED(ch, PRF_NOGRATZ)),
 
