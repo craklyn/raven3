@@ -1960,7 +1960,7 @@ ACMD(do_toggle)
     {"syslog", 0, LVL_IMMORT, "\n", "\n"},
     {"wimpy", 0, 0, "\n", "\n"},
     {"pagelength", 0, 0, "\n", "\n"},
-	{"screenwidth", 0, 0, "\n", "\n"},
+    {"screenwidth", 0, 0, "\n", "\n"},
     {"\n", 0, -1, "\n", "\n"} 	/* must be last */
   };
 
