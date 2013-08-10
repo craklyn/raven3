@@ -28,9 +28,9 @@
 ACMD(do_gen_comm);
 #define SCMD_HOLLER   0
 #define SCMD_SHOUT    1
-#define SCMD_AUCTION  3
-#define SCMD_GRATZ    4
-#define SCMD_OOC      5
+#define SCMD_AUCTION  2
+#define SCMD_GRATZ    3
+#define SCMD_OOC      4
 /* do_qcomm */
 ACMD(do_qcomm);
 #define SCMD_QSAY     0
