@@ -406,10 +406,8 @@ ACMD(do_gen_comm)
   int channels[] = {
     0,
     PRF_NOSHOUT,
-    PRF_NOGOSS,
     PRF_NOAUCT,
     PRF_NOGRATZ,
-    PRF_NOGOSS,
     PRF_NOOOC,	
     0
   };
@@ -417,7 +415,6 @@ ACMD(do_gen_comm)
   int hist_type[] = {
     HIST_HOLLER,
     HIST_SHOUT,
-    HIST_GOSSIP,
     HIST_AUCTION,
     HIST_GRATS,
     HIST_OOC, 	
@@ -438,11 +435,6 @@ ACMD(do_gen_comm)
       "Turn off your noshout flag first!\r\n",
       KYEL},
 
-    {"You cannot gossip!!\r\n",
-      "gossip",
-      "You aren't even on the channel!\r\n",
-      KYEL},
-
     {"You cannot auction!!\r\n",
       "auction",
       "You aren't even on the channel!\r\n",
@@ -458,10 +450,6 @@ ACMD(do_gen_comm)
       "You aren't even on the channel!\r\n",
       KYEL},
 	  
-    {"You cannot gossip your emotions!\r\n",
-      "gossip",
-      "You aren't even on the channel!\r\n",
-      KYEL}
   };
 
   if (PLR_FLAGGED(ch, PLR_NOSHOUT)) {
@@ -470,15 +458,6 @@ ACMD(do_gen_comm)
   }
   if (ROOM_FLAGGED(IN_ROOM(ch), ROOM_SOUNDPROOF) && (GET_LEVEL(ch) < LVL_GOD)) {
     send_to_char(ch, "The walls seem to absorb your words.\r\n");
-    return;
-  }
-
-
-  if (subcmd == SCMD_GEMOTE) {
-    if (!*argument)
-      send_to_char(ch, "Gemote? Yes? Gemote what?\r\n");
-    else
-      do_gmote(ch, argument, 0, 1);
     return;
   }
 

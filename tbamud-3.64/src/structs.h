@@ -84,7 +84,7 @@
 #define ROOM_NOMOB                2   /**< MOBs not allowed in room */
 #define ROOM_INDOORS              3   /**< Indoors, no weather */
 #define ROOM_PEACEFUL             4   /**< Violence not allowed	*/
-#define ROOM_SOUNDPROOF           5   /**< Shouts, gossip blocked */
+#define ROOM_SOUNDPROOF           5   /**< Shouts blocked */
 #define ROOM_NOTRACK              6   /**< Track won't go through */
 #define ROOM_NOMAGIC              7   /**< Magic not allowed */
 #define ROOM_TUNNEL               8   /**< Room for only 1 pers	*/
@@ -184,16 +184,15 @@
 /* History */
 #define HIST_ALL       0 /**< Index to history of all channels */
 #define HIST_SAY       1 /**< Index to history of all 'say' */
-#define HIST_GOSSIP    2 /**< Index to history of all 'gossip' */
-#define HIST_WIZNET    3 /**< Index to history of all 'wiznet' */
-#define HIST_TELL      4 /**< Index to history of all 'tell' */
-#define HIST_SHOUT     5 /**< Index to history of all 'shout' */
-#define HIST_GRATS     6 /**< Index to history of all 'grats' */
-#define HIST_HOLLER    7 /**< Index to history of all 'holler' */
-#define HIST_AUCTION   8 /**< Index to history of all 'auction' */
-#define HIST_OOC       9 /**< Index to history of all 'ooc' */
+#define HIST_WIZNET    2 /**< Index to history of all 'wiznet' */
+#define HIST_TELL      3 /**< Index to history of all 'tell' */
+#define HIST_SHOUT     4 /**< Index to history of all 'shout' */
+#define HIST_GRATS     5 /**< Index to history of all 'grats' */
+#define HIST_HOLLER    6 /**< Index to history of all 'holler' */
+#define HIST_AUCTION   7 /**< Index to history of all 'auction' */
+#define HIST_OOC       8 /**< Index to history of all 'ooc' */
 
-#define NUM_HIST       10 /**< Total number of history indexes */
+#define NUM_HIST       9 /**< Total number of history indexes */
 
 #define HISTORY_SIZE   5 /**< Number of last commands kept in each history */
 
@@ -338,7 +337,7 @@
 #define PLR_MAILING       5   /**< Player is writing mail */
 #define PLR_CRASH         6   /**< Player needs to be crash-saved */
 #define PLR_SITEOK        7   /**< Player has been site-cleared */
-#define PLR_NOSHOUT       8   /**< Player not allowed to shout/goss */
+#define PLR_NOSHOUT       8   /**< Player not allowed to shout */
 #define PLR_NOTITLE       9   /**< Player not allowed to set title */
 #define PLR_DELETED      10   /**< Player deleted - space reusable */
 #define PLR_LOADROOM     11   /**< Player uses nonstandard loadroom */
@@ -410,25 +409,24 @@
 #define PRF_LOG1         16   /**< On-line System Log (low bit) */
 #define PRF_LOG2         17   /**< On-line System Log (high bit) */
 #define PRF_NOAUCT       18   /**< Can't hear auction channel */
-#define PRF_NOGOSS       19   /**< Can't hear gossip channel */
-#define PRF_NOGRATZ      20   /**< Can't hear grats channel */
-#define PRF_SHOWVNUMS    21   /**< Can see VNUMs */
-#define PRF_DISPAUTO     22   /**< Show prompt HP, MP, MV when < 25% */
-#define PRF_CLS          23   /**< Clear screen in OLC */
-#define PRF_BUILDWALK    24   /**< Build new rooms while walking */
-#define PRF_AFK          25   /**< AFK flag */
-#define PRF_AUTOLOOT     26   /**< Loot everything from a corpse */
-#define PRF_AUTOGOLD     27   /**< Loot gold from a corpse */
-#define PRF_AUTOSPLIT    28   /**< Split gold with group */
-#define PRF_AUTOSAC      29   /**< Sacrifice a corpse */
-#define PRF_AUTOASSIST   30   /**< Auto-assist toggle */
-#define PRF_AUTOMAP      31   /**< Show map at the side of room descs */
-#define PRF_AUTOKEY      32   /**< Automatically unlock locked doors when opening */
-#define PRF_AUTODOOR     33   /**< Use the next available door */
-#define PRF_NOOOC        34   /**< Can't hear ooc channel */
-#define PRF_NEWCOMBAT    35   /**< Switch between new and old combat flavor */
+#define PRF_NOGRATZ      19   /**< Can't hear grats channel */
+#define PRF_SHOWVNUMS    20   /**< Can see VNUMs */
+#define PRF_DISPAUTO     21   /**< Show prompt HP, MP, MV when < 25% */
+#define PRF_CLS          22   /**< Clear screen in OLC */
+#define PRF_BUILDWALK    23   /**< Build new rooms while walking */
+#define PRF_AFK          24   /**< AFK flag */
+#define PRF_AUTOLOOT     25   /**< Loot everything from a corpse */
+#define PRF_AUTOGOLD     26   /**< Loot gold from a corpse */
+#define PRF_AUTOSPLIT    27   /**< Split gold with group */
+#define PRF_AUTOSAC      28   /**< Sacrifice a corpse */
+#define PRF_AUTOASSIST   29   /**< Auto-assist toggle */
+#define PRF_AUTOMAP      30   /**< Show map at the side of room descs */
+#define PRF_AUTOKEY      31   /**< Automatically unlock locked doors when opening */
+#define PRF_AUTODOOR     32   /**< Use the next available door */
+#define PRF_NOOOC        33   /**< Can't hear ooc channel */
+#define PRF_NEWCOMBAT    34   /**< Switch between new and old combat flavor */
 /** Total number of available PRF flags */
-#define NUM_PRF_FLAGS    36
+#define NUM_PRF_FLAGS    35
 
 /* Affect bits: used in char_data.char_specials.saved.affected_by */
 /* WARNING: In the world files, NEVER set the bits marked "R" ("Reserved") */

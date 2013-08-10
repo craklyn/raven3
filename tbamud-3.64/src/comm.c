@@ -10,8 +10,10 @@
 
 #define __COMM_C__
 
+
 #include "conf.h"
 #include "sysdep.h"
+
 
 /* Begin conf.h dependent includes */
 
@@ -2675,22 +2677,6 @@ char *act(const char *str, int hide_invisible, struct char_data *ch,
     return NULL;
   }
 
-  if (type == TO_GMOTE && !IS_NPC(ch)) {
-    struct descriptor_data *i;
-    char buf[MAX_STRING_LENGTH];
-
-    for (i = descriptor_list; i; i = i->next) {
-      if (!i->connected && i->character &&
-          !PRF_FLAGGED(i->character, PRF_NOGOSS) &&
-          !PLR_FLAGGED(i->character, PLR_WRITING) &&
-          !ROOM_FLAGGED(IN_ROOM(i->character), ROOM_SOUNDPROOF)) {
-
-        sprintf(buf, "%s%s%s", CCYEL(i->character, C_NRM), str, CCNRM(i->character, C_NRM));
-        perform_act(buf, ch, obj, vict_obj, i->character);
-      }
-    }
-    return last_act_message;
-  }
   /* ASSUMPTION: at this point we know type must be TO_NOTVICT or TO_ROOM */
 
   if (ch && IN_ROOM(ch) != NOWHERE)
