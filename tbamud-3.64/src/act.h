@@ -28,9 +28,11 @@
 ACMD(do_gen_comm);
 #define SCMD_HOLLER   0
 #define SCMD_SHOUT    1
-#define SCMD_AUCTION  2
-#define SCMD_GRATZ    3
-#define SCMD_OOC      4
+#define SCMD_GOSSIP   2
+#define SCMD_AUCTION  3
+#define SCMD_GRATZ    4
+#define SCMD_OOC      5
+#define SCMD_GEMOTE   6
 /* do_qcomm */
 ACMD(do_qcomm);
 #define SCMD_QSAY     0
@@ -113,6 +115,8 @@ int find_eq_pos(struct char_data *ch, struct obj_data *obj, char *arg);
 void name_from_drinkcon(struct obj_data *obj);
 void name_to_drinkcon(struct obj_data *obj, int type);
 void weight_change_object(struct obj_data *obj, int weight);
+/* do_diagnose utility functions */
+void diag_char_to_char(struct char_data *i, struct char_data *ch);
 /* functions with subcommands */
 /* do_drop */
 ACMD(do_drop);
@@ -200,33 +204,34 @@ ACMD(do_gen_tog);
 #define SCMD_NOTELL      4
 #define SCMD_NOAUCTION   5
 #define SCMD_NOSHOUT     6
-#define SCMD_NOGRATZ     7
-#define SCMD_NOWIZ       8
-#define SCMD_QUEST       9
-#define SCMD_SHOWVNUMS   10
-#define SCMD_NOREPEAT    11
-#define SCMD_HOLYLIGHT   12
-#define SCMD_SLOWNS      13
-#define SCMD_AUTOEXIT    14
-#define SCMD_TRACK       15
-#define SCMD_CLS         16
-#define SCMD_BUILDWALK   17
-#define SCMD_AFK         18
-#define SCMD_AUTOLOOT    19
-#define SCMD_AUTOGOLD    20
-#define SCMD_AUTOSPLIT   21
-#define SCMD_AUTOSAC     22
-#define SCMD_AUTOASSIST  23
-#define SCMD_AUTOMAP     24
-#define SCMD_AUTOKEY     25
-#define SCMD_AUTODOOR    26
-#define SCMD_NOOOC       27
-#define SCMD_COLOR       28
-#define SCMD_SYSLOG      29
-#define SCMD_WIMPY       30
-#define SCMD_PAGELENGTH  31
-#define SCMD_SCREENWIDTH 32
-
+#define SCMD_NOGOSSIP    7
+#define SCMD_NOGRATZ     8
+#define SCMD_NOWIZ       9
+#define SCMD_QUEST       10
+#define SCMD_SHOWVNUMS   11
+#define SCMD_NOREPEAT    12
+#define SCMD_HOLYLIGHT   13
+#define SCMD_SLOWNS      14
+#define SCMD_AUTOEXIT    15
+#define SCMD_TRACK       16
+#define SCMD_CLS         17
+#define SCMD_BUILDWALK   18
+#define SCMD_AFK         19
+#define SCMD_AUTOLOOT    20
+#define SCMD_AUTOGOLD    21
+#define SCMD_AUTOSPLIT   22
+#define SCMD_AUTOSAC     23
+#define SCMD_AUTOASSIST  24
+#define SCMD_AUTOMAP     25
+#define SCMD_AUTOKEY     26
+#define SCMD_AUTODOOR    27
+#define SCMD_NOOOC       28
+#define SCMD_NEWCOMBAT   29
+#define SCMD_COLOR       30
+#define SCMD_SYSLOG      31
+#define SCMD_WIMPY       32
+#define SCMD_PAGELENGTH  33
+#define SCMD_SCREENWIDTH 34
 
 /* do_quit */
 ACMD(do_quit);
@@ -266,7 +271,7 @@ void free_command_list(void);
 void create_command_list(void);
 /* Functions without subcommands */
 ACMD(do_action);
-
+ACMD(do_gmote);
 
 
 

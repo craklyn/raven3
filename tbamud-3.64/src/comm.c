@@ -992,6 +992,9 @@ void heartbeat(int heart_pulse)
   if (!(heart_pulse % PULSE_VIOLENCE))
     perform_violence();
 
+  // every pulse mobs will have a chance to do something!
+  performMobCombatAction();
+
   if (!(heart_pulse % (SECS_PER_MUD_HOUR * PASSES_PER_SEC))) {  /* Tick ! */
     next_tick = SECS_PER_MUD_HOUR;  /* Reset tick coundown */
     weather_and_time(1);

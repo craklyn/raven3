@@ -110,6 +110,8 @@
 #define SKILL_SNEAK                 138 /* Reserved Skill[] DO NOT CHANGE */
 #define SKILL_STEAL                 139 /* Reserved Skill[] DO NOT CHANGE */
 #define SKILL_TRACK		              140 /* Reserved Skill[] DO NOT CHANGE */
+#define SKILL_SECOND_ATTACK         141
+#define SKILL_THIRD_ATTACK          142
 /* New skills may be added here up to MAX_SKILLS (300) */
 
 /* NON-PLAYER AND OBJECT SPELLS AND SKILLS: The practice levels for the spells
@@ -281,6 +283,7 @@ void affect_update(void);
 ACMD(do_cast);
 void unused_spell(int spl);
 void mag_assign_spells(void);
+bool mob_cast(struct char_data *mob, struct char_data *vict, int spell_num);
 
 /* Global variables exported */
 #ifndef __SPELL_PARSER_C__

@@ -30,8 +30,6 @@
 #include "asciimap.h"
 
 /* prototypes of local functions */
-/* do_diagnose utility functions */
-static void diag_char_to_char(struct char_data *i, struct char_data *ch);
 /* do_look and do_examine utility functions */
 static void do_auto_exits(struct char_data *ch);
 static void list_char_to_char(struct char_data *list, struct char_data *ch);
@@ -220,20 +218,20 @@ static void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mo
     send_to_char(ch, "  Nothing.\r\n");
 }
 
-static void diag_char_to_char(struct char_data *i, struct char_data *ch)
+void diag_char_to_char(struct char_data *i, struct char_data *ch)
 {
   struct {
     byte percent;
     const char *text;
   } diagnosis[] = {
-    { 100, "is in excellent condition."			},
-    {  90, "has a few scratches."			},
-    {  75, "has some small wounds and bruises."		},
-    {  50, "has quite a few wounds."			},
-    {  30, "has some big nasty wounds and scratches."	},
-    {  15, "looks pretty hurt."				},
-    {   0, "is in awful condition."			},
-    {  -1, "is bleeding awfully from big wounds."	},
+    { 100, "is in \tcexcellent condition.\tn"			},
+    {  90, "has a \tcfew scratches.\tn"			},
+    {  75, "has \tcsome small wounds and bruises.\tn"		},
+    {  50, "has \tcquite a few wounds.\tn"			},
+    {  30, "has \tcsome big nasty wounds and scratches.\tn"	},
+    {  15, "looks \tcpretty hurt.\tn"				},
+    {   0, "is in \tcawful condition.\tn"			},
+    {  -1, "is \tcbleeding awfully from big wounds.\tn"	},
   };
   int percent, ar_index;
   const char *pers = PERS(i, ch);
@@ -293,10 +291,10 @@ static void list_one_char(struct char_data *i, struct char_data *ch)
     " is lying here, incapacitated.",
     " is lying here, stunned.",
     " is sleeping here.",
+    " is meditating here.",
     " is resting here.",
     " is sitting here.",
     "!FIGHTING!",
-    " is meditating here.",
     " is standing here."
   };
 
@@ -832,8 +830,9 @@ ACMD(do_score)
 {
 	static char *positAry[] = { ""
 			"A Corpse", "Critical", "Moribund",
-			"Stunned",  "Sleeping",  "Resting",
-			"Sitting",  "Fighting", "Standing"
+			"Stunned",  "Sleeping", "Meditating",
+			"Resting",	"Sitting",  "Fighting",
+			"Standing"
 	};
 	static int positMax = sizeof(positAry)/sizeof(char *);
 
@@ -1356,20 +1355,22 @@ ACMD(do_who)
           send_to_char(ch, " (Buildwalking)");
         if (PRF_FLAGGED(tch, PRF_AFK))
           send_to_char(ch, " (AFK)");
+        if (PRF_FLAGGED(tch, PRF_NOGOSS))
+          send_to_char(ch, " (nogos)");
         if (PRF_FLAGGED(tch, PRF_NOWIZ))
           send_to_char(ch, " (nowiz)");
         if (PRF_FLAGGED(tch, PRF_NOSHOUT))
           send_to_char(ch, " (noshout)");
         if (PRF_FLAGGED(tch, PRF_NOTELL))
           send_to_char(ch, " (notell)");
+        if (PRF_FLAGGED(tch, PRF_NOOOC))
+          send_to_char(ch, " (noooc)");		  
         if (PRF_FLAGGED(tch, PRF_QUEST))
           send_to_char(ch, " (quest)");
         if (PLR_FLAGGED(tch, PLR_THIEF))
           send_to_char(ch, " (THIEF)");
         if (PLR_FLAGGED(tch, PLR_KILLER))
           send_to_char(ch, " (KILLER)");
-        if (PRF_FLAGGED(tch, PRF_NOOOC))
-          send_to_char(ch, " (noooc)");
         send_to_char(ch, "\r\n");
       }
     }
@@ -1893,6 +1894,9 @@ ACMD(do_toggle)
     {"noshout", PRF_NOSHOUT, 0,
     "You can now hear shouts.\r\n",
     "You are now deaf to shouts.\r\n"},
+    {"nogossip", PRF_NOGOSS, 0,
+    "You can now hear gossip.\r\n",
+    "You are now deaf to gossip.\r\n"},
     {"nograts", PRF_NOGRATZ, 0,
     "You can now hear gratz.\r\n",
     "You are now deaf to gratz.\r\n"},
@@ -1956,12 +1960,15 @@ ACMD(do_toggle)
     {"noooc", PRF_NOOOC, 0,
     "You can now hear ooc.\r\n",
     "You are now deaf to ooc.\r\n"},
+    {"newcombat", PRF_NEWCOMBAT, 0,
+     "You will now see damage messages based on damage dealt.\r\n",
+     "You will now see damage messages based on pain inflicted.\r\n"},
     {"color", 0, 0, "\n", "\n"},
     {"syslog", 0, LVL_IMMORT, "\n", "\n"},
     {"wimpy", 0, 0, "\n", "\n"},
     {"pagelength", 0, 0, "\n", "\n"},
     {"screenwidth", 0, 0, "\n", "\n"},
-    {"\n", 0, -1, "\n", "\n"} 	/* must be last */
+    {"\n", 0, -1, "\n", "\n"} /* must be last */
   };
 
   if (IS_NPC(ch))
@@ -2022,6 +2029,7 @@ ACMD(do_toggle)
     "        NoShout: %-3s    "
     "          Wimpy: %-3s\r\n"
 
+    "       NoGossip: %-3s    "
     "      NoAuction: %-3s    "
     "        NoGrats: %-3s\r\n"
 
@@ -2040,8 +2048,9 @@ ACMD(do_toggle)
     "        Autokey: %-3s    "
     "       Autodoor: %-3s    "
     "          Noooc: %-3s\r\n"
-	
-	"          Color: %-3s\r\n",
+		
+	  "          Color: %-3s    "
+	  "      NewCombat: %-3s\r\n",
 
     ONOFF(PRF_FLAGGED(ch, PRF_DISPHP)),
     ONOFF(PRF_FLAGGED(ch, PRF_BRIEF)),
@@ -2059,6 +2068,7 @@ ACMD(do_toggle)
     ONOFF(PRF_FLAGGED(ch, PRF_NOSHOUT)),
     buf2,
 
+    ONOFF(PRF_FLAGGED(ch, PRF_NOGOSS)),
     ONOFF(PRF_FLAGGED(ch, PRF_NOAUCT)),
     ONOFF(PRF_FLAGGED(ch, PRF_NOGRATZ)),
 
@@ -2078,7 +2088,8 @@ ACMD(do_toggle)
     ONOFF(PRF_FLAGGED(ch, PRF_AUTODOOR)),
     ONOFF(PRF_FLAGGED(ch, PRF_NOOOC)),
        
-    types[COLOR_LEV(ch)]);
+    types[COLOR_LEV(ch)],
+    ONOFF(PRF_FLAGGED(ch, PRF_NEWCOMBAT)));
     return;
   }
 

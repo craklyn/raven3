@@ -106,7 +106,7 @@ ACMD(do_sneak)
   struct affected_type af;
   byte percent;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_SNEAK)) {
+  if (!GET_SKILL(ch, SKILL_SNEAK)) {
     send_to_char(ch, "You have no idea how to do that.\r\n");
     return;
   }
@@ -130,7 +130,7 @@ ACMD(do_hide)
 {
   byte percent;
 
-  if (IS_NPC(ch) || !GET_SKILL(ch, SKILL_HIDE)) {
+  if (!GET_SKILL(ch, SKILL_HIDE)) {
     send_to_char(ch, "You have no idea how to do that.\r\n");
     return;
   }
@@ -731,7 +731,9 @@ ACMD(do_gen_tog)
     {"Autodoor disabled.\r\n",
     "Autodoor enabled.\r\n"},
     {"You can now hear ooc.\r\n",
-    "You are now deaf to ooc.\r\n"}
+    "You are now deaf to ooc.\r\n"},
+    {"You will now see damage messages based on damage dealt.\r\n",
+     "You will now see damage messages based on pain inflicted.\r\n"}
   };
 
   if (IS_NPC(ch))
@@ -841,7 +843,10 @@ ACMD(do_gen_tog)
     break;
   case SCMD_NOOOC:
     result = PRF_TOG_CHK(ch, PRF_NOOOC);
-    break;	
+    break;
+  case SCMD_NEWCOMBAT:
+    result = PRF_TOG_CHK(ch, PRF_NEWCOMBAT);
+    break;
   default:
     log("SYSERR: Unknown subcmd %d in do_gen_toggle.", subcmd);
     return;

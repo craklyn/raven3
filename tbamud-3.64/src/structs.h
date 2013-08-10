@@ -84,7 +84,7 @@
 #define ROOM_NOMOB                2   /**< MOBs not allowed in room */
 #define ROOM_INDOORS              3   /**< Indoors, no weather */
 #define ROOM_PEACEFUL             4   /**< Violence not allowed	*/
-#define ROOM_SOUNDPROOF           5   /**< Shouts, ooc blocked */
+#define ROOM_SOUNDPROOF           5   /**< Shouts, gossip blocked */
 #define ROOM_NOTRACK              6   /**< Track won't go through */
 #define ROOM_NOMAGIC              7   /**< Magic not allowed */
 #define ROOM_TUNNEL               8   /**< Room for only 1 pers	*/
@@ -184,15 +184,16 @@
 /* History */
 #define HIST_ALL       0 /**< Index to history of all channels */
 #define HIST_SAY       1 /**< Index to history of all 'say' */
-#define HIST_WIZNET    2 /**< Index to history of all 'wiznet' */
-#define HIST_TELL      3 /**< Index to history of all 'tell' */
-#define HIST_SHOUT     4 /**< Index to history of all 'shout' */
-#define HIST_GRATS     5 /**< Index to history of all 'grats' */
-#define HIST_HOLLER    6 /**< Index to history of all 'holler' */
-#define HIST_AUCTION   7 /**< Index to history of all 'auction' */
-#define HIST_OOC       8 /**< Index to history of all 'ooc' */
+#define HIST_GOSSIP    2 /**< Index to history of all 'gossip' */
+#define HIST_WIZNET    3 /**< Index to history of all 'wiznet' */
+#define HIST_TELL      4 /**< Index to history of all 'tell' */
+#define HIST_SHOUT     5 /**< Index to history of all 'shout' */
+#define HIST_GRATS     6 /**< Index to history of all 'grats' */
+#define HIST_HOLLER    7 /**< Index to history of all 'holler' */
+#define HIST_AUCTION   8 /**< Index to history of all 'auction' */
+#define HIST_OOC       9 /**< Index to history of all 'ooc' */
 
-#define NUM_HIST       9 /**< Total number of history indexes */
+#define NUM_HIST       10 /**< Total number of history indexes */
 
 #define HISTORY_SIZE   5 /**< Number of last commands kept in each history */
 
@@ -424,8 +425,9 @@
 #define PRF_AUTOKEY      31   /**< Automatically unlock locked doors when opening */
 #define PRF_AUTODOOR     32   /**< Use the next available door */
 #define PRF_NOOOC        33   /**< Can't hear ooc channel */
+#define PRF_NEWCOMBAT    34   /**< Switch between new and old combat flavor */
 /** Total number of available PRF flags */
-#define NUM_PRF_FLAGS    34
+#define NUM_PRF_FLAGS    35
 
 /* Affect bits: used in char_data.char_specials.saved.affected_by */
 /* WARNING: In the world files, NEVER set the bits marked "R" ("Reserved") */
@@ -1399,6 +1401,12 @@ struct message_list
   int a_type;               /**< The id of this attack type. */
   int number_of_attacks;    /**< How many attack messages to chose from. */
   struct message_type *msg; /**< List of messages.			*/
+};
+
+struct damage_message_type {
+  int maxDamage;
+  int painPercentage;
+  struct msg_type *msg;
 };
 
 /** Social message data structure. */

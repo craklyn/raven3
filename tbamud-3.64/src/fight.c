@@ -27,6 +27,8 @@
 #include "fight.h"
 #include "shop.h"
 #include "quest.h"
+#include "spec_procs.h"
+#include "skills.h"
 
 
 /* locally defined global variables, used externally */
@@ -35,7 +37,7 @@ struct char_data *combat_list = NULL;
 /* Weapon attack texts */
 struct attack_hit_type attack_hit_text[] =
 {
-  {"hit", "hits"},    /* 0 */
+  {"punch", "punches"},    /* 0 */
   {"sting", "stings"},
   {"whip", "whips"},
   {"slash", "slashes"},
@@ -49,7 +51,17 @@ struct attack_hit_type attack_hit_text[] =
   {"pierce", "pierces"},
   {"blast", "blasts"},
   {"punch", "punches"},
-  {"stab", "stabs"}
+  {"stab", "stabs"},
+  {"strangle", "strangles"}, /* 15 */
+  {"tear", "tears"},
+  {"squeeze", "squeezes"},
+  {"stomp", "stomps"},
+  {"drain", "drains"},
+  {"bite", "bites"}, /* 20 */
+  {"burn", "burns"},
+  {"impale", "impales"},
+  {"kick", "kicks"}, /* 23*/
+
 };
 
 /* local (file scope only) variables */
@@ -65,7 +77,13 @@ static void solo_gain(struct char_data *ch, struct char_data *victim);
 /** @todo refactor this function name */
 static char *replace_string(const char *str, const char *weapon_singular, const char *weapon_plural);
 static int compute_thaco(struct char_data *ch, struct char_data *vict);
+static char *getDamageMessage(struct char_data *ch, struct char_data *vict, int damage, int msgTo);
 
+#define MSG_TO_ROOM       0
+#define MSG_TO_ATTACKER   1
+#define MSG_TO_VICT       2
+#define MSG_DAMAGE_DEALT  0
+#define MSG_PAIN_DEALT    1
 
 #define IS_WEAPON(type) (((type) >= TYPE_HIT) && ((type) < TYPE_SUFFERING))
 /* The Fight related routines */
@@ -404,101 +422,38 @@ static void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 		      int w_type)
 {
   char *buf;
-  int msgnum;
-
-  static struct dam_weapon_type {
-    const char *to_room;
-    const char *to_char;
-    const char *to_victim;
-  } dam_weapons[] = {
-
-    /* use #w for singular (i.e. "slash") and #W for plural (i.e. "slashes") */
-
-    {
-      "$n tries to #w $N, but misses.",	/* 0: 0     */
-      "You try to #w $N, but miss.",
-      "$n tries to #w you, but misses."
-    },
-
-    {
-      "$n tickles $N as $e #W $M.",	/* 1: 1..2  */
-      "You tickle $N as you #w $M.",
-      "$n tickles you as $e #W you."
-    },
-
-    {
-      "$n barely #W $N.",		/* 2: 3..4  */
-      "You barely #w $N.",
-      "$n barely #W you."
-    },
-
-    {
-      "$n #W $N.",			/* 3: 5..6  */
-      "You #w $N.",
-      "$n #W you."
-    },
-
-    {
-      "$n #W $N hard.",			/* 4: 7..10  */
-      "You #w $N hard.",
-      "$n #W you hard."
-    },
-
-    {
-      "$n #W $N very hard.",		/* 5: 11..14  */
-      "You #w $N very hard.",
-      "$n #W you very hard."
-    },
-
-    {
-      "$n #W $N extremely hard.",	/* 6: 15..19  */
-      "You #w $N extremely hard.",
-      "$n #W you extremely hard."
-    },
-
-    {
-      "$n massacres $N to small fragments with $s #w.",	/* 7: 19..23 */
-      "You massacre $N to small fragments with your #w.",
-      "$n massacres you to small fragments with $s #w."
-    },
-
-    {
-      "$n OBLITERATES $N with $s deadly #w!!",	/* 8: > 23   */
-      "You OBLITERATE $N with your deadly #w!!",
-      "$n OBLITERATES you with $s deadly #w!!"
-    }
-  };
+  struct char_data *chInRoom;
 
   w_type -= TYPE_HIT;		/* Change to base of table with text */
 
-  if (dam == 0)		msgnum = 0;
-  else if (dam <= 2)    msgnum = 1;
-  else if (dam <= 4)    msgnum = 2;
-  else if (dam <= 6)    msgnum = 3;
-  else if (dam <= 10)   msgnum = 4;
-  else if (dam <= 14)   msgnum = 5;
-  else if (dam <= 19)   msgnum = 6;
-  else if (dam <= 23)   msgnum = 7;
-  else			msgnum = 8;
-
-  /* damage message to onlookers */
-  buf = replace_string(dam_weapons[msgnum].to_room,
-	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural), dam;
-  act(buf, FALSE, ch, NULL, victim, TO_NOTVICT);
+  /*
+   * Display damage message by onlookers preferences.
+   */
+  for(chInRoom = world[IN_ROOM(ch)].people; chInRoom; chInRoom = chInRoom->next_in_room) {
+    if(ch != chInRoom && victim != chInRoom) {
+      if(GET_LEVEL(chInRoom) >= LVL_IMMORT)
+          send_to_char(chInRoom,"(%d)", dam);
+        buf = replace_string(getDamageMessage(chInRoom, victim, dam, MSG_TO_ROOM),
+          attack_hit_text[w_type].singular, attack_hit_text[w_type].plural), dam;
+        perform_act(buf, ch, NULL, victim, chInRoom);
+    }
+  }
 
   /* damage message to damager */
   if (GET_LEVEL(ch) >= LVL_IMMORT)
-	send_to_char(ch, "(%d) ", dam);
-  buf = replace_string(dam_weapons[msgnum].to_char,
-	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
+    send_to_char(ch, "(%d)", dam);
+  send_to_char(ch,"\ty");
+  buf = replace_string(getDamageMessage(ch, victim, dam, MSG_TO_ATTACKER),
+      attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_CHAR);
   send_to_char(ch, CCNRM(ch, C_CMP));
 
   /* damage message to damagee */
   if (GET_LEVEL(victim) >= LVL_IMMORT)
-    send_to_char(victim, "\tR(%d)", dam);
-  buf = replace_string(dam_weapons[msgnum].to_victim,
-	  attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
+    send_to_char(victim, "(%d)", dam);
+  send_to_char(victim,"\tr");
+  buf = replace_string(getDamageMessage(ch, ch, dam, MSG_TO_VICT),
+      attack_hit_text[w_type].singular, attack_hit_text[w_type].plural);
   act(buf, FALSE, ch, NULL, victim, TO_VICT | TO_SLEEP);
   send_to_char(victim, CCNRM(victim, C_CMP));
 }
@@ -515,6 +470,12 @@ int skill_message(int dam, struct char_data *ch, struct char_data *vict,
 
   /* @todo restructure the messages library to a pointer based system as
    * opposed to the current cyclic location system. */
+  if(GET_LEVEL(ch) >= LVL_IMMORT) {
+    send_to_char(ch,"(%d)", dam);
+  }
+  if(GET_LEVEL(vict) >= LVL_IMMORT) {
+      send_to_char(vict,"(%d)", dam);
+  }
   for (i = 0; i < MAX_MESSAGES; i++) {
     if (fight_messages[i].a_type == attacktype) {
       nr = dice(1, fight_messages[i].number_of_attacks);
@@ -646,7 +607,9 @@ int damage(struct char_data *ch, struct char_data *victim, int dam, int attackty
   }
 
   /* Set the maximum damage per round and subtract the hit points */
-  dam = MAX(MIN(dam, 100), 0);
+  if(attacktype != SKILL_BACKSTAB && !IS_NPC(ch)) {
+    dam = MAX(MIN(dam, 250), 0);
+  }
   GET_HIT(victim) -= dam;
 
   /* Gain exp for the hit */
@@ -669,7 +632,7 @@ int damage(struct char_data *ch, struct char_data *victim, int dam, int attackty
   else {
     if (GET_POS(victim) == POS_DEAD || dam == 0) {
       if (!skill_message(dam, ch, victim, attacktype))
-	dam_message(dam, ch, victim, attacktype);
+        dam_message(dam, ch, victim, attacktype);
     } else {
       dam_message(dam, ch, victim, attacktype);
     }
@@ -786,6 +749,9 @@ static int compute_thaco(struct char_data *ch, struct char_data *victim)
     calc_thaco = thaco(GET_CLASS(ch), GET_LEVEL(ch));
   else		/* THAC0 for monsters is set in the HitRoll */
     calc_thaco = 20;
+  if(CONFIG_DEBUG_MODE >= NRM)
+    send_to_char(ch,"\tcTHACO: \tC%d\tn\r\n",calc_thaco);
+
   calc_thaco -= str_app[STRENGTH_APPLY_INDEX(ch)].tohit;
   calc_thaco -= GET_HITROLL(ch);
   calc_thaco -= (int) ((GET_INT(ch) - 13) / 1.5);	/* Intelligence helps! */
@@ -794,10 +760,44 @@ static int compute_thaco(struct char_data *ch, struct char_data *victim)
   return calc_thaco;
 }
 
+static char *getDamageMessage(struct char_data *ch, struct char_data *vict, int damage, int msgTo) {
+  struct damage_message_type *message;
+  char *msg = "ERROR!";
+  bool ok = FALSE;
+  // make sure its not zero cause we cant use "You missed".
+  int painPercentage = ((damage * 100) / GET_HIT(vict)) + 1;
+
+  while((message = (struct damage_message_type *) simple_list(damageMessageList))) {
+
+    if(!ok) {
+      if((!PRF_FLAGGED(ch, PRF_NEWCOMBAT) && damage <= message->maxDamage)
+          || (PRF_FLAGGED(ch, PRF_NEWCOMBAT) && painPercentage <= message->painPercentage)) {
+        switch(msgTo) {
+        case MSG_TO_ROOM:
+          msg = message->msg->room_msg;
+          break;
+        case MSG_TO_ATTACKER:
+          msg = message->msg->attacker_msg;
+          break;
+        case MSG_TO_VICT:
+          msg = message->msg->victim_msg;
+          break;
+        default:
+          log("SYSERR: Invalid msgTo(%d) passed to getDamageMessage!", msgTo);
+          msg = "\tYSomething went wrong, report this to staff.\tn";
+        }
+        ok = TRUE;
+      }
+    }
+  }
+
+  return msg;
+}
+
 void hit(struct char_data *ch, struct char_data *victim, int type)
 {
   struct obj_data *wielded = GET_EQ(ch, WEAR_WIELD);
-  int w_type, victim_ac, calc_thaco, dam, diceroll;
+  int w_type, victim_ac, calc_thaco, dam, diceroll, numAttacks;
 
   /* Check that the attacker and victim exist */
   if (!ch || !victim) return;
@@ -886,10 +886,18 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
     if (type == SKILL_BACKSTAB)
       damage(ch, victim, dam * backstab_mult(GET_LEVEL(ch)), SKILL_BACKSTAB);
-    else
-      damage(ch, victim, dam, w_type);
-  }
+    else {
 
+      numAttacks = computeNumberAttacks(ch);
+      //just the basic for now
+      while(numAttacks-- > 0) {
+        damage(ch, victim, dam, w_type);
+      }
+    }
+  }
+  if(FIGHTING(ch) && dam > 0 && !IS_NPC(ch) && GET_POS(victim) > POS_DEAD) {
+    diag_char_to_char(victim, ch);
+  }
   /* check if the victim has a hitprcnt trigger */
   hitprcnt_mtrigger(victim);
 }
@@ -907,21 +915,11 @@ void perform_violence(void)
       continue;
     }
 
-    if (IS_NPC(ch)) {
-      if (GET_MOB_WAIT(ch) > 0) {
-        GET_MOB_WAIT(ch) -= PULSE_VIOLENCE;
-        continue;
+    if (STUN(ch) > 0) {
+      STUN(ch) -= PULSE_VIOLENCE;
+      if(STUN(ch) < 0) {
+        STUN(ch) =  MAX(0, MIN(STUN(ch), STUN(ch) - PULSE_VIOLENCE));
       }
-      GET_MOB_WAIT(ch) = 0;
-      if (GET_POS(ch) < POS_FIGHTING) {
-        GET_POS(ch) = POS_FIGHTING;
-        act("$n scrambles to $s feet!", TRUE, ch, 0, 0, TO_ROOM);
-      }
-    }
-
-    if (GET_POS(ch) < POS_FIGHTING) {
-      send_to_char(ch, "You can't fight while sitting!!\r\n");
-      continue;
     }
 
     if (GROUP(ch)) {
@@ -949,4 +947,55 @@ void perform_violence(void)
       (GET_MOB_SPEC(ch)) (ch, ch, 0, actbuf);
     }
   }
+}
+
+/*
+ * Mobile behavior
+ */
+void performMobCombatAction(void) {
+  struct char_data *ch;
+
+  for (ch = combat_list; ch; ch = next_combat_list) {
+    next_combat_list = ch->next_fighting;
+
+    if (IS_NPC(ch)) {
+
+      if (STUN(ch) < 1 && GET_POS(ch) < POS_FIGHTING) {
+        do_stand(ch, NULL, 0, 0);
+        GET_POS(ch) = POS_FIGHTING;
+      }
+
+      mobCombatAction(ch);
+    }
+  }
+}
+static int maxClassAttacks[NUM_CLASSES] = {
+    3,  3,  3,  4,  3,  3,  4,  3,  3,  3,  3, 3
+};
+int computeNumberAttacks(struct char_data *ch) {
+  int numAttacks = 1;
+
+  if(skillSuccess(ch, SKILL_SECOND_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
+    numAttacks += 1;
+    if(skillSuccess(ch, SKILL_THIRD_ATTACK) || AFF_FLAGGED(ch, AFF_BERSERK)) {
+      numAttacks += 1;
+    }
+  }
+
+  //as implemented in raven, mob Monks can get up to third attack
+  numAttacks = IS_SHOU_LIN(ch) && IS_NPC(ch) ? GET_LEVEL(ch) / 13 : numAttacks;
+
+  // spell to be implemented
+  if(isAffectedBySpellName(ch,"haste")) {
+    numAttacks += 1;
+  } else if(isAffectedBySpellName(ch, "slow")) {
+    numAttacks -= 1;
+  } else if(AFF_FLAGGED(ch, AFF_HASTE)) {
+    numAttacks += 1;
+  }
+
+  numAttacks = numAttacks > maxClassAttacks[(int) GET_CLASS(ch)] ? maxClassAttacks[(int) GET_CLASS(ch)]
+    : numAttacks;
+
+  return numAttacks;
 }
