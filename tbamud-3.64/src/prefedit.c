@@ -194,16 +194,16 @@ static void prefedit_disp_toggles_menu(struct descriptor_data *d)
              CBWHT(d->character, C_NRM));
 
   /* The top section of the actual menu */
-  send_to_char(d->character, "%s1%s) Autoexits    %s[%s%3s%s]      %sA%s) Gossip   %s[%s%3s%s]\r\n"
+  send_to_char(d->character, "%s1%s) Autoexits    %s[%s%3s%s]      %sA%s) OOC      %s[%s%3s%s]\r\n"
                              "%s2%s) Autoloot     %s[%s%3s%s]      %sB%s) Shout    %s[%s%3s%s]\r\n"
                              "%s3%s) Autogold     %s[%s%3s%s]      %sC%s) Tell     %s[%s%3s%s]\r\n"
                              "%s4%s) Autosac      %s[%s%3s%s]      %sD%s) Auction  %s[%s%3s%s]\r\n"
                              "%s5%s) Autoassist   %s[%s%3s%s]      %sE%s) Gratz    %s[%s%3s%s]\r\n"
                              "%s6%s) Autosplit    %s[%s%3s%s]\r\n",
-/* Line 1 - autoexits and gossip */
+/* Line 1 - autoexits and ooc */
              CBYEL(d->character, C_NRM), CCNRM(d->character, C_NRM), CCCYN(d->character, C_NRM), PREFEDIT_FLAGGED(PRF_AUTOEXIT) ? CBGRN(d->character, C_NRM) : CBRED(d->character, C_NRM),
              ONOFF(PREFEDIT_FLAGGED(PRF_AUTOEXIT)), CCCYN(d->character, C_NRM), CBYEL(d->character, C_NRM), CCNRM(d->character, C_NRM), CCCYN(d->character, C_NRM),
-             PREFEDIT_FLAGGED(PRF_NOGOSS) ? CBRED(d->character, C_NRM) : CBGRN(d->character, C_NRM), ONOFF(!PREFEDIT_FLAGGED(PRF_NOGOSS)), CCCYN(d->character, C_NRM),
+             PREFEDIT_FLAGGED(PRF_NOOOC) ? CBRED(d->character, C_NRM) : CBGRN(d->character, C_NRM), ONOFF(!PREFEDIT_FLAGGED(PRF_NOOOC)), CCCYN(d->character, C_NRM),
 /* Line 2 - autoloot and shout */
              CBYEL(d->character, C_NRM), CCNRM(d->character, C_NRM), CCCYN(d->character, C_NRM), PREFEDIT_FLAGGED(PRF_AUTOLOOT) ? CBGRN(d->character, C_NRM) : CBRED(d->character, C_NRM),
              ONOFF(PREFEDIT_FLAGGED(PRF_AUTOLOOT)), CCCYN(d->character, C_NRM), CBYEL(d->character, C_NRM), CCNRM(d->character, C_NRM), CCCYN(d->character, C_NRM),
@@ -582,7 +582,7 @@ void prefedit_parse(struct descriptor_data * d, char *arg)
 
       case 'a':
       case 'A':
-        TOGGLE_BIT_AR(PREFEDIT_GET_FLAGS, PRF_NOGOSS);
+        TOGGLE_BIT_AR(PREFEDIT_GET_FLAGS, PRF_NOOOC);
         break;
 
       case 'b':
@@ -826,9 +826,9 @@ void prefedit_Restore_Defaults(struct descriptor_data *d)
   if (PREFEDIT_FLAGGED(PRF_NOAUCT))
      REMOVE_BIT_AR(PREFEDIT_GET_FLAGS, PRF_NOAUCT);
 
-  /* PRF_NOGOSS     - Off */
-  if (PREFEDIT_FLAGGED(PRF_NOGOSS))
-     REMOVE_BIT_AR(PREFEDIT_GET_FLAGS, PRF_NOGOSS);
+  /* PRF_NOOOC      - Off */
+  if (PREFEDIT_FLAGGED(PRF_NOOOC))
+     REMOVE_BIT_AR(PREFEDIT_GET_FLAGS, PRF_NOOOC);
 
   /* PRF_NOGRATZ    - Off */
   if (PREFEDIT_FLAGGED(PRF_NOGRATZ))
