@@ -1627,6 +1627,24 @@ void init_spell_levels(void)
   spell_level(SKILL_STEAL, CLASS_THIEF, 4);
   spell_level(SKILL_HIDE, CLASS_THIEF, 5);
   spell_level(SKILL_TRACK, CLASS_THIEF, 6);
+  spell_level(SKILL_KICK, CLASS_THIEF, 5);
+
+  spell_level(SKILL_SECOND_ATTACK, CLASS_RANGER, 25);
+  spell_level(SKILL_SECOND_ATTACK, CLASS_SHADOW_DANCER, 35);
+  spell_level(SKILL_SECOND_ATTACK, CLASS_ASSASSIN, 35);
+  spell_level(SKILL_SECOND_ATTACK, CLASS_SHOU_LIN, 35);
+  spell_level(SKILL_SECOND_ATTACK, CLASS_SOLAMNIC_KNIGHT, 30);
+  spell_level(SKILL_SECOND_ATTACK, CLASS_DEATH_KNIGHT, 30);
+
+  spell_level(SKILL_KICK, CLASS_SHADOW_DANCER, 5);
+  spell_level(SKILL_KICK, CLASS_SHOU_LIN, 2);
+  spell_level(SKILL_KICK, CLASS_ASSASSIN, 5);
+  spell_level(SKILL_KICK, CLASS_SOLAMNIC_KNIGHT, 3);
+  spell_level(SKILL_KICK, CLASS_DEATH_KNIGHT, 3);
+  spell_level(SKILL_KICK, CLASS_RANGER, 5);
+
+  spell_level(SKILL_BASH, CLASS_SOLAMNIC_KNIGHT, 15);
+  spell_level(SKILL_BASH, CLASS_DEATH_KNIGHT, 15);
 
   /* WARRIORS */
   spell_level(SKILL_KICK, CLASS_WARRIOR, 1);
