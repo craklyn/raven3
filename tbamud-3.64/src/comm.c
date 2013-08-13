@@ -2674,6 +2674,7 @@ char *act(const char *str, int hide_invisible, struct char_data *ch,
     }
     return NULL;
   }
+
   /* ASSUMPTION: at this point we know type must be TO_NOTVICT or TO_ROOM */
 
   if (ch && IN_ROOM(ch) != NOWHERE)
