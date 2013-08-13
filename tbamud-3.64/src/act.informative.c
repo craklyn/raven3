@@ -2024,7 +2024,6 @@ ACMD(do_toggle)
     "        NoShout: %-3s    "
     "          Wimpy: %-3s\r\n"
 
-
     "      NoAuction: %-3s    "
     "        NoGrats: %-3s\r\n"
 
@@ -2062,7 +2061,6 @@ ACMD(do_toggle)
     ONOFF(PRF_FLAGGED(ch, PRF_AUTOEXIT)),
     ONOFF(PRF_FLAGGED(ch, PRF_NOSHOUT)),
     buf2,
-
 
     ONOFF(PRF_FLAGGED(ch, PRF_NOAUCT)),
     ONOFF(PRF_FLAGGED(ch, PRF_NOGRATZ)),
