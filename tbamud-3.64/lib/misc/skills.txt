@@ -1,0 +1,1579 @@
+Spell
+Number    : 45
+Name      : animate dead
+MinPos    : Standing
+Violent   : No
+Routines  : Summons 
+Targets   : ObjInRoom 
+Flags     : NOBITS 
+Cost      : 10 35 3
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 1
+Name      : armor
+MinPos    : Fighting
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 15 30 3
+Message   : WearOff ToChar You feel less protected.
+Level     : Mu 4
+Level     : Cl 1
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 3
+Name      : bless
+MinPos    : Standing
+Violent   : No
+Routines  : Affects AlterObj 
+Targets   : CharInRoom ObjInInv 
+Flags     : NOBITS 
+Cost      : 5 35 3
+Message   : WearOff ToChar You feel less righteous.
+Level     : Mu 61
+Level     : Cl 5
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 4
+Name      : blindness
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom NotSelf 
+Flags     : NOBITS 
+Cost      : 25 35 1
+Message   : WearOff ToChar You feel a cloak of blindness dissolve.
+Level     : Mu 9
+Level     : Cl 6
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 5
+Name      : burning hands
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 10 30 3
+Level     : Mu 40
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 6
+Name      : call lightning
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 25 40 3
+Level     : Mu 61
+Level     : Cl 50
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 7
+Name      : charm person
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Manual 
+Targets   : CharInRoom NotSelf 
+Flags     : NOBITS 
+Cost      : 50 75 2
+Message   : WearOff ToChar You feel more self-confident.
+Level     : Mu 16
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 8
+Name      : chill touch
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages Affects 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 10 30 3
+Message   : WearOff ToChar You feel your strength return.
+Level     : Mu 3
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 9
+Name      : clone
+MinPos    : Standing
+Violent   : No
+Routines  : Summons 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 65 80 5
+Level     : Mu 30
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 10
+Name      : color spray
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 15 30 3
+Level     : Mu 11
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 11
+Name      : control weather
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 25 75 5
+Level     : Mu 61
+Level     : Cl 17
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 12
+Name      : create food
+MinPos    : Standing
+Violent   : No
+Routines  : Creations 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 5 30 4
+Level     : Mu 61
+Level     : Cl 2
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 13
+Name      : create water
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : ObjInInv ObjEquiped 
+Flags     : NOBITS 
+Cost      : 5 30 4
+Level     : Mu 61
+Level     : Cl 2
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 14
+Name      : cure blind
+MinPos    : Standing
+Violent   : No
+Routines  : Unaffects 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 5 30 2
+Level     : Mu 61
+Level     : Cl 4
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 15
+Name      : cure critic
+MinPos    : Fighting
+Violent   : No
+Routines  : Points 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 10 30 2
+Level     : Mu 61
+Level     : Cl 9
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 16
+Name      : cure light
+MinPos    : Fighting
+Violent   : No
+Routines  : Points 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 10 30 2
+Level     : Mu 61
+Level     : Cl 1
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 17
+Name      : curse
+MinPos    : Standing
+Violent   : Yes
+Routines  : Affects AlterObj 
+Targets   : CharInRoom ObjInInv 
+Flags     : NOBITS 
+Cost      : 50 80 2
+Message   : WearOff ToChar You feel more optimistic.
+Level     : Mu 14
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 54
+Name      : darkness
+MinPos    : Standing
+Violent   : No
+Routines  : Rooms 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 5 30 4
+Level     : Mu 61
+Level     : Cl 12
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 18
+Name      : detect alignment
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom SelfOnly 
+Flags     : NOBITS 
+Cost      : 10 20 2
+Message   : WearOff ToChar You feel less aware.
+Level     : Mu 61
+Level     : Cl 4
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 19
+Name      : detect invisibility
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom SelfOnly 
+Flags     : NOBITS 
+Cost      : 10 20 2
+Message   : WearOff ToChar Your eyes stop tingling.
+Level     : Mu 2
+Level     : Cl 6
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 20
+Name      : detect magic
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom SelfOnly 
+Flags     : NOBITS 
+Cost      : 10 20 2
+Message   : WearOff ToChar The detect magic wears off.
+Level     : Mu 2
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 21
+Name      : detect poison
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : CharInRoom ObjInInv ObjInRoom 
+Flags     : NOBITS 
+Cost      : 5 15 1
+Message   : WearOff ToChar The detect poison wears off.
+Level     : Mu 10
+Level     : Cl 3
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 22
+Name      : dispel evil
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 25 40 3
+Level     : Mu 61
+Level     : Cl 48
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 46
+Name      : dispel good
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 25 40 3
+Level     : Mu 61
+Level     : Cl 48
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 23
+Name      : earthquake
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Areas 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 25 40 3
+Level     : Mu 61
+Level     : Cl 45
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 24
+Name      : enchant weapon
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : ObjInInv 
+Flags     : NOBITS 
+Cost      : 100 150 10
+Level     : Mu 26
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 25
+Name      : energy drain
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages Manual 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 25 40 1
+Level     : Mu 13
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 47
+Name      : group armor
+MinPos    : Standing
+Violent   : No
+Routines  : Groups 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 30 50 2
+Level     : Mu 61
+Level     : Cl 9
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 26
+Name      : fireball
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 30 40 2
+Level     : Mu 45
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 53
+Name      : fly
+MinPos    : Fighting
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 20 40 2
+Message   : WearOff ToChar You drift slowly to the ground.
+Level     : Mu 22
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 48
+Name      : group heal
+MinPos    : Standing
+Violent   : No
+Routines  : Groups 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 60 80 5
+Level     : Mu 61
+Level     : Cl 22
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 27
+Name      : harm
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 45 75 3
+Level     : Mu 61
+Level     : Cl 45
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 28
+Name      : heal
+MinPos    : Fighting
+Violent   : No
+Routines  : Unaffects Points 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 40 60 3
+Level     : Mu 61
+Level     : Cl 16
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 50
+Name      : infravision
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom SelfOnly 
+Flags     : NOBITS 
+Cost      : 10 25 1
+Message   : WearOff ToChar Your night vision seems to fade.
+Level     : Mu 3
+Level     : Cl 7
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 29
+Name      : invisibility
+MinPos    : Standing
+Violent   : No
+Routines  : Affects AlterObj 
+Targets   : CharInRoom ObjInInv ObjInRoom 
+Flags     : NOBITS 
+Cost      : 25 35 1
+Message   : WearOff ToChar You feel yourself exposed.
+Level     : Mu 4
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 30
+Name      : lightning bolt
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 15 30 1
+Level     : Mu 50
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 31
+Name      : locate object
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : ObjInWorld 
+Flags     : NOBITS 
+Cost      : 20 25 1
+Level     : Mu 6
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 32
+Name      : magic missile
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 10 25 3
+Level     : Mu 1
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 33
+Name      : poison
+MinPos    : Standing
+Violent   : Yes
+Routines  : Affects AlterObj 
+Targets   : CharInRoom NotSelf ObjInInv 
+Flags     : NOBITS 
+Cost      : 20 50 3
+Message   : WearOff ToChar You feel less sick.
+Level     : Mu 14
+Level     : Cl 8
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 34
+Name      : protection from evil
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom SelfOnly 
+Flags     : NOBITS 
+Cost      : 10 40 3
+Message   : WearOff ToChar You feel less protected.
+Level     : Mu 61
+Level     : Cl 8
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 35
+Name      : remove curse
+MinPos    : Standing
+Violent   : No
+Routines  : Unaffects AlterObj 
+Targets   : CharInRoom ObjInInv ObjEquiped 
+Flags     : NOBITS 
+Cost      : 25 45 5
+Level     : Mu 61
+Level     : Cl 26
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 43
+Name      : remove poison
+MinPos    : Standing
+Violent   : No
+Routines  : Unaffects AlterObj 
+Targets   : CharInRoom ObjInInv ObjInRoom 
+Flags     : NOBITS 
+Cost      : 8 40 4
+Level     : Mu 61
+Level     : Cl 10
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 36
+Name      : sanctuary
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 85 110 5
+Message   : WearOff ToChar The white aura around your body fades.
+Level     : Mu 61
+Level     : Cl 15
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 44
+Name      : sense life
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom SelfOnly 
+Flags     : NOBITS 
+Cost      : 10 20 2
+Message   : WearOff ToChar You feel less aware of your surroundings.
+Level     : Mu 61
+Level     : Cl 18
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 37
+Name      : shocking grasp
+MinPos    : Fighting
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 15 30 3
+Level     : Mu 7
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 38
+Name      : sleep
+MinPos    : Standing
+Violent   : Yes
+Routines  : Affects 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 25 40 5
+Message   : WearOff ToChar You feel less tired.
+Level     : Mu 42
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 39
+Name      : strength
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 30 35 1
+Message   : WearOff ToChar You feel weaker.
+Level     : Mu 6
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 40
+Name      : summon
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : CharInWorld NotSelf 
+Flags     : NOBITS 
+Cost      : 50 75 3
+Level     : Mu 61
+Level     : Cl 10
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 2
+Name      : teleport
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 50 75 3
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 51
+Name      : waterwalk
+MinPos    : Standing
+Violent   : No
+Routines  : Affects 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 20 40 2
+Message   : WearOff ToChar Your feet seem less buoyant.
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 42
+Name      : word of recall
+MinPos    : Fighting
+Violent   : No
+Routines  : Manual 
+Targets   : CharInRoom 
+Flags     : NOBITS 
+Cost      : 10 20 2
+Level     : Mu 61
+Level     : Cl 12
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 52
+Name      : identify
+MinPos    : Standing
+Violent   : No
+Routines  : Manual 
+Targets   : CharInRoom ObjInInv ObjInRoom 
+Flags     : NOBITS 
+Cost      : 25 50 5
+Level     : Mu 20
+Level     : Cl 11
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 398
+Name      : Script-inflicted
+MinPos    : Sitting
+Violent   : Yes
+Routines  : NOBITS 
+Targets   : Ignore 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 131
+Name      : backstab
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 3
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 132
+Name      : bash
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 12
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 133
+Name      : hide
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 5
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 134
+Name      : kick
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 1
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 135
+Name      : pick lock
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 2
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 137
+Name      : rescue
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 3
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 138
+Name      : sneak
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 1
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 139
+Name      : steal
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 4
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 140
+Name      : track
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 6
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 136
+Name      : whirlwind
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 16
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 141
+Name      : second attack
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 35
+Level     : Wa 15
+Level     : Ra 25
+Level     : As 35
+Level     : Sl 35
+Level     : Kn 30
+Level     : De 30
+Level     : Sd 35
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Skill
+Number    : 142
+Name      : third attack
+MinPos    : Dead
+Violent   : No
+Routines  : NOBITS 
+Targets   : NOBITS 
+Flags     : NOBITS 
+Cost      : 0 0 0
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 45
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 55
+Name      : shield
+MinPos    : Standing
+Violent   : No
+Routines  : Affects Groups 
+Targets   : CharInRoom 
+Flags     : AccumDuration CostsVigor 
+Cost      : 20 40 2
+CostExpr  : (s * c) + l
+DamDice   : 6 8 10
+DamExpr   : a + b + c
+Message   : Success ToVict You are surrounded by a shimmering globe.
+Message   : WearOff ToChar Your protective shield dissolves.
+Affects   : HITROLL 3
+Affects   : ARMOR -20
+AffDurtn  : F s * l
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+Spell
+Number    : 56
+Name      : doombolt
+MinPos    : Standing
+Violent   : Yes
+Routines  : Damages 
+Targets   : CharInRoom FightVict 
+Flags     : NOBITS 
+Cost      : 30 50 5
+DamDice   : 15 10 100
+Message   : Success ToChar A bolt of pure black fire leaps from your hand and thunders into $N!
+Message   : Success ToVict You're burned horribly as $n blasts you with pure black fire!
+Message   : Fail ToChar A bolt of pure black fire leaps from your hand, but whizzes past $N's head!
+Message   : Fail ToVict A bolt of pure black fire leaps from $n's hand and narrowly misses your head!
+Message   : GodVict ToChar $N casually deflects your black flames, uh oh.
+Message   : GodVict ToVict You casually deflect a bolt of pure black fire sent by $n.
+Message   : Death ToChar A bolt of black flame leaps from your hand, burning $N to a crisp!
+Message   : Death ToVict You are burned to death by a bolt of black fire sent by $n!
+Level     : Mu 61
+Level     : Cl 61
+Level     : Th 61
+Level     : Wa 61
+Level     : Ra 61
+Level     : As 61
+Level     : Sl 61
+Level     : Kn 61
+Level     : De 61
+Level     : Sd 61
+Level     : Nm 61
+Level     : Dr 61
+End
+
+$

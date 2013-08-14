@@ -108,6 +108,7 @@
 #define SOCMESS_FILE_NEW LIB_MISC"socials.new"  /* messages for social acts with aedit patch*/
 #define XNAME_FILE	LIB_MISC"xnames"   /* invalid name substrings	*/
 #define COMBAT_FILE LIB_MISC"combat.txt" /* combat messages file */
+#define SKILLS_FILE LIB_MISC"skills.txt" /* skills definition file */
 
 /* BEGIN: Assumed default locations for logfiles, mainly used in do_file. */
 /**/

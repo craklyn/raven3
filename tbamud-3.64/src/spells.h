@@ -34,6 +34,7 @@
 #define MAG_CREATIONS	(1 << 9)
 #define MAG_MANUAL	(1 << 10)
 #define MAG_ROOMS   (1 << 11)
+#define NUM_ABI_ROUTINES 12
 
 #define TYPE_UNDEFINED               (-1)
 #define SPELL_RESERVED_DBC            0  /* SKILL NUMBER ZERO -- RESERVED */
@@ -180,6 +181,7 @@
 #define TAR_OBJ_ROOM    (1 << 8)
 #define TAR_OBJ_WORLD   (1 << 9)
 #define TAR_OBJ_EQUIP	  (1 << 10)
+#define NUM_ABI_TARGETS 11
 
 struct spell_info_type {
    byte min_position;	/* Position for caster	 */
@@ -213,7 +215,7 @@ struct spell_info_type {
 #define SPELL_TYPE_SCROLL  4
 
 #define ASPELL(spellname) \
-void	spellname(int level, struct char_data *ch, \
+void	(spellname)(int level, struct char_data *ch, \
 		  struct char_data *victim, struct obj_data *obj)
 
 #define MANUAL_SPELL(spellname)	spellname(level, caster, cvict, ovict);
