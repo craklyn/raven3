@@ -105,7 +105,7 @@ struct oasis_olc_data {
   struct ibt_data *ibt;          /* used for 'ibtedit'       */
   struct message_list *msg;
   struct message_type *m_type;
-  struct ability_info_type *ab   /* used for 'abedit'        */
+  struct ability_info_type *ab;   /* used for 'abedit'        */
   int script_mode;
   int trigger_position;
   int item_type;
