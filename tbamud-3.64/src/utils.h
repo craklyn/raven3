@@ -24,7 +24,7 @@
  * to allow for easier addition of parameters to the otherwise generic and
  * static function structure. */
 #define ACMD(name)  \
-   void name(struct char_data *ch, char *argument, int cmd, int subcmd)
+   void (name)(struct char_data *ch, char *argument, int cmd, int subcmd)
 
 /* external declarations and prototypes */
 
@@ -72,6 +72,7 @@ void new_affect(struct affected_type *af);
 int get_class_by_name(char *classname);
 char * convert_from_tabs(char * string);
 int count_non_protocol_chars(char * str);
+char *trim_str(char *);
 
 /* Public functions made available form weather.c */
 void weather_and_time(int mode);
