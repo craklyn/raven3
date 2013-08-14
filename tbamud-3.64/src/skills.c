@@ -59,6 +59,13 @@ static int getIndexOf(char *str, const char **arr);
 /* OLC local functions */
 static void abeditDisplayMainMenu(struct descriptor_data *d);
 static void abeditDisplayAffMenu(struct descriptor_data *d);
+static void abeditDisplayTypes(struct descriptor_data *d);
+static void abeditDisplayPositions(struct descriptor_data *d);
+static void abeditDisplayCostMenu(struct descriptor_data *d);
+static void abeditDisplayDamMenu(struct descriptor_data *d);
+static void abeditDisplayFlags(struct descriptor_data *d);
+static void abeditDisplayRoutines(struct descriptor_data *d);
+static void abeditDisplayTargets(struct descriptor_data *d);
 
 static ACMD(do_abedit_stat);
 static ACMD(do_abedit_list);
@@ -157,7 +164,7 @@ static const char *ability_message_to[NUM_AB_MSG_TO + 1] = {
     "ToChar", "ToVict", "ToRoom", "\n"
 };
 
-static const char *ability_types[] = {
+static const char *ability_types[NUM_ABILITY_TYPES + 1] = {
     "Spell","Skill","\n"
 };
 /* new skill feature */
@@ -397,6 +404,10 @@ struct ability_info_type *getAbilityByName(char *name) {
 void abeditParse(struct descriptor_data *d, char *arg) {
   bool quit = FALSE;
   struct ability_info_type *ab = OLC_ABILITY(d);
+  int num = -1;
+
+  if(*arg)
+    num = atoi(arg);
 
   switch(OLC_MODE(d)) {
   case ABEDIT_MAIN_MENU: {
@@ -412,6 +423,39 @@ void abeditParse(struct descriptor_data *d, char *arg) {
       case '1':
         write_to_output(d,"Name: \r\n");
         OLC_MODE(d) = ABEDIT_NAME;
+        return;
+      case '2':
+        abeditDisplayTypes(d);
+        return;
+      case '3':
+        abeditDisplayPositions(d);
+        return;
+      case '4':
+        // just toggle
+        ab->violent = !ab->violent;
+        break;
+      case '5':
+        abeditDisplayCostMenu(d);
+        return;
+      case '6':
+        if(IS_SET(ab->routines, MAG_DAMAGE)) {
+          abeditDisplayDamMenu(d);
+          return;
+        }
+        else
+          write_to_output(d, "Please set the 'Damages' routine first.\r\n");
+        break;
+      case 'F':
+      case 'f':
+        abeditDisplayFlags(d);
+        return;
+      case 'R':
+      case 'r':
+        abeditDisplayRoutines(d);
+        return;
+      case 'T':
+      case 't':
+        abeditDisplayTargets(d);
         return;
       case 'Q':
       case 'q':
@@ -451,6 +495,167 @@ void abeditParse(struct descriptor_data *d, char *arg) {
       return;
     }
     break;
+  case ABEDIT_TYPE:
+    if(num > 0 && num <= NUM_ABILITY_TYPES) {
+      ab->type = num-1;
+      abeditDisplayMainMenu(d);
+    } else {
+      write_to_output(d, "Invalid type, enter a correct type :\r\n");
+    }
+    return;
+  case ABEDIT_MINPOS:
+    if(num > 0 && num <= NUM_POSITIONS) {
+      ab->minPosition = num-1;
+      abeditDisplayMainMenu(d);
+    } else {
+      write_to_output(d, "Invalid position, enter a correct position :\r\n");
+    }
+    return;
+  case ABEDIT_COST:
+    switch(*arg){
+    case '1':
+      write_to_output(d, "(%s?%s) For help on variables\r\n", grn, nrm);
+      write_to_output(d, "Cost Expression(enter to clear) :\r\n");
+      OLC_MODE(d) = ABEDIT_COST_EXPR;
+      break;
+    case '2':
+      write_to_output(d, "Minimun Cost(1 - 999) :\r\n");
+      OLC_MODE(d) = ABEDIT_COST_MIN;
+      break;
+    case 'Q':
+    case 'q':
+    default:
+      abeditDisplayMainMenu(d);
+      return;
+    }
+    return;
+    case ABEDIT_COST_MIN:
+      if(num > 0 && num <= 999) {
+        ab->minCost = num;
+        write_to_output(d, "Maximum Cost(%d - 999) :\r\n", num + 1);
+        OLC_MODE(d) = ABEDIT_COST_MAX;
+      } else {
+        write_to_output(d, "Enter value between 1 - 999 :\r\n");
+      }
+      return;
+    case ABEDIT_COST_MAX:
+      if(num > 0 && num <= 999 && num > ab->minCost) {
+        ab->maxCost = num;
+        OLC_MODE(d) = ABEDIT_COST_CHG;
+        write_to_output(d, "Cost Change(1 - 999) :\r\n");
+      } else {
+        write_to_output(d, "Enter value between %d - 999 :\r\n", ab->minCost + 1);
+      }
+      return;
+    case ABEDIT_COST_CHG:
+      if(num > 0 && num <= 999) {
+        ab->costChange = num;
+        abeditDisplayCostMenu(d);
+      } else {
+        write_to_output(d, "Enter value between 0 - 999 :\r\n");
+      }
+      return;
+    case ABEDIT_COST_EXPR:
+      if(*arg) {
+        ab->costFormula = strdup(arg);
+      } else {
+        ab->costFormula = NULL;
+        ab->minCost = 0;
+        ab->maxCost = 0;
+        ab->costChange = 0;
+      }
+      abeditDisplayCostMenu(d);
+      return;
+    case ABEDIT_DAM:
+      switch(*arg){
+      case '1':
+        write_to_output(d, "(%s?%s) For help on variables\r\n", grn, nrm);
+        write_to_output(d, "Damage Expression(enter to clear) :\r\n");
+        OLC_MODE(d) = ABEDIT_DAM_EXPR;
+        break;
+      case '2':
+        if(ab->damDice == NULL) {
+          CREATE(ab->damDice, struct dam_dice_info, 1);
+        }
+        write_to_output(d, "Number of Dice(1 - 999) :\r\n");
+        OLC_MODE(d) = ABEDIT_DAM_NUM;
+        break;
+      case 'Q':
+      case 'q':
+      default:
+        abeditDisplayMainMenu(d);
+      }
+      return;
+    case ABEDIT_DAM_NUM:
+      if(num > 0 && num <= 999) {
+        ab->damDice->numDice = num;
+        write_to_output(d, "Dice Size(1 - 999) :\r\n");
+        OLC_MODE(d) = ABEDIT_DAM_SIZE;
+      } else {
+        write_to_output(d, "Enter value between 1 - 99 :\r\n");
+      }
+      return;
+    case ABEDIT_DAM_SIZE:
+      if(num > 0 && num <= 999) {
+        ab->damDice->diceSize = num;
+        write_to_output(d, "Damroll(1 - 999) :\r\n");
+        OLC_MODE(d) = ABEDIT_DAM_DR;
+      } else {
+        write_to_output(d, "Enter value between 1 - 99 :\r\n");
+      }
+      return;
+    case ABEDIT_DAM_DR:
+      if(num > 0 && num <= 999) {
+        ab->damDice->damRoll = num;
+        abeditDisplayDamMenu(d);
+      } else {
+        write_to_output(d, "Enter value between 1 - 99 :\r\n");
+      }
+      return;
+    case ABEDIT_DAM_EXPR:
+      if(*arg) {
+        ab->damDiceFormula = strdup(arg);
+      } else {
+        ab->damDiceFormula = NULL;
+      }
+      ab->damDice->numDice = 0;
+      ab->damDice->diceSize = 0;
+      ab->damDice->damRoll = 0;
+      abeditDisplayMainMenu(d);
+      return;
+    case ABEDIT_FLAGS:
+      if(num  == 0) {
+        abeditDisplayMainMenu(d);
+      } else if (num > 0 && num < NUM_AB_FLAGS + 1) {
+        TOGGLE_BIT_AR(ab->flags, num - 1);
+        abeditDisplayFlags(d);
+      } else {
+        write_to_output(d, "Please select from the flags below :\r\n");
+        abeditDisplayFlags(d);
+      }
+      return;
+    case ABEDIT_ROUTINES:
+      if(num  == 0) {
+        abeditDisplayMainMenu(d);
+      } else if (num > 0 && num < NUM_ABI_ROUTINES + 1) {
+        TOGGLE_BIT(ab->routines, (1 << (num - 1)));
+        abeditDisplayRoutines(d);
+      } else {
+        write_to_output(d, "Please select from the flags below :\r\n");
+        abeditDisplayRoutines(d);
+      }
+      return;
+    case ABEDIT_TARGETS:
+      if(num  == 0) {
+        abeditDisplayMainMenu(d);
+      } else if (num > 0 && num < NUM_ABI_TARGETS + 1) {
+        TOGGLE_BIT(ab->targets, (1 << (num - 1)));
+        abeditDisplayTargets(d);
+      } else {
+        write_to_output(d, "Please select from the flags below :\r\n");
+        abeditDisplayTargets(d);
+      }
+      return;
   }
 
   if(!quit) {
@@ -885,23 +1090,25 @@ static void displayGeneralAbilityInfo(struct char_data *ch, struct ability_info_
     send_to_char(ch, "\tc%-10s\tn: \tG%s\tn\r\n", "Cost Expr.", ab->costFormula);
   }
 
-  if(!ab->damDiceFormula) {
-    if(ab->damDice) {
-      sprintf(buf,"%dd%d+%d", ab->damDice->diceSize, ab->damDice->numDice, ab->damDice->damRoll);
-      send_to_char(ch, "\tc%-10s\tn: \ty%-10d\tn \tc%-10s\tn: \ty%-15s\tn \tc%-10s\tn: %s\r\n",
-          "Avg. Dam.", (((ab->damDice->diceSize + 1) / 2) * ab->damDice->numDice) + ab->damDice->damRoll,
-          "Dam. Dice",   buf,
-          "Violent", (ab->violent ? "\tRYes\tn" : "\tDNo\tn"));
+  if(IS_SET(ab->routines, MAG_DAMAGE)) {
+    if(!ab->damDiceFormula) {
+      if(ab->damDice) {
+        sprintf(buf,"%dd%d+%d", ab->damDice->diceSize, ab->damDice->numDice, ab->damDice->damRoll);
+        send_to_char(ch, "\tc%-10s\tn: \ty%-10d\tn \tc%-10s\tn: \ty%-15s\tn \tc%-10s\tn: %s\r\n",
+            "Avg. Dam.", (((ab->damDice->diceSize + 1) / 2) * ab->damDice->numDice) + ab->damDice->damRoll,
+            "Dam. Dice",   buf,
+            "Violent", (ab->violent ? "\tRYes\tn" : "\tDNo\tn"));
+      } else {
+        send_to_char(ch, "\tc%-10s\tn: \ty%-10s\tn \tc%-10s\tn: \ty%-15s\tn \tc%-10s\tn: %s \r\n",
+            "Avg. Dam.", "N/A",
+            "Dam. Dice", "N/A",
+            "Violent", (ab->violent ? "\tRYes\tn" : "\tDNo\tn"));
+      }
     } else {
-      send_to_char(ch, "\tc%-10s\tn: \ty%-10s\tn \tc%-10s\tn: \ty%-15s\tn \tc%-10s\tn: %s \r\n",
-          "Avg. Dam.", "N/A",
-          "Dam. Dice", "N/A",
-          "Violent", (ab->violent ? "\tRYes\tn" : "\tDNo\tn"));
+      send_to_char(ch, "\tc%-10s\tn: \tG%-38s\tn \tc%-10s\tn: \ty%s\tn\r\n",
+          "Dam. Expr.", ab->damDiceFormula,
+          "Violent",    (ab->violent ? "\tRYes\tn" : "\tDNo\tn"));
     }
-  } else {
-    send_to_char(ch, "\tc%-10s\tn: \tG%-38s\tn \tc%-10s\tn: \ty%s\tn\r\n",
-        "Dam. Expr.", ab->damDiceFormula,
-        "Violent",    (ab->violent ? "\tRYes\tn" : "\tDNo\tn"));
   }
 
   sprintbitarray(ab->flags, ability_flag_types, ABF_ARRAY_MAX, buf);
@@ -1094,6 +1301,71 @@ ASPELL(spell_none) {
 }
 
 /********************** OLC local functions ***********************************/
+static void abeditDisplayTargets(struct descriptor_data *d) {
+  char buf[MAX_STRING_LENGTH];
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+  sprintbit(ab->targets, target_types, buf, sizeof(buf));
+  column_list(d->character, 2, target_types, NUM_ABI_TARGETS, TRUE);
+  write_to_output(d, "Current targets: %s%s%s\r\n", cyn, buf, nrm);
+  write_to_output(d, "Enter Option (0 to quit) :\r\n");
+  OLC_MODE(d) = ABEDIT_TARGETS;
+}
+
+static void abeditDisplayRoutines(struct descriptor_data *d) {
+  char buf[MAX_STRING_LENGTH];
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+  sprintbit(ab->routines, routine_types, buf, sizeof(buf));
+  column_list(d->character, 2, routine_types, NUM_ABI_ROUTINES, TRUE);
+  write_to_output(d, "Current routines: %s%s%s\r\n", cyn, buf, nrm);
+  write_to_output(d, "Enter Option (0 to quit) :\r\n");
+  OLC_MODE(d) = ABEDIT_ROUTINES;
+}
+
+static void abeditDisplayFlags(struct descriptor_data *d) {
+  char buf[MAX_STRING_LENGTH];
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+  sprintbitarray(ab->flags, ability_flag_types, ABF_ARRAY_MAX, buf);
+  column_list(d->character, 2, ability_flag_types, NUM_AB_FLAGS, TRUE);
+  write_to_output(d, "Current flags: %s%s%s\r\n", cyn, buf, nrm);
+  write_to_output(d, "Enter Option (0 to quit) :\r\n");
+  OLC_MODE(d) = ABEDIT_FLAGS;
+}
+
+static void abeditDisplayDamMenu(struct descriptor_data *d) {
+  write_to_output(d,"%sNOTE: 'Damage Expression' will always be used if it has a value. If the\r\n", cyn);
+  write_to_output(d,"expression is un-parsable it will have a value of 1.%s\r\n", nrm);
+  write_to_output(d, "%s1%s) Damage Expression\r\n", grn, nrm);
+  write_to_output(d, "%s2%s) Damage Dice Values\r\n", grn, nrm);
+  write_to_output(d, "%sQ%s) Return To Main Menu\r\n", grn, nrm);
+  write_to_output(d, "Enter Option :\r\n");
+  OLC_MODE(d) = ABEDIT_DAM;
+}
+
+static void abeditDisplayCostMenu(struct descriptor_data *d) {
+  write_to_output(d,"%sNOTE: 'Cost Expression' will always be used if it has a value. If the\r\n", cyn);
+  write_to_output(d,"expression is un-parsable it will have a value of 1.%s\r\n", nrm);
+  write_to_output(d, "%s1%s) Cost Expression\r\n", grn, nrm);
+  write_to_output(d, "%s2%s) Standard Cost Value\r\n", grn, nrm);
+  write_to_output(d, "%sQ%s) Return To Main Menu\r\n", grn, nrm);
+  write_to_output(d, "Enter Option :\r\n");
+  OLC_MODE(d) = ABEDIT_COST;
+}
+
+static void abeditDisplayPositions(struct descriptor_data *d) {
+  column_list(d->character, 0, position_types, NUM_POSITIONS, TRUE);
+  write_to_output(d, "Position :\r\n");
+  OLC_MODE(d) = ABEDIT_MINPOS;
+}
+
+static void abeditDisplayTypes(struct descriptor_data *d) {
+  column_list(d->character, 0, ability_types, NUM_ABILITY_TYPES, TRUE);
+  write_to_output(d, "Type :\r\n");
+  OLC_MODE(d) = ABEDIT_TYPE;
+}
+
 static void abeditDisplayAffMenu(struct descriptor_data *d) {
   char buf[MAX_STRING_LENGTH];
   int len = 0, i = 0;
@@ -1141,7 +1413,7 @@ static void abeditDisplayMainMenu(struct descriptor_data *d) {
       grn, nrm, "Min. Pos.", yel, position_types[ab->minPosition], nrm,
       grn, nrm, "Violent", yel, (ab->violent ? "Yes" : "No"), nrm);
 
-  if(ab->costFormula) {
+  if(ab->costFormula != NULL) {
     sprintf(buf, "%s%-5s%s [%s%-15s%s]",
         grn,"Expr", nrm, cyn, ab->costFormula, nrm);
   } else {

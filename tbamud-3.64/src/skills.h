@@ -14,6 +14,7 @@
 
 #define ABILITY_TYPE_SPELL 0
 #define ABILITY_TYPE_SKILL 1
+#define NUM_ABILITY_TYPES  2
 
 #define SCMD_ABEDIT_STAT 1
 #define SCMD_ABEDIT_LIST 2
@@ -52,11 +53,16 @@
 #define ABEDIT_COST_MIN   5
 #define ABEDIT_COST_MAX   6
 #define ABEDIT_COST_CHG   7
-#define ABEDIT_DAM        8
-#define ABEDIT_DAM_NUM    9
-#define ABEDIT_DAM_DICE   10
-#define ABEDIT_DAM_DR     11
-#define ABEDIT_AFF_MENU   12
+#define ABEDIT_COST_EXPR  8
+#define ABEDIT_DAM        9
+#define ABEDIT_DAM_NUM    10
+#define ABEDIT_DAM_SIZE   11
+#define ABEDIT_DAM_DR     12
+#define ABEDIT_DAM_EXPR   13
+#define ABEDIT_FLAGS      14
+#define ABEDIT_ROUTINES   15
+#define ABEDIT_TARGETS    16
+#define ABEDIT_AFF_MENU   17
 
 
 ACMD(do_abedit);
