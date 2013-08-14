@@ -27,6 +27,8 @@
 #include "skills.h"
 #include "modify.h"
 #include "graph.h"
+#include "oasis.h"
+#include "screen.h"
 
 #define __SKILLS_C__
 
@@ -39,10 +41,9 @@ struct list_data *abilityList;
 
 static int curr_line;
 
-/* local functions */
+/* local functions declaration */
 static bool equipmentSkillSuccess (struct char_data *ch);
 static bool affectSkillSuccess    (struct char_data *ch);
-static void writeSkill            (FILE *skillsFile, int skillNum);
 static struct ability_info_type * createAbility(int num, char *name, int type);
 static void createAbilitySpell(struct ability_info_type *ability);
 static void createAbilitySkill(struct ability_info_type *ability);
@@ -55,8 +56,15 @@ static void displayGeneralAbilityInfo(struct char_data *ch, struct ability_info_
 static void displayMessages(struct char_data *ch, struct msg_type *msg, const char *messageName);
 static int getIndexOf(char *str, const char **arr);
 
-static ACMD(do_skedit_stat);
-static ACMD(do_skedit_list);
+/* OLC local functions */
+static void abeditDisplayMainMenu(struct descriptor_data *d);
+static void abeditDisplayAffMenu(struct descriptor_data *d);
+
+static ACMD(do_abedit_stat);
+static ACMD(do_abedit_list);
+
+/* OLC functions */
+
 
 static struct manual_spell_info {
   int spellNum;
@@ -385,6 +393,75 @@ struct ability_info_type *getAbilityByName(char *name) {
 
     return ability;
 }
+
+void abeditParse(struct descriptor_data *d, char *arg) {
+  bool quit = FALSE;
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+  switch(OLC_MODE(d)) {
+  case ABEDIT_MAIN_MENU: {
+    if(!*arg) {
+      write_to_output(d, "Enter a valid option from below : \r\n");
+      return;
+    } else {
+      switch(*arg) {
+      case 'A':
+      case 'a':
+        abeditDisplayAffMenu(d);
+        return;
+      case '1':
+        write_to_output(d,"Name: \r\n");
+        OLC_MODE(d) = ABEDIT_NAME;
+        return;
+      case 'Q':
+      case 'q':
+        write_to_output(d,"Exiting ability editor.\r\n");
+        cleanup_olc(d, CLEANUP_ALL);
+        quit = TRUE;
+        break;
+      default:
+        write_to_output(d, "Enter a valid option :\r\n");
+        return;
+      }
+    }
+    break;
+  }
+  case ABEDIT_AFF_MENU: {
+    if(!*arg) {
+      write_to_output(d, "Enter a valid option from below : \r\n");
+      abeditDisplayAffMenu(d);
+      return;
+    } else {
+      switch(*arg) {
+      case 'Q':
+      case 'q':
+        abeditDisplayMainMenu(d);
+        return;
+      }
+      default:
+        write_to_output(d, "Enter a valid option : \r\n");
+        return;
+    }
+    break;
+  }
+  case ABEDIT_NAME:
+    if(*arg) {
+      ab->name = strdup(arg);
+      abeditDisplayMainMenu(d);
+      return;
+    }
+    break;
+  }
+
+  if(!quit) {
+    OLC_VAL(d) = 1;
+    abeditDisplayMainMenu(d);
+  }
+}
+
+/*
+ * Local functions definition
+ */
 
 /*
  * Return TRUE if ch's worn items has skill success and a roll is successful
@@ -738,33 +815,6 @@ static void writeAbility (FILE *aFile, struct ability_info_type *ability) {
   fputs("End\n\n", aFile);
 }
 
-void writeSkill(FILE *skillsFile, int skillNum) {
-  int i;
-  char buf[MAX_STRING_LENGTH];
-
-  buf[0] = '\0';
-  fprintf(skillsFile, "SNumber   : %d\n", skillNum);
-  fprintf(skillsFile, "SName     : %s\n", spell_info[skillNum].name);
-  fprintf(skillsFile, "MinPos    : %s\n", position_types[spell_info[skillNum].min_position]);
-  fprintf(skillsFile, "MinMana   : %d\n", spell_info[skillNum].mana_min);
-  fprintf(skillsFile, "MaxMana   : %d\n", spell_info[skillNum].mana_max);
-  fprintf(skillsFile, "ManaChange: %d\n", spell_info[skillNum].mana_change);
-  fprintf(skillsFile, "Violent   : %s\n", spell_info[skillNum].violent ? "Yes" : "No");
-  sprintbit(spell_info[skillNum].routines, routine_types, buf, sizeof(buf));
-  fprintf(skillsFile, "Routines  : %s\n", buf);
-  sprintbit(spell_info[skillNum].targets, target_types, buf, sizeof(buf));
-  fprintf(skillsFile, "Targets   : %s\n", buf);
-  if(spell_info[skillNum].wear_off_msg)
-    fprintf(skillsFile, "Message   : WearOff ToChar %s\n", spell_info[skillNum].wear_off_msg);
-
-
-  for(i = 0; i < NUM_CLASSES; i++) {
-    fprintf(skillsFile, "MinLevel  : %s %d\n", class_abbrevs[i], spell_info[skillNum].min_level[i]);
-  }
-
-  fputs("End\n\n", skillsFile);
-}
-
 static void createAbilitySpell(struct ability_info_type *ability) {
   struct ability_spell_info_type *sp;
 
@@ -837,9 +887,9 @@ static void displayGeneralAbilityInfo(struct char_data *ch, struct ability_info_
 
   if(!ab->damDiceFormula) {
     if(ab->damDice) {
-      sprintf(buf,"%dd%d+%d", ab->damDice->numDice, ab->damDice->diceSize, ab->damDice->damRoll);
+      sprintf(buf,"%dd%d+%d", ab->damDice->diceSize, ab->damDice->numDice, ab->damDice->damRoll);
       send_to_char(ch, "\tc%-10s\tn: \ty%-10d\tn \tc%-10s\tn: \ty%-15s\tn \tc%-10s\tn: %s\r\n",
-          "Avg. Dam.", (((ab->damDice->numDice + 1) / 2) * ab->damDice->diceSize) + ab->damDice->damRoll,
+          "Avg. Dam.", (((ab->damDice->diceSize + 1) / 2) * ab->damDice->numDice) + ab->damDice->damRoll,
           "Dam. Dice",   buf,
           "Violent", (ab->violent ? "\tRYes\tn" : "\tDNo\tn"));
     } else {
@@ -906,13 +956,15 @@ static void displayGeneralAbilityInfo(struct char_data *ch, struct ability_info_
 
 #define PRINT_SYNTAX(ch)                                      \
 do {                                                          \
- send_to_char(ch, "Syntax: ABEDIT save\r\n\r\n");             \
+ send_to_char(ch, "Syntax: ABEDIT <option/ability number or name>\r\n\r\n"); \
  send_to_char(ch, "Options:\r\n");                            \
  send_to_char(ch, " save                       - save all abilities to file\r\n");  \
  send_to_char(ch, " stat <ability number/name> - display the ability information\r\n");  \
+ send_to_char(ch, " list                       - list all abilities and their basic information\r\n");  \
+ send_to_char(ch, " new                        - create a new ability\r\n");  \
 } while (0)
 
-static ACMD(do_skedit_list) {
+static ACMD(do_abedit_list) {
   struct ability_info_type *ab;
   char buf[MAX_STRING_LENGTH];
   int len = 0, nlen = 0;
@@ -936,7 +988,7 @@ static ACMD(do_skedit_list) {
   }
 
 }
-static ACMD(do_skedit_stat) {
+static ACMD(do_abedit_stat) {
   struct ability_info_type *ab;
   skip_spaces(&argument);
 
@@ -956,37 +1008,79 @@ static ACMD(do_skedit_stat) {
   }
 }
 
-ACMD(do_skedit) {
-  char arg1[MAX_INPUT_LENGTH];
-  char *args;
-  int count = 0;
+ACMD(do_abedit) {
+  char arg1[MAX_INPUT_LENGTH], *args;
+  int count = 0, abNum = -1;
+  struct ability_info_type *ab = NULL;
+  struct descriptor_data *d;
+  bool edit = FALSE, canEdit = TRUE;
 
   if(!IS_NPC(ch) && ch->desc && STATE(ch->desc) == CON_PLAYING) {
-
     if(subcmd == 0) {
       if(*argument) {
         args = one_argument(argument, arg1);
-        if(*arg1 && !str_cmp(arg1, "save")) {
+        if(!str_cmp(arg1, "save")) {
           count = saveAbilities();
           send_to_char(ch, "Saved %d abilities to file.\r\n", count);
         } else if(!str_cmp(arg1, "stat")) {
-          do_skedit_stat(ch, args, cmd, subcmd);
+          do_abedit_stat(ch, args, cmd, subcmd);
         } else if(!str_cmp(arg1, "list")) {
-          do_skedit_list(ch, args, cmd, subcmd);
+          do_abedit_list(ch, args, cmd, subcmd);
+        } else if(is_number(arg1)) {
+          abNum = atoi(arg1);
+          edit = TRUE;
+        } else {
+          edit = TRUE;
         }
-        else {
-          PRINT_SYNTAX(ch);
+
+        if(edit) {
+          for(d = descriptor_list; d; d = d->next) {
+            if(STATE(d) == CON_ABEDIT && OLC_ABILITY(d) && OLC_NUM(d) == abNum) {
+              send_to_char(ch,"Someone is already editing that ability.\r\n");
+              canEdit = FALSE;
+            }
+          }
+
+          if(canEdit) {
+
+            if((abNum > -1 && (ab = getAbility(abNum)) != NULL) || ((ab = getAbilityByName(trim_str(argument))) != NULL)) {
+              d = ch->desc;
+
+              if(d->olc != NULL) {
+                mudlog(BRF, LVL_IMMORT, TRUE, "SYSERR: do_abedit: Player already had olc structure.");
+                free(d->olc);
+              }
+
+              CREATE(d->olc, struct oasis_olc_data, 1);
+              OLC_NUM(d) = abNum;
+              OLC_VAL(d) = 0;
+
+              OLC_ABILITY(d) = ab;
+              abeditDisplayMainMenu(d);
+              STATE(d) = CON_ABEDIT;
+
+              act("$n starts using OLC.", TRUE, ch, NULL, NULL, TO_ROOM);
+              SET_BIT_AR(PLR_FLAGS(ch), PLR_WRITING);
+
+              mudlog(CMP, LVL_IMMORT, TRUE, "OLC: %s starts editing skill (%d):%s",
+                  GET_NAME(ch), ab->number, ab->name);
+
+            } else {
+              send_to_char(ch, "That ability name or number does not exist.\r\n");
+            }
+          }
         }
+
       } else {
         PRINT_SYNTAX(ch);
       }
     } else {
       switch(subcmd) {
       case SCMD_ABEDIT_STAT:
-        do_skedit_stat(ch, argument, cmd, subcmd);
+        do_abedit_stat(ch, argument, cmd, subcmd);
         break;
       case SCMD_ABEDIT_LIST:
-        do_skedit_list(ch, argument, cmd, subcmd);
+        do_abedit_list(ch, argument, cmd, subcmd);
       }
     }
   }
@@ -997,4 +1091,111 @@ ACMD(do_skedit) {
 
 ASPELL(spell_none) {
   return;
+}
+
+/********************** OLC local functions ***********************************/
+static void abeditDisplayAffMenu(struct descriptor_data *d) {
+  char buf[MAX_STRING_LENGTH];
+  int len = 0, i = 0;
+  struct affected_type *aff;
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+  if(ab->affects != NULL) {
+    for(aff = ab->affects; aff; aff = aff->next) {
+      len += sprintf(buf + len, "  %s%2d%s) modifies %s%-15s%s by %s%-3d%s\r\n",
+          grn, ++i, nrm, cyn, apply_types[aff->location], nrm, yel, aff->modifier, nrm);
+    }
+    write_to_output(d, "Applies the following:\r\n%s\r\n", buf);
+    if(ab->affDurationFormula) {
+      sprintf(buf, "%sD%s) Duration expression: %s%s%s",
+          grn, nrm, yel, ab->affDurationFormula, nrm);
+    } else {
+      sprintf(buf, "%sD%s) Duration: %s%d%s", grn, nrm, yel, ab->affDuration, nrm);
+    }
+    write_to_output(d, "%s\r\n", buf);
+
+  } else {
+    write_to_output(d, "%sNo affects defined, create (%sN%s)ew!.%s\r\n", yel, grn, yel, nrm);
+  }
+  write_to_output(d, "%sN%s) New affect\r\n", grn, nrm);
+  write_to_output(d, "%sX%s) Delete affect\r\n", grn, nrm);
+  write_to_output(d, "%s?%s) Help\r\n", grn, nrm);
+  write_to_output(d, "%sQ%s) Leave affects menu\r\n", grn, nrm);
+  write_to_output(d, "Enter selection :\r\n");
+
+  OLC_MODE(d) = ABEDIT_AFF_MENU;
+}
+
+static void abeditDisplayMainMenu(struct descriptor_data *d) {
+  char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
+  int len = 0, len2 = 0, i;
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+
+  get_char_colors(d->character);
+  write_to_output(d, "%s1%s) %-10s: [%s%3d%s] %s%-15s%s %s2%s) %-10s: %s%s%s\r\n",
+      grn, nrm, "Name", cyn, ab->number, nrm, yel, ab->name, nrm,
+      grn, nrm, "Type", yel, ability_types[ab->type], nrm);
+
+  write_to_output(d, "%s3%s) %-10s: %s%-21s%s %s4%s) %-10s: %s%-3s%s\r\n",
+      grn, nrm, "Min. Pos.", yel, position_types[ab->minPosition], nrm,
+      grn, nrm, "Violent", yel, (ab->violent ? "Yes" : "No"), nrm);
+
+  if(ab->costFormula) {
+    sprintf(buf, "%s%-5s%s [%s%-15s%s]",
+        grn,"Expr", nrm, cyn, ab->costFormula, nrm);
+  } else {
+    sprintf(buf, "%s%s%s[%s%3d%s] %s%s%s[%s%3d%s] %s%s%s[%s%3d%s]",
+        grn, "Min", nrm, cyn, ab->minCost, nrm,
+        grn, "Max", nrm, cyn, ab->maxCost, nrm,
+        grn, "Chg", nrm, cyn, ab->costChange, nrm);
+  }
+
+  write_to_output(d, "%s5%s) %-10s: %s\r\n",
+        grn, nrm, "Cost", buf);
+
+  if(IS_SET(ab->routines, MAG_DAMAGE)) {
+
+    if(ab->damDiceFormula == NULL) {
+      sprintf(buf, "%s%dd%d+%d%s  %s%10s%s[%s%-3d%s]",
+          yel, ab->damDice->diceSize, ab->damDice->numDice, ab->damDice->damRoll, nrm,
+          grn, "Avg", nrm,
+          cyn,
+          ((((ab->damDice->diceSize + 1) / 2) * ab->damDice->numDice + ab->damDice->damRoll)),
+          nrm);
+    } else {
+      sprintf(buf, "%s%-5s%s [%s%-15s%s]",
+          grn,"Expr", nrm, cyn, ab->damDiceFormula, nrm);
+    }
+    write_to_output(d, "%s6%s) %-10s: %s\r\n",
+        grn, nrm, "Damage", buf);
+  }
+
+  sprintbitarray(ab->flags, ability_flag_types, NUM_AB_FLAGS, buf);
+  write_to_output(d, "%sF%s) %-10s: %s%s%s\r\n",
+      grn, nrm, "Flags", yel, buf, nrm);
+  sprintbit(ab->routines, routine_types, buf, sizeof(buf));
+  write_to_output(d, "%sR%s) %-10s: %s%s%s\r\n",
+      grn, nrm, "Routines", yel, buf, nrm);
+  sprintbit(ab->targets, target_types, buf, sizeof(buf));
+  write_to_output(d, "%sT%s) %-10s: %s%s%s\r\n",
+      grn, nrm, "Targets", yel, buf, nrm);
+
+  for(i = 0; i < NUM_CLASSES; i++) {
+    len += sprintf(buf + len, "%-3s", class_abbrevs[i]);
+    len2 += sprintf(buf2 + len2, "%3d", ab->minLevels[i]);
+  }
+  write_to_output(d, "%sL%s) %-10s: %s%s%s\r\n",
+      grn, nrm, "Levels", yel, buf, nrm);
+  write_to_output(d, "%-13s %s%s%s\r\n", " ", cyn, buf2, nrm);
+
+  write_to_output(d, "%sA%s) Affects Menu\r\n", grn, nrm);
+  write_to_output(d, "%sM%s) Messages Menu\r\n", grn, nrm);
+  write_to_output(d, "%sX%s) Type Specific Menu\r\n", grn, nrm);
+  write_to_output(d, "%s?%s) Help\r\n", grn, nrm);
+
+
+  write_to_output(d, "%sQ%s) Quit\r\nEnter Selection :", grn, nrm);
+
+  OLC_MODE(d) = ABEDIT_MAIN_MENU;
 }

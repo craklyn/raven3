@@ -139,6 +139,7 @@ extern const char *nrm, *grn, *cyn, *yel;
 #define OLC_HELP(d)    (OLC(d)->help)     /**< Hedit structure      */
 #define OLC_PREFS(d)   (OLC(d)->prefs)    /**< Preferences structure */
 #define OLC_IBT(d)     (OLC(d)->ibt)      /**< IBT (idea/bug/typo) structure */
+#define OLC_ABILITY(d) (OLC(d)->ab)       /**< Ability structure */
 /* Other macros. */
 #define OLC_EXIT(d)    (OLC_ROOM(d)->dir_option[OLC_VAL(d)])
 #define OLC_MSG(d)     (OLC(d)->m_type)

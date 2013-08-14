@@ -87,9 +87,9 @@ cpp_extern const struct command_info cmd_info[] = {
   { "at"       , "at"      , POS_DEAD    , do_at       , LVL_IMMORT, 0 },
   { "advance"  , "adv"     , POS_DEAD    , do_advance  , LVL_GRGOD, 0 },
   { "aedit"    , "aed"     , POS_DEAD    , do_oasis_aedit, LVL_GOD, 0 },
-  { "abedit"   , "abedit"  , POS_DEAD    , do_skedit   , LVL_GRGOD, 0 },
-  { "ablist"   , "ablist"  , POS_DEAD    , do_skedit   , LVL_GRGOD, SCMD_ABEDIT_LIST},
-  { "abstat"   , "abstat"  , POS_DEAD    , do_skedit   , LVL_GRGOD, SCMD_ABEDIT_STAT},
+  { "abedit"   , "abedit"  , POS_DEAD    , do_abedit   , LVL_GRGOD, 0 },
+  { "ablist"   , "ablist"  , POS_DEAD    , do_abedit   , LVL_GRGOD, SCMD_ABEDIT_LIST},
+  { "abstat"   , "abstat"  , POS_DEAD    , do_abedit   , LVL_GRGOD, SCMD_ABEDIT_STAT},
   { "alias"    , "ali"     , POS_DEAD    , do_alias    , 0, 0 },
   { "afk"      , "afk"     , POS_DEAD    , do_gen_tog  , 0, SCMD_AFK },
   { "areas"    , "are"     , POS_DEAD    , do_areas    , 0, 0 },
@@ -1367,6 +1367,7 @@ void nanny(struct descriptor_data *d, char *arg)
     { CON_PREFEDIT, prefedit_parse },
     { CON_IBTEDIT, ibtedit_parse },
     { CON_MSGEDIT, msgedit_parse },
+    { CON_ABEDIT, abeditParse},
     { -1, NULL }
   };
 
