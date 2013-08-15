@@ -40,6 +40,8 @@
 struct list_data *abilityList;
 
 static int curr_line;
+static int currMsgNum;
+static int currMsgToNum;
 static struct affected_type *currAff;
 
 /* local functions declaration */
@@ -71,6 +73,8 @@ static void abeditDisplayLevels(struct descriptor_data *d);
 static void abeditDisplayAffDurMenu(struct descriptor_data *d);
 static void abeditDisplayAffApplies(struct descriptor_data *d);
 static void abeditDisplayMessageMenu(struct descriptor_data *d);
+static void abeditDisplayMessageNew(struct descriptor_data *d);
+static void abeditDisplayMessages(struct descriptor_data *d);
 
 static ACMD(do_abedit_stat);
 static ACMD(do_abedit_list);
@@ -410,6 +414,7 @@ void abeditParse(struct descriptor_data *d, char *arg) {
   bool quit = FALSE;
   struct ability_info_type *ab = OLC_ABILITY(d);
   struct affected_type *aff, *prev;
+  struct msg_type *msg;
   int num = -1, cls = -1, i;
   char val[MAX_INPUT_LENGTH];
 
@@ -859,17 +864,97 @@ void abeditParse(struct descriptor_data *d, char *arg) {
         case 'q':
           abeditDisplayMainMenu(d);
           return;
+        case 'N':
+        case 'n':
+          abeditDisplayMessageNew(d);
+          return;
         case 'X':
         case 'x':
+          write_to_output(d, "Message number :\r\n");
+          OLC_MODE(d) = ABEDIT_MESSAGE_DEL;
           return;
         default:
-          abeditDisplayMainMenu(d);
+          if((num = atoi(arg)) > 0 && num < NUM_AB_MSGS + 1) {
+            currMsgToNum = num - 1;
+            abeditDisplayMessages(d);
+          } else {
+            write_to_output(d, "Invalid message number!\r\n");
+            abeditDisplayMessageMenu(d);
+          }
           return;
         }
       } else {
         abeditDisplayMessageMenu(d);
         return;
       }
+      return;
+    case ABEDIT_MESSAGE_NEW:
+      if(num > 0 && num < NUM_AB_MSGS + 1) {
+        currMsgNum = num - 1;
+        if(ab->messages[currMsgNum] != NULL) {
+          write_to_output(d, "Message is not empty, switching to edit.\r\n");
+        } else {
+          CREATE(ab->messages[currMsgNum], struct msg_type, 1);
+        }
+        abeditDisplayMessages(d);
+      } else {
+        write_to_output(d, "Invalid message number!\r\n");
+        abeditDisplayMessageNew(d);
+      }
+      return;
+    case ABEDIT_MESSAGE_DEL:
+      if(num > 0) {
+        msg = NULL;
+        for(i = 0; i < NUM_AB_MSGS; i++) {
+          if(i == (num - 1))
+            msg = ab->messages[i];
+        }
+
+        if(msg != NULL) {
+          free(msg->attacker_msg);
+          free(msg->room_msg);
+          free(msg->victim_msg);
+          ab->messages[num - 1] = NULL;
+          abeditDisplayMessageMenu(d);
+        } else {
+          write_to_output(d, "That message does not exist!\r\n");
+          abeditDisplayMessageMenu(d);
+        }
+      } else {
+        write_to_output(d, "Invalid message number!\r\n");
+        abeditDisplayMessageMenu(d);
+      }
+      return;
+    case ABEDIT_MESSAGE_EDIT:
+      if(num == 0) {
+        abeditDisplayMessageMenu(d);
+      } else if(num > 0 && num < NUM_AB_MSG_TO + 1) {
+        write_to_output(d, "Message (blank to clear):\r\n");
+        currMsgToNum = num - 1;
+        OLC_MODE(d) = ABEDIT_MESSAGE_MSG;
+      } else {
+        write_to_output(d, "Invalid message tp number!\r\nMessage to number (0 to quit) :\r\n");
+      }
+      return;
+    case ABEDIT_MESSAGE_MSG:
+      if(*arg) {
+        if(currMsgToNum == AB_MSG_TO_CHAR) {
+          ab->messages[currMsgNum]->attacker_msg = strdup(arg);
+        } else if(currMsgToNum == AB_MSG_TO_ROOM) {
+          ab->messages[currMsgNum]->room_msg = strdup(arg);
+        } else if(currMsgToNum == AB_MSG_TO_VICT) {
+          ab->messages[currMsgNum]->victim_msg = strdup(arg);
+        }
+      } else {
+        if(currMsgToNum == AB_MSG_TO_CHAR) {
+          ab->messages[currMsgNum]->attacker_msg = NULL;
+        } else if(currMsgToNum == AB_MSG_TO_ROOM) {
+          ab->messages[currMsgNum]->room_msg = NULL;
+        } else if(currMsgToNum == AB_MSG_TO_VICT) {
+          ab->messages[currMsgNum]->victim_msg = NULL;
+        }
+      }
+      abeditDisplayMessages(d);
       return;
     default:
       abeditDisplayMainMenu(d);
@@ -1519,6 +1604,38 @@ ASPELL(spell_none) {
 }
 
 /********************** OLC local functions ***********************************/
+static void abeditDisplayMessages(struct descriptor_data *d) {
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+  write_to_output(d, "%s%s%s Messages:\r\n", cyn, ability_message_type[currMsgNum], nrm);
+  write_to_output(d, "%s1%s) %s%s%s: %s%s%s\r\n",
+      grn, nrm, cyn, ability_message_to[AB_MSG_TO_CHAR], nrm,
+      yel, NOT_NULL(ab->messages[currMsgNum]->attacker_msg), nrm);
+  write_to_output(d, "%s2%s) %s%s%s: %s%s%s\r\n",
+      grn, nrm, cyn, ability_message_to[AB_MSG_TO_VICT], nrm,
+      yel, NOT_NULL(ab->messages[currMsgNum]->victim_msg), nrm);
+  write_to_output(d, "%s3%s) %s%s%s: %s%s%s\r\n",
+      grn, nrm, cyn, ability_message_to[AB_MSG_TO_ROOM], nrm,
+      yel, NOT_NULL(ab->messages[currMsgNum]->room_msg), nrm);
+  write_to_output(d, "Enter message to number (0 to quit) :\r\n");
+  OLC_MODE(d) = ABEDIT_MESSAGE_EDIT;
+}
+
+static void abeditDisplayMessageNew(struct descriptor_data *d) {
+  struct ability_info_type *ab = OLC_ABILITY(d);
+  int i;
+
+  //display the empty slots only
+  clear_screen(d);
+  write_to_output(d, "%sAvailable message slot%s :\r\n", grn, nrm);
+  for(i = 0; i < NUM_AB_MSGS; i++) {
+    if(ab->messages[i] == NULL)
+      write_to_output(d, "%s%d%s) %s%s%s\r\n", grn, (i + 1), nrm, cyn, ability_message_type[i], nrm);
+  }
+  write_to_output(d,"\r\nEnter message number :\r\n");
+  OLC_MODE(d) = ABEDIT_MESSAGE_NEW;
+}
+
 static void abeditDisplayMessageMenu(struct descriptor_data *d) {
   struct ability_info_type *ab = OLC_ABILITY(d);
   char buf[MAX_STRING_LENGTH], *msg = '\0';
@@ -1538,20 +1655,20 @@ static void abeditDisplayMessageMenu(struct descriptor_data *d) {
 
         if(j == AB_MSG_TO_CHAR) {
           msg = ab->messages[i]->attacker_msg;
-          len += sprintf(buf + len, "%s%s%s\r\n", yel, msg == NULL ? "None." : msg, nrm);
+          len += sprintf(buf + len, "%s%s%s\r\n", yel, NOT_NULL(msg), nrm);
         } else if(j == AB_MSG_TO_VICT) {
           msg = ab->messages[i]->victim_msg;
-          len += sprintf(buf + len, "%s%s%s\r\n", yel, msg == NULL ? "None." : msg, nrm);
+          len += sprintf(buf + len, "%s%s%s\r\n", yel, NOT_NULL(msg), nrm);
         } else if(j == AB_MSG_TO_ROOM) {
           msg = ab->messages[i]->room_msg;
-          len += sprintf(buf + len, "%s%s%s\r\n", yel, msg == NULL ? "None." : msg, nrm);
+          len += sprintf(buf + len, "%s%s%s\r\n", yel, NOT_NULL(msg), nrm);
         }
       }
     }
   }
 
   if(!hasMessage) {
-    write_to_output(d, "%sNo messages defined, create%s (%sN%s)%sew!%s",yel, nrm, grn, nrm, yel, nrm);
+    write_to_output(d, "%sNo messages defined, create%s (%sN%s)%sew!%s\r\n",yel, nrm, grn, nrm, yel, nrm);
   } else {
     write_to_output(d, "%s\r\n", buf);
   }
@@ -1777,9 +1894,9 @@ static void abeditDisplayMainMenu(struct descriptor_data *d) {
 
   write_to_output(d, "%sA%s) Affects Menu\r\n", grn, nrm);
   write_to_output(d, "%sM%s) Messages Menu\r\n", grn, nrm);
-  write_to_output(d, "%sX%s) Type Specific Menu\r\n", grn, nrm);
+  write_to_output(d, "%sV%s) Other Values\r\n", grn, nrm);
+  write_to_output(d, "%sS%s) Type Specific Menu\r\n", grn, nrm);
   write_to_output(d, "%s?%s) Help\r\n", grn, nrm);
-
 
   write_to_output(d, "%sQ%s) Quit\r\nEnter Selection :", grn, nrm);
 
