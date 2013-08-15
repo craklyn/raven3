@@ -41,28 +41,41 @@
 
 #define AB_MSG_TO_CHAR    0
 #define AB_MSG_TO_VICT    1
-#define AB_MSG_TO_ROOM    3
-#define NUM_AB_MSG_TO     4
+#define AB_MSG_TO_ROOM    2
+#define NUM_AB_MSG_TO     3
 
 /* OLC modes */
-#define ABEDIT_MAIN_MENU  0
-#define ABEDIT_NAME       1
-#define ABEDIT_TYPE       2
-#define ABEDIT_MINPOS     3
-#define ABEDIT_COST       4
-#define ABEDIT_COST_MIN   5
-#define ABEDIT_COST_MAX   6
-#define ABEDIT_COST_CHG   7
-#define ABEDIT_COST_EXPR  8
-#define ABEDIT_DAM        9
-#define ABEDIT_DAM_NUM    10
-#define ABEDIT_DAM_SIZE   11
-#define ABEDIT_DAM_DR     12
-#define ABEDIT_DAM_EXPR   13
-#define ABEDIT_FLAGS      14
-#define ABEDIT_ROUTINES   15
-#define ABEDIT_TARGETS    16
-#define ABEDIT_AFF_MENU   17
+#define ABEDIT_MAIN_MENU     0
+#define ABEDIT_NAME          1
+#define ABEDIT_TYPE          2
+#define ABEDIT_MINPOS        3
+#define ABEDIT_COST          4
+#define ABEDIT_COST_MIN      5
+#define ABEDIT_COST_MAX      6
+#define ABEDIT_COST_CHG      7
+#define ABEDIT_COST_EXPR     8
+#define ABEDIT_DAM           9
+#define ABEDIT_DAM_NUM      10
+#define ABEDIT_DAM_SIZE     11
+#define ABEDIT_DAM_DR       12
+#define ABEDIT_DAM_EXPR     13
+#define ABEDIT_FLAGS        14
+#define ABEDIT_ROUTINES     15
+#define ABEDIT_TARGETS      16
+#define ABEDIT_LEVELS       17
+#define ABEDIT_AFF_MENU     18
+#define ABEDIT_AFF_APPLY    19
+#define ABEDIT_AFF_MOD      20
+#define ABEDIT_AFF_DUR      21
+#define ABEDIT_AFF_DUR_EXPR 22
+#define ABEDIT_AFF_DUR_VAL  23
+#define ABEDIT_AFF_DELETE   24
+#define ABEDIT_MESSAGE      25
+#define ABEDIT_MESSAGE_NEW  26
+#define ABEDIT_MESSAGE_DEL  27
+
+
+
 
 
 ACMD(do_abedit);

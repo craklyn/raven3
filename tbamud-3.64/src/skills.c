@@ -40,6 +40,7 @@
 struct list_data *abilityList;
 
 static int curr_line;
+static struct affected_type *currAff;
 
 /* local functions declaration */
 static bool equipmentSkillSuccess (struct char_data *ch);
@@ -66,6 +67,10 @@ static void abeditDisplayDamMenu(struct descriptor_data *d);
 static void abeditDisplayFlags(struct descriptor_data *d);
 static void abeditDisplayRoutines(struct descriptor_data *d);
 static void abeditDisplayTargets(struct descriptor_data *d);
+static void abeditDisplayLevels(struct descriptor_data *d);
+static void abeditDisplayAffDurMenu(struct descriptor_data *d);
+static void abeditDisplayAffApplies(struct descriptor_data *d);
+static void abeditDisplayMessageMenu(struct descriptor_data *d);
 
 static ACMD(do_abedit_stat);
 static ACMD(do_abedit_list);
@@ -404,7 +409,9 @@ struct ability_info_type *getAbilityByName(char *name) {
 void abeditParse(struct descriptor_data *d, char *arg) {
   bool quit = FALSE;
   struct ability_info_type *ab = OLC_ABILITY(d);
-  int num = -1;
+  struct affected_type *aff, *prev;
+  int num = -1, cls = -1, i;
+  char val[MAX_INPUT_LENGTH];
 
   if(*arg)
     num = atoi(arg);
@@ -412,14 +419,10 @@ void abeditParse(struct descriptor_data *d, char *arg) {
   switch(OLC_MODE(d)) {
   case ABEDIT_MAIN_MENU: {
     if(!*arg) {
-      write_to_output(d, "Enter a valid option from below : \r\n");
+      abeditDisplayMainMenu(d);
       return;
     } else {
       switch(*arg) {
-      case 'A':
-      case 'a':
-        abeditDisplayAffMenu(d);
-        return;
       case '1':
         write_to_output(d,"Name: \r\n");
         OLC_MODE(d) = ABEDIT_NAME;
@@ -445,9 +448,21 @@ void abeditParse(struct descriptor_data *d, char *arg) {
         else
           write_to_output(d, "Please set the 'Damages' routine first.\r\n");
         break;
+      case 'A':
+      case 'a':
+        abeditDisplayAffMenu(d);
+        return;
       case 'F':
       case 'f':
         abeditDisplayFlags(d);
+        return;
+      case 'L':
+      case 'l':
+        abeditDisplayLevels(d);
+        return;
+      case 'M':
+      case 'm':
+        abeditDisplayMessageMenu(d);
         return;
       case 'R':
       case 'r':
@@ -464,7 +479,7 @@ void abeditParse(struct descriptor_data *d, char *arg) {
         quit = TRUE;
         break;
       default:
-        write_to_output(d, "Enter a valid option :\r\n");
+        abeditDisplayMainMenu(d);
         return;
       }
     }
@@ -472,21 +487,47 @@ void abeditParse(struct descriptor_data *d, char *arg) {
   }
   case ABEDIT_AFF_MENU: {
     if(!*arg) {
-      write_to_output(d, "Enter a valid option from below : \r\n");
       abeditDisplayAffMenu(d);
-      return;
     } else {
       switch(*arg) {
+      case 'D':
+      case 'd':
+        abeditDisplayAffDurMenu(d);
+        break;
+      case 'N':
+      case 'n':
+        abeditDisplayAffApplies(d);
+        break;
       case 'Q':
       case 'q':
         abeditDisplayMainMenu(d);
-        return;
-      }
+        break;
+      case 'X':
+      case 'x':
+        if(ab->affects != NULL) {
+          write_to_output(d, "Enter affect number :\r\n");
+          OLC_MODE(d) = ABEDIT_AFF_DELETE;
+        } else {
+          abeditDisplayAffMenu(d);
+        }
+        break;
       default:
-        write_to_output(d, "Enter a valid option : \r\n");
-        return;
+        if(is_number(arg) && ((num = atoi(arg)) > 0)) {
+          for(aff = ab->affects, i = 1; aff != NULL && i != num; aff = aff->next, i++);
+
+          if(aff != NULL) {
+            currAff = aff;
+            abeditDisplayAffApplies(d);
+          } else {
+            write_to_output(d, "That affect doest not exist!!!\r\n");
+            abeditDisplayAffMenu(d);
+          }
+        } else {
+          abeditDisplayAffMenu(d);
+        }
+      }
     }
-    break;
+    return;
   }
   case ABEDIT_NAME:
     if(*arg) {
@@ -515,7 +556,7 @@ void abeditParse(struct descriptor_data *d, char *arg) {
     switch(*arg){
     case '1':
       write_to_output(d, "(%s?%s) For help on variables\r\n", grn, nrm);
-      write_to_output(d, "Cost Expression(enter to clear) :\r\n");
+      write_to_output(d, "Cost Expression (blank to clear) :\r\n");
       OLC_MODE(d) = ABEDIT_COST_EXPR;
       break;
     case '2':
@@ -557,20 +598,26 @@ void abeditParse(struct descriptor_data *d, char *arg) {
       return;
     case ABEDIT_COST_EXPR:
       if(*arg) {
-        ab->costFormula = strdup(arg);
+        if(*arg == '?') {
+          write_to_output(d, "To be implemented soon...\r\n");
+          write_to_output(d, "Cost Expression (blank to clear) :\r\n");
+        } else {
+          ab->costFormula = strdup(arg);
+          abeditDisplayCostMenu(d);
+        }
       } else {
         ab->costFormula = NULL;
         ab->minCost = 0;
         ab->maxCost = 0;
         ab->costChange = 0;
+        abeditDisplayCostMenu(d);
       }
-      abeditDisplayCostMenu(d);
       return;
     case ABEDIT_DAM:
       switch(*arg){
       case '1':
         write_to_output(d, "(%s?%s) For help on variables\r\n", grn, nrm);
-        write_to_output(d, "Damage Expression(enter to clear) :\r\n");
+        write_to_output(d, "Damage Expression (blank to clear) :\r\n");
         OLC_MODE(d) = ABEDIT_DAM_EXPR;
         break;
       case '2':
@@ -614,14 +661,20 @@ void abeditParse(struct descriptor_data *d, char *arg) {
       return;
     case ABEDIT_DAM_EXPR:
       if(*arg) {
-        ab->damDiceFormula = strdup(arg);
+        if(*arg == '?') {
+          write_to_output(d, "To be implemented soon...\r\n");
+          write_to_output(d, "Damage Expression (blank to clear) :\r\n");
+        } else {
+          ab->damDiceFormula = strdup(arg);
+          abeditDisplayMainMenu(d);
+        }
       } else {
         ab->damDiceFormula = NULL;
+        ab->damDice->numDice = 0;
+        ab->damDice->diceSize = 0;
+        ab->damDice->damRoll = 0;
+        abeditDisplayMainMenu(d);
       }
-      ab->damDice->numDice = 0;
-      ab->damDice->diceSize = 0;
-      ab->damDice->damRoll = 0;
-      abeditDisplayMainMenu(d);
       return;
     case ABEDIT_FLAGS:
       if(num  == 0) {
@@ -655,6 +708,171 @@ void abeditParse(struct descriptor_data *d, char *arg) {
         write_to_output(d, "Please select from the flags below :\r\n");
         abeditDisplayTargets(d);
       }
+      return;
+    case ABEDIT_LEVELS:
+      if(*arg) {
+        if(LOWER(*arg) == 'q') {
+          abeditDisplayMainMenu(d);
+        } else if((sscanf(arg,"%s %d", val, &num)) == 2) {
+          cls = getIndexOf(val, class_abbrevs);
+          if((cls >= 0 && cls < NUM_CLASSES) && (num > 0 && num <= LVL_IMMORT)) {
+            ab->minLevels[cls] = num;
+            abeditDisplayMainMenu(d);
+          } else {
+            write_to_output(d, "Invalid class or level!\r\n");
+            write_to_output(d, "Enter class and level (e.g. wa 1) or Q to quit :\r\n");
+          }
+        } else {
+          write_to_output(d, "Enter class and level (e.g. wa 1) or Q to quit :\r\n");
+        }
+      } else {
+        write_to_output(d, "Enter class and level (e.g. wa 1) or Q to quit :\r\n");
+        abeditDisplayLevels(d);
+      }
+      return;
+    case ABEDIT_AFF_DUR:
+      if(*arg) {
+        switch(*arg){
+        case '1':
+          write_to_output(d, "(%s?%s) For help on variables\r\n", grn, nrm);
+          write_to_output(d, "Duration Expression (blank to clear) :\r\n");
+          OLC_MODE(d) = ABEDIT_AFF_DUR_EXPR;
+          break;
+        case '2':
+          write_to_output(d, "Duration (1 - 999) :\r\n");
+          OLC_MODE(d) = ABEDIT_AFF_DUR_VAL;
+          break;
+        case 'Q':
+        case 'q':
+          abeditDisplayAffMenu(d);
+          break;
+        default:
+          abeditDisplayAffDurMenu(d);
+          break;
+        }
+      } else {
+        abeditDisplayAffDurMenu(d);
+      }
+      return;
+
+    case ABEDIT_AFF_DUR_EXPR:
+      if(*arg) {
+        if(*arg == '?') {
+          write_to_output(d, "To be implemented soon....\r\n");
+          write_to_output(d, "Duration Expression (blank to clear) :\r\n");
+        } else {
+          ab->affDurationFormula = strdup(arg);
+          abeditDisplayAffDurMenu(d);
+        }
+      } else {
+        ab->affDurationFormula = NULL;
+        ab->affDuration = 0;
+        abeditDisplayAffDurMenu(d);
+      }
+      return;
+    case ABEDIT_AFF_DUR_VAL:
+      if(num > 0 && num <= 999) {
+        ab->affDuration = num;
+        abeditDisplayAffDurMenu(d);
+      } else {
+        write_to_output(d, "Invalid duration!\r\nDuration (1 - 999) :\r\n");
+      }
+      return;
+    case ABEDIT_AFF_APPLY:
+      if(num == 0) {
+        abeditDisplayAffMenu(d);
+      } else if((num = get_flag_by_number(num, NUM_APPLIES, NUM_ILLEGAL_APPLIES, illegal_applies)) != -1) {
+        //create the new aff here to avoid memory leaks if the the user enters
+        //0 and cancels the new affect
+        if(currAff == NULL) {
+          CREATE(currAff, struct affected_type, 1);
+          currAff->next = NULL;
+        }
+        currAff->location = num;
+
+        write_to_output(d, "Modifier (-999 - 999) :\r\n");
+        OLC_MODE(d) = ABEDIT_AFF_MOD;
+      } else {
+        write_to_output(d, "Invalid location!\r\n");
+        abeditDisplayAffApplies(d);
+      }
+      return;
+    case ABEDIT_AFF_MOD:
+      if(num >= -999 && num <= 999) {
+        currAff->modifier = num;
+        if(ab->affects == NULL) {
+          // this is the first affect
+          ab->affects = currAff;
+          ab->affects->next = NULL;
+        } else {
+          //find first if it's already in the list
+          // add end of affect list if new
+          for(aff = ab->affects; aff->next != NULL || aff != currAff; aff = aff->next);
+          // this is indeed a new affect
+          if(aff != currAff) {
+            aff->next = currAff;
+          }
+        }
+        currAff = NULL;
+        abeditDisplayAffMenu(d);
+      } else {
+        write_to_output(d, "Invalid modifier!\r\nModifier (-999 - 999) :\r\n");
+      }
+      return;
+    case ABEDIT_AFF_DELETE:
+      if(num > 0) {
+        //find the aff we want to delete
+        for(aff = ab->affects, i = 1; aff != NULL && i != num; aff = aff->next, i++);
+
+        //found it
+        if(aff != NULL) {
+
+          if(ab->affects == aff) {
+            // it's the first affect
+            ab->affects = aff->next;
+            aff = NULL;
+            free(aff);
+          } else {
+            //find the affect before aff
+            for(prev = ab->affects; prev != NULL && prev->next != aff; prev = prev->next);
+
+            prev->next = aff->next;
+            aff = NULL;
+            free(aff);
+          }
+          abeditDisplayAffMenu(d);
+
+        } else {
+          // it doesn't exist
+          write_to_output(d, "That affect does not exist!!!\r\n");
+          abeditDisplayAffMenu(d);
+        }
+      } else {
+        write_to_output(d, "Maybe you should start with 1???\r\n");
+        abeditDisplayAffMenu(d);
+      }
+      return;
+    case ABEDIT_MESSAGE:
+      if(*arg) {
+        switch(*arg) {
+        case 'Q':
+        case 'q':
+          abeditDisplayMainMenu(d);
+          return;
+        case 'X':
+        case 'x':
+          return;
+        default:
+          abeditDisplayMainMenu(d);
+          return;
+        }
+      } else {
+        abeditDisplayMessageMenu(d);
+        return;
+      }
+      return;
+    default:
+      abeditDisplayMainMenu(d);
       return;
   }
 
@@ -1301,6 +1519,94 @@ ASPELL(spell_none) {
 }
 
 /********************** OLC local functions ***********************************/
+static void abeditDisplayMessageMenu(struct descriptor_data *d) {
+  struct ability_info_type *ab = OLC_ABILITY(d);
+  char buf[MAX_STRING_LENGTH], *msg = '\0';
+  bool hasMessage = FALSE;
+  int i, j, len = 0;
+
+  get_char_colors(d->character);
+  for(i = 0; i < NUM_AB_MSGS; i++) {
+    if(ab->messages[i] != NULL) {
+      hasMessage = TRUE;
+
+      len += sprintf(buf + len, "%s%d%s) %s%-10s Messages%s:\r\n",
+          grn, (i+1), nrm, cyn, ability_message_type[i], nrm);
+      for(j = 0; j < NUM_AB_MSG_TO; j++) {
+        len += sprintf(buf + len, "     %s%6s%s: ",
+            grn, ability_message_to[j], nrm);
+
+        if(j == AB_MSG_TO_CHAR) {
+          msg = ab->messages[i]->attacker_msg;
+          len += sprintf(buf + len, "%s%s%s\r\n", yel, msg == NULL ? "None." : msg, nrm);
+        } else if(j == AB_MSG_TO_VICT) {
+          msg = ab->messages[i]->victim_msg;
+          len += sprintf(buf + len, "%s%s%s\r\n", yel, msg == NULL ? "None." : msg, nrm);
+        } else if(j == AB_MSG_TO_ROOM) {
+          msg = ab->messages[i]->room_msg;
+          len += sprintf(buf + len, "%s%s%s\r\n", yel, msg == NULL ? "None." : msg, nrm);
+        }
+      }
+    }
+  }
+
+  if(!hasMessage) {
+    write_to_output(d, "%sNo messages defined, create%s (%sN%s)%sew!%s",yel, nrm, grn, nrm, yel, nrm);
+  } else {
+    write_to_output(d, "%s\r\n", buf);
+  }
+  write_to_output(d, "(%sN%s) New Message\r\n", grn, nrm);
+  write_to_output(d, "(%sX%s) Delete\r\n", grn, nrm);
+  write_to_output(d, "(%sQ%s) Return to Main Menu\r\n", grn, nrm);
+  write_to_output(d, "Enter options or number to edit :\r\n");
+  OLC_MODE(d) = ABEDIT_MESSAGE;
+}
+
+static void abeditDisplayAffApplies(struct descriptor_data *d) {
+  int i, count = 0;
+  const char *allowed_applies[NUM_APPLIES];
+
+  clear_screen(d);
+
+  for (i = 0; i < NUM_APPLIES; i++) {
+    if (is_illegal_flag(i, NUM_ILLEGAL_APPLIES, illegal_applies)) continue;
+    allowed_applies[count++] = strdup(apply_types[i]);
+  }
+  column_list(d->character, 4, allowed_applies, count, TRUE);
+  write_to_output(d, "Enter apply location (0 no apply) :\r\n");
+  OLC_MODE(d) = ABEDIT_AFF_APPLY;
+}
+
+static void abeditDisplayAffDurMenu(struct descriptor_data *d) {
+  clear_screen(d);
+  write_to_output(d,"%sNOTE: 'Duration Expression' will always be used if it has a value. If the\r\n", cyn);
+  write_to_output(d,"expression is un-parsable it will have a value of 1.%s\r\n", nrm);
+  write_to_output(d, "%s1%s) Duration Expression\r\n", grn, nrm);
+  write_to_output(d, "%s2%s) Standard Duration Value\r\n", grn, nrm);
+  write_to_output(d, "%sQ%s) Return To Affects Menu\r\n", grn, nrm);
+  write_to_output(d, "Enter Option :\r\n");
+  OLC_MODE(d) = ABEDIT_AFF_DUR;
+}
+
+static void abeditDisplayLevels(struct descriptor_data *d) {
+  char buf[MAX_STRING_LENGTH];
+  int i, len = 0;
+  struct ability_info_type *ab = OLC_ABILITY(d);
+
+  for(i = 0; i < NUM_CLASSES; i++) {
+    len += sprintf(buf + len, "%s%2d%s) %s%2s%s - %s%-3d%s ",
+        grn, (i + 1), nrm,
+        yel, class_abbrevs[i], nrm,
+        cyn, ab->minLevels[i], nrm);
+    if(!((i+1) % 3))
+      len += sprintf(buf + len, "\r\n");
+  }
+  write_to_output(d, "%s\r\n", buf);
+  write_to_output(d, "%sQ%s) Return to Main Menu\r\n", grn, nrm);
+  write_to_output(d, "Enter Option (class level) :\r\n");
+  OLC_MODE(d) = ABEDIT_LEVELS;
+}
+
 static void abeditDisplayTargets(struct descriptor_data *d) {
   char buf[MAX_STRING_LENGTH];
   struct ability_info_type *ab = OLC_ABILITY(d);
@@ -1390,10 +1696,11 @@ static void abeditDisplayAffMenu(struct descriptor_data *d) {
     write_to_output(d, "%sNo affects defined, create (%sN%s)ew!.%s\r\n", yel, grn, yel, nrm);
   }
   write_to_output(d, "%sN%s) New affect\r\n", grn, nrm);
-  write_to_output(d, "%sX%s) Delete affect\r\n", grn, nrm);
+  if(ab->affects != NULL)
+    write_to_output(d, "%sX%s) Delete affect\r\n", grn, nrm);
   write_to_output(d, "%s?%s) Help\r\n", grn, nrm);
-  write_to_output(d, "%sQ%s) Leave affects menu\r\n", grn, nrm);
-  write_to_output(d, "Enter selection :\r\n");
+  write_to_output(d, "%sQ%s) Return to Main Menu\r\n", grn, nrm);
+  write_to_output(d, "Enter Selection or the affect number to edit :\r\n");
 
   OLC_MODE(d) = ABEDIT_AFF_MENU;
 }
@@ -1429,12 +1736,19 @@ static void abeditDisplayMainMenu(struct descriptor_data *d) {
   if(IS_SET(ab->routines, MAG_DAMAGE)) {
 
     if(ab->damDiceFormula == NULL) {
-      sprintf(buf, "%s%dd%d+%d%s  %s%10s%s[%s%-3d%s]",
-          yel, ab->damDice->diceSize, ab->damDice->numDice, ab->damDice->damRoll, nrm,
-          grn, "Avg", nrm,
-          cyn,
-          ((((ab->damDice->diceSize + 1) / 2) * ab->damDice->numDice + ab->damDice->damRoll)),
-          nrm);
+      if(ab->damDice != NULL) {
+        sprintf(buf, "%s%dd%d+%d%s  %s%10s%s[%s%-3d%s]",
+            yel, ab->damDice->diceSize, ab->damDice->numDice, ab->damDice->damRoll, nrm,
+            grn, "Avg", nrm,
+            cyn,
+            ((((ab->damDice->diceSize + 1) / 2) * ab->damDice->numDice + ab->damDice->damRoll)),
+            nrm);
+      } else {
+        sprintf(buf, "%s%dd%d+%d%s  %s%10s%s[%s%-3d%s]",
+            yel, 0, 0, 0, nrm,
+            grn, "Avg", nrm,
+            cyn,0, nrm);
+      }
     } else {
       sprintf(buf, "%s%-5s%s [%s%-15s%s]",
           grn,"Expr", nrm, cyn, ab->damDiceFormula, nrm);
