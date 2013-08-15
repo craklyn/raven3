@@ -61,7 +61,6 @@
 /* this is one mud year.. */
 #define MAX_OBJ_TIMER       1071000
 
-
 /* this defines how much memory is alloacted for 'bit strings' when saving in
  * OLC. Remember to change it if you go for longer bitvectors. */
 #define BIT_STRING_LENGTH 33
@@ -203,6 +202,8 @@ extern const char *nrm, *grn, *cyn, *yel;
 #define OEDIT_PERM			26
 #define OEDIT_DELETE                    27
 #define OEDIT_COPY                      28
+
+#define NUM_ILLEGAL_APPLIES 5
 
 /* Submodes of REDIT connectedness. */
 #define REDIT_MAIN_MENU 		1
@@ -397,6 +398,9 @@ extern const char *nrm, *grn, *cyn, *yel;
 #define HEDIT_MIN_LEVEL                 6
 
 int  save_config( IDXTYPE nowhere );
+
+/* illegal apply loctions table */
+extern const int illegal_applies[NUM_ILLEGAL_APPLIES];
 
 /* Prototypes to keep. */
 void clear_screen(struct descriptor_data *);
