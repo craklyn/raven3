@@ -147,6 +147,7 @@ Violent   : Yes
 Routines  : Manual 
 Targets   : CharInRoom NotSelf 
 Flags     : NOBITS 
+Manual    : spell_charm
 Cost      : 50 75 2
 Message   : WearOff ToChar You feel more self-confident.
 Level     : Mu 16
@@ -287,6 +288,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : ObjInInv ObjEquiped 
 Flags     : NOBITS 
+Manual    : spell_create_water
 Cost      : 5 30 4
 Level     : Mu 61
 Level     : Cl 2
@@ -498,6 +500,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : CharInRoom ObjInInv ObjInRoom 
 Flags     : NOBITS 
+Manual    : spell_detect_poison
 Cost      : 5 15 1
 Message   : WearOff ToChar The detect poison wears off.
 Level     : Mu 10
@@ -591,6 +594,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : ObjInInv 
 Flags     : NOBITS 
+Manual    : spell_enchant_weapon
 Cost      : 100 150 10
 Level     : Mu 26
 Level     : Cl 61
@@ -847,6 +851,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : ObjInWorld 
 Flags     : NOBITS 
+Manual    : spell_locate_object
 Cost      : 20 25 1
 Level     : Mu 6
 Level     : Cl 61
@@ -1106,6 +1111,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : CharInWorld NotSelf 
 Flags     : NOBITS 
+Manual    : spell_summon
 Cost      : 50 75 3
 Level     : Mu 61
 Level     : Cl 10
@@ -1129,6 +1135,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : CharInRoom 
 Flags     : NOBITS 
+Manual    : spell_teleport
 Cost      : 50 75 3
 Level     : Mu 61
 Level     : Cl 61
@@ -1176,6 +1183,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : CharInRoom 
 Flags     : NOBITS 
+Manual    : spell_recall
 Cost      : 10 20 2
 Level     : Mu 61
 Level     : Cl 12
@@ -1199,6 +1207,7 @@ Violent   : No
 Routines  : Manual 
 Targets   : CharInRoom ObjInInv ObjInRoom 
 Flags     : NOBITS 
+Manual    : spell_identify
 Cost      : 25 50 5
 Level     : Mu 20
 Level     : Cl 11
@@ -1242,9 +1251,10 @@ Number    : 131
 Name      : backstab
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_backstab
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1265,9 +1275,10 @@ Number    : 132
 Name      : bash
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_bash
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1288,9 +1299,10 @@ Number    : 133
 Name      : hide
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_hide
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1311,9 +1323,10 @@ Number    : 134
 Name      : kick
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_kick
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1334,9 +1347,10 @@ Number    : 135
 Name      : pick lock
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_gen_door
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1357,9 +1371,10 @@ Number    : 137
 Name      : rescue
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_rescue
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1380,9 +1395,10 @@ Number    : 138
 Name      : sneak
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_sneak
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1403,9 +1419,10 @@ Number    : 139
 Name      : steal
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_steal
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1426,9 +1443,10 @@ Number    : 140
 Name      : track
 MinPos    : Dead
 Violent   : No
-Routines  : NOBITS 
+Routines  : Manual 
 Targets   : NOBITS 
 Flags     : NOBITS 
+Manual    : do_track
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1447,11 +1465,12 @@ End
 Skill
 Number    : 136
 Name      : whirlwind
-MinPos    : Dead
-Violent   : No
-Routines  : NOBITS 
-Targets   : NOBITS 
+MinPos    : Standing
+Violent   : Yes
+Routines  : Damages Manual 
+Targets   : Ignore 
 Flags     : NOBITS 
+Manual    : do_whirlwind
 Cost      : 0 0 0
 Level     : Mu 61
 Level     : Cl 61
@@ -1520,27 +1539,26 @@ MinPos    : Standing
 Violent   : No
 Routines  : Affects Groups 
 Targets   : CharInRoom 
-Flags     : AccumDuration CostsVigor 
+Flags     : NOBITS 
 Cost      : 20 40 2
 CostExpr  : (s * c) + l
 DamDice   : 6 8 10
 DamExpr   : a + b + c
 Message   : Success ToVict You are surrounded by a shimmering globe.
 Message   : WearOff ToChar Your protective shield dissolves.
-Affects   : HITROLL 3
 Affects   : ARMOR -20
 AffDurtn  : F s * l
-Level     : Mu 61
+Level     : Mu 25
 Level     : Cl 61
 Level     : Th 61
 Level     : Wa 61
-Level     : Ra 61
+Level     : Ra 25
 Level     : As 61
 Level     : Sl 61
 Level     : Kn 61
 Level     : De 61
 Level     : Sd 61
-Level     : Nm 61
+Level     : Nm 25
 Level     : Dr 61
 End
 
