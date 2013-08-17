@@ -413,7 +413,6 @@ ACMD(do_gen_comm)
   };
 
   int hist_type[] = {
-    HIST_HOLLER,
     HIST_SHOUT,
     HIST_AUCTION,
     HIST_GRATS,
@@ -425,11 +424,6 @@ ACMD(do_gen_comm)
    *           [2] message if you're not on the channel
    *           [3] a color string. */
   const char *com_msgs[][4] = {
-    {"You cannot holler!!\r\n",
-      "holler",
-      "",
-      KYEL},
-
     {"You cannot shout!!\r\n",
       "shout",
       "Turn off your noshout flag first!\r\n",
@@ -479,13 +473,6 @@ ACMD(do_gen_comm)
   if (!*argument) {
     send_to_char(ch, "Yes, %s, fine, %s we must, but WHAT???\r\n", com_msgs[subcmd][1], com_msgs[subcmd][1]);
     return;
-  }
-  if (subcmd == SCMD_HOLLER) {
-    if (GET_MOVE(ch) < CONFIG_HOLLER_MOVE_COST) {
-      send_to_char(ch, "You're too exhausted to holler.\r\n");
-      return;
-    } else
-      GET_MOVE(ch) -= CONFIG_HOLLER_MOVE_COST;
   }
   /* Set up the color on code. */
   strlcpy(color_on, com_msgs[subcmd][3], sizeof(color_on));

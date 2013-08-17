@@ -19,7 +19,6 @@ extern int pk_allowed;
 extern int script_players;
 extern int pt_allowed;
 extern int level_can_shout;
-extern int holler_move_cost;
 extern int tunnel_size;
 extern int max_exp_gain;
 extern int max_exp_loss;

@@ -351,7 +351,6 @@ extern const char *nrm, *grn, *cyn, *yel;
 /* Numerical responses. */
 #define CEDIT_NUMERICAL_RESPONSE	20
 #define CEDIT_LEVEL_CAN_SHOUT		21
-#define CEDIT_HOLLER_MOVE_COST		22
 #define CEDIT_TUNNEL_SIZE		23
 #define CEDIT_MAX_EXP_GAIN		24
 #define CEDIT_MAX_EXP_LOSS		25

@@ -1006,8 +1006,6 @@ do                                                              \
 #define CONFIG_PT_ALLOWED       config_info.play.pt_allowed
 /** What level to use the shout command? */
 #define CONFIG_LEVEL_CAN_SHOUT  config_info.play.level_can_shout
-/** How many move points does holler cost? */
-#define CONFIG_HOLLER_MOVE_COST config_info.play.holler_move_cost
 /** How many characters can fit in a room marked as tunnel? */
 #define CONFIG_TUNNEL_SIZE      config_info.play.tunnel_size
 /** What is the max experience that can be gained at once? */
