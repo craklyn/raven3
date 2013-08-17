@@ -523,8 +523,9 @@
 #define CON_PREFEDIT     30 /**< OLC mode - preference edit */
 #define CON_IBTEDIT      31 /**< OLC mode - idea/bug/typo edit */
 #define CON_MSGEDIT      32 /**< OLC mode - message editor */
-#define CON_GET_PROTOCOL 33 /**< Used at log-in while attempting to get protocols > */
-#define CON_QBREATH		 34 /**< Choose a breath for Draconians */
+#define CON_ABEDIT       33 /**< OLC mode - ability edditor */
+#define CON_GET_PROTOCOL 34 /**< Used at log-in while attempting to get protocols > */
+#define CON_QBREATH      35 /**< Choose a breath for Draconians */
 
 /* OLC States range - used by IS_IN_OLC and IS_PLAYING */
 #define FIRST_OLC_STATE CON_OEDIT     /**< The first CON_ state that is an OLC */

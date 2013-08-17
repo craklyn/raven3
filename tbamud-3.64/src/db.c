@@ -41,6 +41,7 @@
 #include "msgedit.h"
 #include "class.h"
 #include "race.h"
+#include "skills.h"
 #include <sys/stat.h>
 
 /*  declarations of most of the 'global' variables */
@@ -691,6 +692,9 @@ void boot_db(void)
 
   log("Loading spell definitions.");
   mag_assign_spells();
+
+  log("Loading abilities definitions.");
+  loadAbilities();
 
   boot_world();
 

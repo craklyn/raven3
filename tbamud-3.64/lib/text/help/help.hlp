@@ -296,6 +296,17 @@ to list all forms. i. e. the keyword rumble could be used to cover anyone who
 types <action> rumble rumbl rumb rum ru.
 
 #31
+ABEDIT ABILITY-EDIT
+
+Syntax: ABEDIT <option/ability number or name>
+Options:
+ save                       - save all abilities to file
+ stat <ability number/name> - display the ability information
+ list                       - list all abilities and their basic information
+ new                        - create a new ability
+
+See Also: ABEDIT-MENU
+#61
 AC-CONFIDENCE ARMOR-CLASS ARMOUR-CLASS AC-APPLY 
 
    Your Armor Class (often called AC) is an expression for how good your armor
@@ -1201,36 +1212,6 @@ NOTE: Buildwalk does not autosave on exit. You must type SAVEALL. This way if
  
 See also: TOGGLE, SAVEALL, REDIT, OLC, RLIST, DIG
 #31
-BULLETINS BOARDS BULLETIN-BOARDS MESSAGE-BOARDS POSTING
-
-Bulletin boards are the forum of inter-player communication on the MUD.
-There are different bulletin boards for different purposes -- for example,
-a standard mortal board, a board for immortals, a board for fun "social"
-messages, etc.  Naturally, not all players may be allowed to read all
-types of boards.
-
-Type "LOOK BOARD" to see the messages already posted on a board.  Type
-"WRITE <subject>" to post a message to a board; terminate a message with
-a '/s' as the first characters on a line.  Type "READ <number>" to read a
-post.  Type "REMOVE <number>" to remove your own messages.
-
-Examples:
-  > look at board
-  > write Crash Bug I found!
-  [writes the message; terminates with '/s']
-  > look at board
-  > read 6
-  > remove 6
-
-Boards are just a normal object with a special procedure attached in the
-MUD's code. Ask your friendly implementor if you need to make one.
-
-@uRoom - Board@n 
-1204 - Immortal Board
-1290 - Social Board
-
-See also: MAIL, READ, WRITE, SPECIALS
-#31
 BULLETINS BOARDS BULLETIN-BOARDS MESSAGE-BOARDS
 
 Bulletin boards are the forum of inter-player communication on the MUD.
@@ -1261,6 +1242,36 @@ MUD's code. Ask your friendly implementor if you need to make one.
 
 See also: MAIL, READ, WRITE
 #0
+BULLETINS BOARDS BULLETIN-BOARDS MESSAGE-BOARDS POSTING
+
+Bulletin boards are the forum of inter-player communication on the MUD.
+There are different bulletin boards for different purposes -- for example,
+a standard mortal board, a board for immortals, a board for fun "social"
+messages, etc.  Naturally, not all players may be allowed to read all
+types of boards.
+
+Type "LOOK BOARD" to see the messages already posted on a board.  Type
+"WRITE <subject>" to post a message to a board; terminate a message with
+a '/s' as the first characters on a line.  Type "READ <number>" to read a
+post.  Type "REMOVE <number>" to remove your own messages.
+
+Examples:
+  > look at board
+  > write Crash Bug I found!
+  [writes the message; terminates with '/s']
+  > look at board
+  > read 6
+  > remove 6
+
+Boards are just a normal object with a special procedure attached in the
+MUD's code. Ask your friendly implementor if you need to make one.
+
+@uRoom - Board@n 
+1204 - Immortal Board
+1290 - Social Board
+
+See also: MAIL, READ, WRITE, SPECIALS
+#31
 BURNING-HANDS
 
 Usage       : cast 'burning hands' <victim>
@@ -1613,6 +1624,7 @@ unlimited containers
 See Also: NEWS, CHANGELOG
 #0
 CHAR-VARS TRIGEDIT-VARIABLES-CHARACTERS %TITLE% %ACTOR.TITLE% CHAR-VARIABLES TRIGEDIT-CHAR-VAR %ACTOR.ID% ACTOR.ID ACTOR.VNUM %ACTOR.VNUM% %ACTOR.NAME% %ACTOR% %VICTIM% SELF %SELF% MOBVARS MOB-VARS TRIGEDIT-LEVEL %SELF.ID% SELF.ID NEXT_IN_ROOM ACTOR-VAR 
+
 
 The following fields can be used with %actor%. i.e. %actor.<field>%
 Excluding the subfield () returns the value. Adding a subfield adjusts it.
@@ -2027,8 +2039,7 @@ This spell will change the "course" of the current weather.
 Example:
 
   > cast 'control wea' worse
-See also: %WEATHER%, WEATHER
-#31
+#0
 CONTROL-WEATHER
 
 Usage       : cast 'control weather' <'better' | 'worse'>
@@ -2039,7 +2050,8 @@ This spell will change the "course" of the current weather.
 Example:
 
   > cast 'control wea' worse
-#0
+See also: %WEATHER%, WEATHER
+#31
 CONTROL-WEATHER
 
 Usage       : cast 'control weather' <'better' | 'worse'>
@@ -5369,6 +5381,69 @@ RECALL                          - Recall to / set / reset your recall base.
 SLEEP WAKE REST SIT STAND       - Change your position (or others').
 LOCK UNLOCK OPEN CLOSE PICK     - Doors and containers.
 #0
+MSGEDIT MESSAGE-EDITOR
+
+The Message Editor (BETA):
+  tbaMUD 3.64
+WARNING: THE NEW MESSAGE EDITOR WILL ALTER THE EXISTING MESSAGE FILE BY CONVERTING
+IT TO A MORE EASILY MACHINE READABLE FORMAT WHEN A MESSAGE IS SUCCESSFULLY EDITED.
+The Message Editor is an OLC style editor for modifying the in-game combat messages.
+Simply typing "msgedit" will bring up a list of all active in-game combat messages,
+along with the skill they are associated with, number of entries, and a name (if
+one exists.)
+========================================
+Message List: 
+0 ) [5  ] 1, burning hands        30) [314] 2, Unknown           
+1 ) [6  ] 1, call lightning       31) [399] 2, Unknown           
+2 ) [8  ] 1, chill touch          32) [33 ] 1, poison            
+3 ) [10 ] 1, color spray          33) [202] 1, !UNUSED!          
+4 ) [22 ] 1, dispel evil          34) [203] 1, !UNUSED!          
+5 ) [23 ] 1, earthquake           35) [204] 1, !UNUSED!          
+6 ) [25 ] 1, energy drain         36) [205] 1, !UNUSED!          
+7 ) [26 ] 1, fireball             37) [206] 1, !UNUSED!      
+=========================================
+MSG #, SKILL NUMBER, NUMBER OF ENTRIES, NAME (if applicable)
+0 )    [5  ]         1,                 burning hands
+To edit a message, use the command "msgedit" along with the entry # of the message
+you would like to edit. To edit the "burning hands" entry, the correct command would
+be:
+  > msgedit 0
+==========================================
+Msg Edit: [0x1] [$n: Attacker | $N: Victim]
+1) Action Type: 5 [burning hands]
+   Death Messages:
+A) CHAR :  You have burned $N to death!
+B) VICT :  You have been burned to death by $n!
+C) ROOM :  $n has burned $N to death!
+   Miss Messages:
+D) CHAR :  You miss $N with your burning hands.
+E) VICT :  $n reaches for you with burning hands, but misses!
+F) ROOM :  $n tries to burn $N, but $E escapes!
+   Hit Messages:
+G) CHAR :  You burn $N with your hot little hands!
+H) VICT :  You cry out in pain as $n grabs you with burning hands!
+I) ROOM :  $N cries out as $n burns $M!
+   God Messages:
+J) CHAR :  Your attempt to burn $N nears BLASPHEMY!!!
+K) VICT :  The pitiful creature before you tries to burn you.
+L) ROOM :  Unaware of the risks, $n tries to burn $N.
+N) New Q) Quit
+============================================
+To edit a message, simply enter the applicable letter for the line to which you'd
+like to edit, and an entry prompt will emerge along with an example of use.
+To edit the A), "char death message", simply type from the message editor:
+  > a
+============================================
+Enter Selection : a
+Example: You kill $N!
+Enter new string : 
+=============================================
+Developed by Joseph Arnusch (Vatiken) for use in tbaMUD 3.64.
+#0
+MUDCOMMAND %MUDCOMMAND%
+
+See @RHELP TEXT-VAR@n
+#31
 MUDCOMMAND CMD.MUDCOMMAND %CMD.MUDCOMMAND% %MUDCOMMAND% CMD.MUDCOMMAND 
 
    Used to match text to existing commands in the MUD. This will also match
@@ -5378,10 +5453,6 @@ any abbreviations.
 if %cmd.mudcommand% == sit && chair /= %arg% && %arg%
 
 Examples: @RTSTAT 81, 52, 62
-#31
-MUDCOMMAND %MUDCOMMAND%
-
-See @RHELP TEXT-VAR@n
 #31
 MULTIPLAYING MULTIPLAYERS MULTIPLE MULTI-PLAYERS MULTI-PLAYING
 
@@ -8981,28 +9052,6 @@ mob or object vnum.
 
 See also: POSTMASTER, PETSHOPS, BANKS, GUILDMASTER, BOARDS
 #31
-SPELLS
-
- 1) armor                 2) teleport              3) bless                
- 4) blindness             5) burning hands         6) call lightning       
- 7) charm person          8) chill touch           9) clone                
-10) color spray          11) control weather      12) create food          
-13) create water         14) cure blind           15) cure critic          
-16) cure light           17) curse                18) detect alignment     
-19) detect invisibility  20) detect magic         21) detect poison        
-22) dispel evil          23) earthquake           24) enchant weapon       
-25) energy drain         26) fireball             27) harm                 
-28) heal                 29) invisibility         30) lightning bolt       
-31) locate object        32) magic missile        33) poison               
-34) protection from evil 35) remove curse         36) sanctuary            
-37) shocking grasp       38) sleep                39) strength             
-40) summon               41) !UNUSED!             42) word of recall       
-43) remove poison        44) sense life           45) animate dead         
-46) dispel good          47) group armor          48) group heal           
-49) !UNUSED!             50) infravision          51) waterwalk            
-52) identify
-
-#31
 SPELLS MAGICS SPELLBOOKS TOMBS SPELL-LEVELS SPELLS-STOCK SPELLLIST
 
 | Mage               level |   Cleric              level |
@@ -9041,6 +9090,28 @@ SPELLS MAGICS SPELLBOOKS TOMBS SPELL-LEVELS SPELLS-STOCK SPELLLIST
 
 See also: SKILLS
 #0
+SPELLS
+
+ 1) armor                 2) teleport              3) bless                
+ 4) blindness             5) burning hands         6) call lightning       
+ 7) charm person          8) chill touch           9) clone                
+10) color spray          11) control weather      12) create food          
+13) create water         14) cure blind           15) cure critic          
+16) cure light           17) curse                18) detect alignment     
+19) detect invisibility  20) detect magic         21) detect poison        
+22) dispel evil          23) earthquake           24) enchant weapon       
+25) energy drain         26) fireball             27) harm                 
+28) heal                 29) invisibility         30) lightning bolt       
+31) locate object        32) magic missile        33) poison               
+34) protection from evil 35) remove curse         36) sanctuary            
+37) shocking grasp       38) sleep                39) strength             
+40) summon               41) !UNUSED!             42) word of recall       
+43) remove poison        44) sense life           45) animate dead         
+46) dispel good          47) group armor          48) group heal           
+49) !UNUSED!             50) infravision          51) waterwalk            
+52) identify
+
+#31
 SPLITTING
 
 Usage: split <amount to split>
@@ -9807,8 +9878,11 @@ telnet://tbamud.com:9091
 The Builder Acamady (TBA) was created in October of 2000 on the MUD Cruel World. It began with a combination of my own MUDding experience and the work of numerous others from the MUDding community into an extensive tutorial zone, help files, and examples
 
 
+
 TBA now has two main missions. It originally was meant to be a training MUD open to anyone willing to learn or teach how to create your own text-based World. 1,000's of builder's have gone through our training and many MUDs require new builders to comple
+
 e training at TBA before they can apply to their MUD. TBA's other mission is the development of the codebase formerly known as CircleMUD. Due to CircleMUD's stagnation TBA staff decided to release our codebase under the name tbaMUD and we have been updat
+
 ng it tirelessly for over 10 years.
 
 TBA is a low stress, no deadline, training environment where anyone with motivation can work at their own pace to learn as much or as little as they wish. Numerous people are available to answer questions and give advice.
@@ -9816,7 +9890,9 @@ TBA is a low stress, no deadline, training environment where anyone with motivat
 1000's of builders served and counting.
 
 The most challenging aspect of running a MUD is finding good builders. You will hear this from the admin of every MUD that has ever been. In the past it has always been up to each individual MUD to find and usually train their own builders. This works, b
+
 t I think the MUDing community can come up with something better. That is why we created The Builder's Academy. No pressure, no deadline, just come and learn or help teach. Give something back to the community we have all taken so much from. TBA is a MUD
+
 ng community resource, please submit any lessons learned or building tips and tricks so we can improve our codebase and training.
 
 TBA can also be used by other MUDs as a builder's port. Just send us your newbie builders. We will teach them and then you can have them back with the zones they built.
@@ -9855,8 +9931,11 @@ TBA stands for The Builder Academy.
 The Builder Acamady (TBA) was created in October of 2000 on the MUD Cruel World. It began with a combination of my own MUDding experience and the work of numerous others from the MUDding community into an extensive tutorial zone, help files, and examples
 
 
+
 TBA now has two main missions. It originally was meant to be a training MUD open to anyone willing to learn or teach how to create your own text-based World. 1,000's of builder's have gone through our training and many MUDs require new builders to comple
+
 e training at TBA before they can apply to their MUD. TBA's other mission is the development of the codebase formerly known as CircleMUD. Due to CircleMUD's stagnation TBA staff decided to release our codebase under the name tbaMUD and we have been updat
+
 ng it tirelessly for over 10 years.
 
 TBA is a low stress, no deadline, training environment where anyone with motivation can work at their own pace to learn as much or as little as they wish. Numerous people are available to answer questions and give advice.
@@ -9864,7 +9943,9 @@ TBA is a low stress, no deadline, training environment where anyone with motivat
 1000's of builders served and counting.
 
 The most challenging aspect of running a MUD is finding good builders. You will hear this from the admin of every MUD that has ever been. In the past it has always been up to each individual MUD to find and usually train their own builders. This works, b
+
 t I think the MUDing community can come up with something better. That is why we created The Builder's Academy. No pressure, no deadline, just come and learn or help teach. Give something back to the community we have all taken so much from. TBA is a MUD
+
 ng community resource, please submit any lessons learned or building tips and tricks so we can improve our codebase and training.
 
 TBA can also be used by other MUDs as a builder's port. Just send us your newbie builders. We will teach them and then you can have them back with the zones they built.
@@ -10502,9 +10583,9 @@ Done is used to terminate a while or switch block.
 
 Example: @RTSTAT 35, 18, 6, 153, 132@n
 #31
-TRIG.HLP
-#31
 TRIG.HLP END
+#31
+TRIG.HLP
 #31
 TRIGEDIT TRIGS TRIGEDITOR TRIGGEREDIT TRIGGER-EDIT TRIGGERS DG-SCRIPTS TRIG-HELP SCRIPTS MOBPROGS MPROGS PROGS SCRIPTING TRIGMENU
 
@@ -11908,6 +11989,7 @@ Example: @RTSTAT 31@n
 See also: TRIGEDIT-RANDOM
 #31
 TRIGEDIT-VARIABLES-TEXTS TEXT-VAR %ARG% CDR CAR ARG.CDR %ARG.CDR% %CMD.CDR% CMD.CDR ARG.CAR CMD.CAR CAR %ARG.CAR% %CMD.CAR% %TEXT% PUSH CMD %CMD% %CDR% %CAR% %TRIM% TRIGEDIT-TEXT-VAR %STRLEN% CDR STRLEN STRING-LENGTH STRINGLENGTH CONTAINS %CONTAINS% CHAR
+
 T
 
 Text Variable Fields 
@@ -13342,6 +13424,16 @@ lifespan (set in zedit) but can be done manually with this command.
 
 See also: ZPURGE, SHOW ZONES
 #31
+ZUNLOCK ZLOCK
+
+Zone locking and unlocking prevents any OLC from being used in the zone. Only 
+an IMPL or GRGOD can lock/unlock all zones. A builder can lock and unlock their
+own zone if their name is in the zone's builders list. 
+
+zlock - Locks one or all zones. Type zlock for usage. 
+zunlock - Locks one or all zones. Type zunlock for usage. 
+
+#31
 ZUNLOCK
 
 Usage: zunlock <zone number>
@@ -13353,73 +13445,4 @@ The 'list' shows all currently unlocked zones.
 
 See also: ZLOCK
 #31
-ZUNLOCK ZLOCK
-
-Zone locking and unlocking prevents any OLC from being used in the zone. Only 
-an IMPL or GRGOD can lock/unlock all zones. A builder can lock and unlock their
-own zone if their name is in the zone's builders list. 
-
-zlock - Locks one or all zones. Type zlock for usage. 
-zunlock - Locks one or all zones. Type zunlock for usage. 
-
-#31
-MSGEDIT MESSAGE-EDITOR
-
-The Message Editor (BETA):
-  tbaMUD 3.64
-WARNING: THE NEW MESSAGE EDITOR WILL ALTER THE EXISTING MESSAGE FILE BY CONVERTING
-IT TO A MORE EASILY MACHINE READABLE FORMAT WHEN A MESSAGE IS SUCCESSFULLY EDITED.
-The Message Editor is an OLC style editor for modifying the in-game combat messages.
-Simply typing "msgedit" will bring up a list of all active in-game combat messages,
-along with the skill they are associated with, number of entries, and a name (if
-one exists.)
-========================================
-Message List: 
-0 ) [5  ] 1, burning hands        30) [314] 2, Unknown           
-1 ) [6  ] 1, call lightning       31) [399] 2, Unknown           
-2 ) [8  ] 1, chill touch          32) [33 ] 1, poison            
-3 ) [10 ] 1, color spray          33) [202] 1, !UNUSED!          
-4 ) [22 ] 1, dispel evil          34) [203] 1, !UNUSED!          
-5 ) [23 ] 1, earthquake           35) [204] 1, !UNUSED!          
-6 ) [25 ] 1, energy drain         36) [205] 1, !UNUSED!          
-7 ) [26 ] 1, fireball             37) [206] 1, !UNUSED!      
-=========================================
-MSG #, SKILL NUMBER, NUMBER OF ENTRIES, NAME (if applicable)
-0 )    [5  ]         1,                 burning hands
-To edit a message, use the command "msgedit" along with the entry # of the message
-you would like to edit. To edit the "burning hands" entry, the correct command would
-be:
-  > msgedit 0
-==========================================
-Msg Edit: [0x1] [$n: Attacker | $N: Victim]
-1) Action Type: 5 [burning hands]
-   Death Messages:
-A) CHAR :  You have burned $N to death!
-B) VICT :  You have been burned to death by $n!
-C) ROOM :  $n has burned $N to death!
-   Miss Messages:
-D) CHAR :  You miss $N with your burning hands.
-E) VICT :  $n reaches for you with burning hands, but misses!
-F) ROOM :  $n tries to burn $N, but $E escapes!
-   Hit Messages:
-G) CHAR :  You burn $N with your hot little hands!
-H) VICT :  You cry out in pain as $n grabs you with burning hands!
-I) ROOM :  $N cries out as $n burns $M!
-   God Messages:
-J) CHAR :  Your attempt to burn $N nears BLASPHEMY!!!
-K) VICT :  The pitiful creature before you tries to burn you.
-L) ROOM :  Unaware of the risks, $n tries to burn $N.
-N) New Q) Quit
-============================================
-To edit a message, simply enter the applicable letter for the line to which you'd
-like to edit, and an entry prompt will emerge along with an example of use.
-To edit the A), "char death message", simply type from the message editor:
-  > a
-============================================
-Enter Selection : a
-Example: You kill $N!
-Enter new string : 
-=============================================
-Developed by Joseph Arnusch (Vatiken) for use in tbaMUD 3.64.
-#0
 $~
