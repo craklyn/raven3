@@ -48,9 +48,9 @@ static void oedit_save_to_disk(int zone_num);
 /* handy macro */
 #define S_PRODUCT(s, i) ((s)->producing[(i)])
 
-#define NUM_ILLEGAL_APPLIES 5
+
 /* Illegal obj applies */
-static const int illegal_applies[NUM_ILLEGAL_APPLIES] = {
+const int illegal_applies[NUM_ILLEGAL_APPLIES] = {
     APPLY_NONE,
     APPLY_UNUSED1,
     APPLY_UNUSED2,

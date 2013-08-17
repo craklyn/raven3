@@ -61,7 +61,6 @@
 /* this is one mud year.. */
 #define MAX_OBJ_TIMER       1071000
 
-
 /* this defines how much memory is alloacted for 'bit strings' when saving in
  * OLC. Remember to change it if you go for longer bitvectors. */
 #define BIT_STRING_LENGTH 33
@@ -105,6 +104,7 @@ struct oasis_olc_data {
   struct ibt_data *ibt;          /* used for 'ibtedit'       */
   struct message_list *msg;
   struct message_type *m_type;
+  struct ability_info_type *ab;   /* used for 'abedit'        */
   int script_mode;
   int trigger_position;
   int item_type;
@@ -138,6 +138,7 @@ extern const char *nrm, *grn, *cyn, *yel;
 #define OLC_HELP(d)    (OLC(d)->help)     /**< Hedit structure      */
 #define OLC_PREFS(d)   (OLC(d)->prefs)    /**< Preferences structure */
 #define OLC_IBT(d)     (OLC(d)->ibt)      /**< IBT (idea/bug/typo) structure */
+#define OLC_ABILITY(d) (OLC(d)->ab)       /**< Ability structure */
 /* Other macros. */
 #define OLC_EXIT(d)    (OLC_ROOM(d)->dir_option[OLC_VAL(d)])
 #define OLC_MSG(d)     (OLC(d)->m_type)
@@ -201,6 +202,8 @@ extern const char *nrm, *grn, *cyn, *yel;
 #define OEDIT_PERM			26
 #define OEDIT_DELETE                    27
 #define OEDIT_COPY                      28
+
+#define NUM_ILLEGAL_APPLIES 5
 
 /* Submodes of REDIT connectedness. */
 #define REDIT_MAIN_MENU 		1
@@ -395,6 +398,9 @@ extern const char *nrm, *grn, *cyn, *yel;
 #define HEDIT_MIN_LEVEL                 6
 
 int  save_config( IDXTYPE nowhere );
+
+/* illegal apply loctions table */
+extern const int illegal_applies[NUM_ILLEGAL_APPLIES];
 
 /* Prototypes to keep. */
 void clear_screen(struct descriptor_data *);

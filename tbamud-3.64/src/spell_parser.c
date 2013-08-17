@@ -21,6 +21,7 @@
 #include "db.h"
 #include "dg_scripts.h"
 #include "fight.h"  /* for hit() */
+#include "skills.h"
 
 #define SINFO spell_info[spellnum]
 
@@ -615,7 +616,7 @@ ACMD(do_cast)
   }
 
   /* You throws the dice and you takes your chances.. 101% is total failure */
-  if (rand_number(0, 101) > GET_SKILL(ch, spellnum)) {
+  if (!skillSuccess(ch, spellnum)) {
     WAIT_STATE(ch, PULSE_VIOLENCE);
     if (!tch || !skill_message(0, ch, tch, spellnum))
       send_to_char(ch, "You lost your concentration!\r\n");
