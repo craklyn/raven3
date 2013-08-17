@@ -82,7 +82,6 @@ static void cedit_setup(struct descriptor_data *d)
   OLC_CONFIG(d)->play.pk_allowed          = CONFIG_PK_ALLOWED;
   OLC_CONFIG(d)->play.pt_allowed          = CONFIG_PT_ALLOWED;
   OLC_CONFIG(d)->play.level_can_shout     = CONFIG_LEVEL_CAN_SHOUT;
-  OLC_CONFIG(d)->play.holler_move_cost    = CONFIG_HOLLER_MOVE_COST;
   OLC_CONFIG(d)->play.tunnel_size         = CONFIG_TUNNEL_SIZE;
   OLC_CONFIG(d)->play.max_exp_gain        = CONFIG_MAX_EXP_GAIN;
   OLC_CONFIG(d)->play.max_exp_loss        = CONFIG_MAX_EXP_LOSS;
@@ -185,7 +184,6 @@ static void cedit_save_internally(struct descriptor_data *d)
   CONFIG_PK_ALLOWED          = OLC_CONFIG(d)->play.pk_allowed;
   CONFIG_PT_ALLOWED          = OLC_CONFIG(d)->play.pt_allowed;
   CONFIG_LEVEL_CAN_SHOUT     = OLC_CONFIG(d)->play.level_can_shout;
-  CONFIG_HOLLER_MOVE_COST    = OLC_CONFIG(d)->play.holler_move_cost;
   CONFIG_TUNNEL_SIZE         = OLC_CONFIG(d)->play.tunnel_size;
   CONFIG_MAX_EXP_GAIN        = OLC_CONFIG(d)->play.max_exp_gain;
   CONFIG_MAX_EXP_LOSS        = OLC_CONFIG(d)->play.max_exp_loss;
@@ -339,8 +337,6 @@ int save_config( IDXTYPE nowhere )
   	      "pt_allowed = %d\n\n", CONFIG_PT_ALLOWED);
   fprintf(fl, "* What is the minimum level a player can shout/etc?\n"
               "level_can_shout = %d\n\n", CONFIG_LEVEL_CAN_SHOUT);
-  fprintf(fl, "* How many movement points does shouting cost the player?\n"
-  	      "holler_move_cost = %d\n\n", CONFIG_HOLLER_MOVE_COST);
   fprintf(fl, "* How many players can fit in a tunnel?\n"
               "tunnel_size = %d\n\n", CONFIG_TUNNEL_SIZE);
   fprintf(fl, "* Maximum experience gainable per kill?\n"
@@ -608,7 +604,6 @@ static void cedit_disp_game_play_options(struct descriptor_data *d)
         "%sA%s) Player Killing Allowed  : %s%s\r\n"
         "%sB%s) Player Thieving Allowed : %s%s\r\n"
         "%sC%s) Minimum Level To Shout  : %s%d\r\n"
-        "%sD%s) Holler Move Cost        : %s%d\r\n"
         "%sE%s) Tunnel Size             : %s%d\r\n"
         "%sF%s) Maximum Experience Gain : %s%d\r\n"
         "%sG%s) Maximum Experience Loss : %s%d\r\n"
@@ -635,7 +630,6 @@ static void cedit_disp_game_play_options(struct descriptor_data *d)
         grn, nrm, cyn, CHECK_VAR(OLC_CONFIG(d)->play.pk_allowed),
         grn, nrm, cyn, CHECK_VAR(OLC_CONFIG(d)->play.pt_allowed),
         grn, nrm, cyn, OLC_CONFIG(d)->play.level_can_shout,
-        grn, nrm, cyn, OLC_CONFIG(d)->play.holler_move_cost,
         grn, nrm, cyn, OLC_CONFIG(d)->play.tunnel_size,
         grn, nrm, cyn, OLC_CONFIG(d)->play.max_exp_gain,
         grn, nrm, cyn, OLC_CONFIG(d)->play.max_exp_loss,
@@ -882,12 +876,6 @@ void cedit_parse(struct descriptor_data *d, char *arg)
         case 'C':
           write_to_output(d, "Enter the minimum level a player must be to shout, etc : ");
           OLC_MODE(d) = CEDIT_LEVEL_CAN_SHOUT;
-          return;
-
-        case 'd':
-        case 'D':
-          write_to_output(d, "Enter the amount it costs (in move points) to holler : ");
-          OLC_MODE(d) = CEDIT_HOLLER_MOVE_COST;
           return;
 
         case 'e':
@@ -1299,17 +1287,6 @@ void cedit_parse(struct descriptor_data *d, char *arg)
           "Enter the minimum level a player must be to shout, etc : ");
       } else {
         OLC_CONFIG(d)->play.level_can_shout = atoi(arg);
-        cedit_disp_game_play_options(d);
-      }
-      break;
-
-    case CEDIT_HOLLER_MOVE_COST:
-      if (!*arg) {
-        write_to_output(d,
-          "That is an invalid choice!\r\n"
-          "Enter the amount it costs (in move points) to holler : ");
-      } else {
-        OLC_CONFIG(d)->play.holler_move_cost = atoi(arg);
         cedit_disp_game_play_options(d);
       }
       break;
