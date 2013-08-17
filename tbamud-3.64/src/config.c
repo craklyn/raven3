@@ -51,11 +51,8 @@ int pk_allowed = NO;
 /* Is playerthieving allowed? */
 int pt_allowed = NO;
 
-/* Minimum level a player must be to shout/holler/auction. */
+/* Minimum level a player must be to shout/auction. */
 int level_can_shout = 1;
-
-/* Number of movement points it costs to holler. */
-int holler_move_cost = 20;
 
 /* How many people can get into a tunnel?  The default is two, but there is
  * also an alternate message in the case of one person being allowed. */
